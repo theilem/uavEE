@@ -1,0 +1,7 @@
+float64 steady_state_thrust
+float64 dynamics_thrust
+float64 total_thrust
+float64 steady_state_thrust_power
+float64 dynamics_thrust_power
+float64 total_thrust_power
+float64 cumulative_total_thrust_power

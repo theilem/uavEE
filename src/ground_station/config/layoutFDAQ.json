@@ -1,0 +1,154 @@
+{
+    "main_config": {
+        "flight_control_path":"/usr/local/config/flight_control.json",
+        "mission_control_path":"/usr/local/config/mission_control.json",
+        "mode":"airplane",
+        "widget_configs": {
+            "overhead_map": {
+                "aircraft_image": "airplane.png",
+                "map_center": {
+                    "lat": 40.059375,
+                    "lon": -88.551382
+                },
+                "map_nw_corner": {
+                    "lat": 40.041283557243602,
+                    "lon": -88.389129638671903
+                },
+                "map_se_corner": {
+                    "lat": 39.981329382870399,
+                    "lon": -88.292999267578097
+                }
+            },
+            "WidgetControlSurface": {
+                "elevatorL": {
+                    "center": 6000,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": false
+                },
+                "elevatorR": {
+                    "center": 6000,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": false
+                },
+                "rudder": {
+                    "center": 6000,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": true
+                },
+                "wingLI": {
+                    "center": 3600,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": true
+                },
+                "wingLO": {
+                    "center": 6000,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": true
+                },
+                "wingRI": {
+                    "center": 3600,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": false
+                },
+                "wingRO": {
+                    "center": 6000,
+                    "max": 8400,
+                    "min": 3600,
+                    "reverse": true
+                },
+                "displaySettings": {
+
+                }
+            },
+            "WidgetAirplaneView":{
+                "cs": {
+                    "elevatorL": {
+                        "center": 6000,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": false
+                    },
+                    "elevatorR": {
+                        "center": 6000,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": false
+                    },
+                    "rudder": {
+                        "center": 6000,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": true
+                    },
+                    "wingLI": {
+                        "center": 3600,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": true
+                    },
+                    "wingLO": {
+                        "center": 6000,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": true
+                    },
+                    "wingRI": {
+                        "center": 3600,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": false
+                    },
+                    "wingRO": {
+                        "center": 6000,
+                        "max": 8400,
+                        "min": 3600,
+                        "reverse": true
+                    },
+                    "displaySettings": {
+
+                    }
+                }
+            }
+        }
+    },
+    "type": "vertical_layout",
+    "config": {
+        "items": [
+            {
+                "type": "horizontal_layout",
+                "config": {
+                    "items": [
+                        {
+                            "type": "maneuver_planner"
+                        },
+                        {
+                            "type": "overhead_map"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "horizontal_layout",
+                "config": {
+                    "items": [
+                        {
+                            "type": "cp_grid"
+                        },
+                        {
+                            "type": "pfd"
+                        },
+                        {
+                            "type": "sensor_data"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

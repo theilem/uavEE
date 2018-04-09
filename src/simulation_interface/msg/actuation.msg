@@ -1,0 +1,7 @@
+float64 rollOutput
+float64 pitchOutput
+float64 yawOutput
+float64 collectiveOutput
+float64 throttleOutput
+float64 flapOutput
+uint32 sequenceNr

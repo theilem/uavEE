@@ -1,0 +1,8 @@
+<launch>
+	<node name="simulation_interface_node" pkg="simulation_interface" type="simulation_interface_node" output="screen">
+		<param name="simulation_config" value="/usr/local/config/simulation.json" />
+	</node>
+	<node name="autopilot_interface_node" pkg="autopilot_interface" type="autopilot_interface_node" output="screen">
+		<param name="serial_port" value="/dev/tnt3" />
+	</node>
+</launch>

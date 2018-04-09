@@ -1,0 +1,150 @@
+{
+    "main_config": {
+        "flight_control_path":"/home/mircot/devel/uavEE/src/autopilot_interface/config/phantom/flight_control.json",
+        "mission_control_path":"/home/mircot/devel/uavEE/src/autopilot_interface/config/phantom/mission_control.json",
+		"mode":"airplane",
+    	"widget_configs": {
+			"overhead_map": {
+				"aircraft_image": "airplane.png",
+				"map_center": {
+				    "lat": 40.0039,
+				    "lon": -88.5614
+				}
+			},
+			"WidgetControlSurface": {
+				"elevatorL": {
+					"center": 6000,
+					"max": 8400,
+					"min": 3600,
+					"reverse": false
+				},
+				"elevatorR": {
+					"center": 6000,
+					"max": 8400,
+					"min": 3600,
+					"reverse": false
+				},
+				"rudder": {
+					"center": 6000,
+					"max": 8400,
+					"min": 3600,
+					"reverse": true
+				},
+				"wingLI": {
+					"center": 3600,
+					"max": 8400,
+					"min": 3600,
+					"reverse": true
+				},
+				"wingLO": {
+					"center": 6000,
+					"max": 8400,
+					"min": 3600,
+					"reverse": true
+				},
+				"wingRI": {
+					"center": 3600,
+					"max": 8400,
+					"min": 3600,
+					"reverse": false
+				},
+				"wingRO": {
+					"center": 6000,
+					"max": 8400,
+					"min": 3600,
+					"reverse": true
+				},
+				"displaySettings": {
+
+				}
+			},
+			"WidgetAirplaneView":{
+				"cs": {
+					"elevatorL": {
+						"center": 6000,
+						"max": 8400,
+						"min": 3600,
+						"reverse": false
+					},
+					"elevatorR": {
+						"center": 6000,
+						"max": 8400,
+						"min": 3600,
+						"reverse": false
+					},
+					"rudder": {
+						"center": 6000,
+						"max": 8400,
+						"min": 3600,
+						"reverse": true
+					},
+					"wingLI": {
+						"center": 3600,
+						"max": 8400,
+						"min": 3600,
+						"reverse": true
+					},
+					"wingLO": {
+						"center": 6000,
+						"max": 8400,
+						"min": 3600,
+						"reverse": true
+					},
+					"wingRI": {
+						"center": 3600,
+						"max": 8400,
+						"min": 3600,
+						"reverse": false
+					},
+					"wingRO": {
+						"center": 6000,
+						"max": 8400,
+						"min": 3600,
+						"reverse": true
+					},
+					"displaySettings": {
+	
+					}
+				}
+			}
+    	}
+    },
+    "type": "quad_layout",
+    "config": {
+	"nw": {
+		"type": "horizontal_layout",
+		"config": {
+		"items": [
+			{
+                "type": "maneuver_planner"
+			},
+		    	{
+			"type": "six"
+		    	}
+		]
+	    }
+	},
+	"ne": {
+	    "type": "overhead_map"
+	},
+	"sw": {
+		"type": "cp_grid"
+	},
+	"se": {
+	    "type": "horizontal_layout",
+	    "config": {
+		"items": [
+			{
+				"type": "pfd"
+			},
+		    {
+			"type": "sensor_data",
+			"config": {
+			    "defaultHeading": 0
+			}
+		    }
+		]
+	    }
+	}
+    }
+}

@@ -1,0 +1,21 @@
+<launch>
+	<node name="autopilot_interface_node" pkg="autopilot_interface" type="autopilot_interface_node" output="screen">
+		<param name="watchdog_binary" value="/usr/local/bin/uavAP/Watchdog" />
+		<param name="watchdog_config" value="$(find autopilot_interface)/config/cessna/watchdog.json" />
+		<param name="alvolo_config" value="/usr/local/config/alvolo.json" />
+	</node>
+	<!--node name="autopilot_interface_node" pkg="autopilot_interface" type="autopilot_interface_node" output="screen">
+		<param name="serial_port" value="/dev/tnt3" />
+	</node-->
+	<node name="radio_comm_node" pkg="radio_comm" type="radio_comm_node">
+		<param name="serial_port" value="/dev/tnt1" />
+	</node>
+	<node name="power_modeling_node" pkg="power_modeling" type="power_modeling_node">
+		<param name="l_over_d" value="12" />
+		<param name="mass" value="2.5" />
+	</node>
+    <node name="ground_station_node" pkg="ground_station" type="ground_station_node" output="screen">
+        <param name="config_path" value="$(find ground_station)/config/layoutCessna.json" />
+        <param name="resource_path" value="$(find ground_station)/resources/" />
+    </node>
+</launch>

@@ -1,0 +1,8 @@
+uint8 id
+float64 kp
+float64 ki
+float64 kd
+float64 ff
+float64 imax
+---
+bool valid_request
