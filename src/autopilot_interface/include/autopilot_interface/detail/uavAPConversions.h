@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -25,15 +25,18 @@
 
 #ifndef AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_UAVAPCONVERSIONS_H_
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_UAVAPCONVERSIONS_H_
-#include <simulation_interface/sensor_data.h>
-#include <radio_comm/pidstati.h>
-#include <uavAP/Core/SensorData.h>
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
-#include <radio_comm/local_planner_status.h>
-#include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
+
+#include <ros/time.h>
+
+#include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/protobuf/messages/LocalPlanner.pb.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
+#include "simulation_interface/sensor_data.h"
+#include "radio_comm/pidstati.h"
+#include "radio_comm/velocity_body.h"
 
 template<typename XYZType>
-XYZType
+inline XYZType
 Vector3ToXYZType(const Vector3& vec)
 {
 	XYZType xyz;
@@ -44,13 +47,13 @@ Vector3ToXYZType(const Vector3& vec)
 }
 
 template<typename XYZType>
-Vector3
+inline Vector3
 xyzTypeToVector3(const XYZType& vec)
 {
 	return Vector3(vec.x, vec.y, vec.z);
 }
 
-simulation_interface::sensor_data
+inline simulation_interface::sensor_data
 apToRos(const SensorData& sd)
 {
 	simulation_interface::sensor_data data;
@@ -62,12 +65,17 @@ apToRos(const SensorData& sd)
 	data.acceleration.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.acceleration);
 	data.acceleration.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularAcc);
 
-	data.header.stamp.fromBoost(sd.timestamp);
+	data.air_speed = sd.airSpeed;
+	data.ground_speed = sd.groundSpeed;
+
+	data.header.stamp = ros::Time::fromBoost(sd.timestamp);
+
+	data.battery_voltage = sd.batteryVoltage;
 
 	return data;
 }
 
-SensorData
+inline SensorData
 rosToAp(const simulation_interface::sensor_data& sd)
 {
 	SensorData data;
@@ -79,12 +87,19 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	data.acceleration = xyzTypeToVector3(sd.acceleration.linear);
 	data.angularAcc = xyzTypeToVector3(sd.acceleration.angular);
 
+	data.groundSpeed = sd.ground_speed;
+	data.airSpeed = sd.air_speed;
+
 	data.timestamp = sd.header.stamp.toBoost();
+	data.hasGPSFix = true;
+	data.autopilotActive = true;
+
+	data.batteryVoltage = sd.battery_voltage;
 
 	return data;
 }
 
-radio_comm::pidstati
+inline radio_comm::pidstati
 apToRos(const PIDStati& stati)
 {
 	radio_comm::pidstati data;
@@ -92,7 +107,7 @@ apToRos(const PIDStati& stati)
 	for (auto& it : stati)
 	{
 		radio_comm::pidstatus status;
-		status.id = it.first;
+		status.id = static_cast<unsigned int>(it.first);
 		status.target = it.second.target;
 		status.value = it.second.value;
 		data.stati.push_back(status);
@@ -101,17 +116,7 @@ apToRos(const PIDStati& stati)
 	return data;
 }
 
-radio_comm::airplane_linear_local_planner_status
-apToRos(const AirplaneLinearLocalPlannerStatus& status)
-{
-	radio_comm::airplane_linear_local_planner_status data;
-
-	data.heading_target = status.heading_target();
-
-	return data;
-}
-
-radio_comm::velocity_body
+inline radio_comm::velocity_body
 apToRos(const VelocityBody& vel)
 {
 	radio_comm::velocity_body data;
@@ -119,33 +124,6 @@ apToRos(const VelocityBody& vel)
 	data.velocity_x = vel.velocity_x();
 	data.velocity_y = vel.velocity_y();
 	data.velocity_z = vel.velocity_z();
-
-	return data;
-}
-
-radio_comm::linear_local_planner_status
-apToRos(const LinearLocalPlannerStatus& status)
-{
-	radio_comm::linear_local_planner_status data;
-
-	if (status.has_airplane_status())
-		data.airplane_status = apToRos(status.airplane_status());
-	if (status.has_velocity_target())
-		data.velocity_target = apToRos(status.velocity_target());
-
-	data.current_path_section = status.current_path_section();
-	data.yaw_rate_target = status.yaw_rate_target();
-
-	return data;
-}
-
-radio_comm::local_planner_status
-apToRos(const LocalPlannerStatus& status)
-{
-	radio_comm::local_planner_status data;
-
-	if (status.has_linear_status())
-		data.linear_status = apToRos(status.linear_status());
 
 	return data;
 }

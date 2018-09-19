@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMScenery_h_
 #define _XPLMScenery_h_
 
@@ -18,7 +36,8 @@
 #include "XPLMDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #if defined(XPLM200)
@@ -53,7 +72,6 @@ extern "C" {
  *
  */
 
-
 /*
  * XPLMProbeType
  * 
@@ -62,11 +80,11 @@ extern "C" {
  * future APIs will expose more flexible or poewrful or useful probes.         
  *
  */
-enum {
-     /* The Y probe gives you the location of the tallest physical scenery along    *
-      * the Y axis going through the queried point.                                 */
-     xplm_ProbeY                              = 0
-
+enum
+{
+	/* The Y probe gives you the location of the tallest physical scenery along    *
+	 * the Y axis going through the queried point.                                 */
+	xplm_ProbeY = 0
 
 };
 typedef int XPLMProbeType;
@@ -77,18 +95,18 @@ typedef int XPLMProbeType;
  * Probe results - possible results from a probe query.                        
  *
  */
-enum {
-     /* The probe hit terrain and returned valid values.                            */
-     xplm_ProbeHitTerrain                     = 0
+enum
+{
+	/* The probe hit terrain and returned valid values.                            */
+	xplm_ProbeHitTerrain = 0
 
-     /* An error in the API call.  Either the probe struct size is bad, or the      *
-      * probe is invalid or the type is mismatched for the specific query call.     */
-    ,xplm_ProbeError                          = 1
+	/* An error in the API call.  Either the probe struct size is bad, or the      *
+	 * probe is invalid or the type is mismatched for the specific query call.     */
+	,xplm_ProbeError = 1
 
-     /* The probe call succeeded but there is no terrain under this point (perhaps  *
-      * it is off the side of the planet?)                                          */
-    ,xplm_ProbeMissed                         = 2
-
+	/* The probe call succeeded but there is no terrain under this point (perhaps  *
+	 * it is off the side of the planet?)                                          */
+	,xplm_ProbeMissed = 2
 
 };
 typedef int XPLMProbeResult;
@@ -109,33 +127,34 @@ typedef void * XPLMProbeRef;
  * structSize to the size of the struct before using it.                       
  *
  */
-typedef struct {
-     /* Size of structure in bytes - always set this before calling the XPLM.       */
-     int                       structSize;
-     /* Resulting X location of the terrain point we hit, in local OpenGL           *
-      * coordinates.                                                                */
-     float                     locationX;
-     /* Resulting Y location of the terrain point we hit, in local OpenGL           *
-      * coordinates.                                                                */
-     float                     locationY;
-     /* Resulting Z location of the terrain point we hit, in local OpenGL           *
-      * coordinates.                                                                */
-     float                     locationZ;
-     /* X component of the normal vector to the terrain we found.                   */
-     float                     normalX;
-     /* Y component of the normal vector to the terrain we found.                   */
-     float                     normalY;
-     /* Z component of the normal vector to the terrain we found.                   */
-     float                     normalZ;
-     /* X component of the velocity vector of the terrain we found.                 */
-     float                     velocityX;
-     /* Y component of the velocity vector of the terrain we found.                 */
-     float                     velocityY;
-     /* Z component of the velocity vector of the terrain we found.                 */
-     float                     velocityZ;
-     /* Tells if the surface we hit is water (otherwise it is land).                */
-     int                       is_wet;
-} XPLMProbeInfo_t;
+typedef struct
+{
+	/* Size of structure in bytes - always set this before calling the XPLM.       */
+	int structSize;
+	/* Resulting X location of the terrain point we hit, in local OpenGL           *
+	 * coordinates.                                                                */
+	float locationX;
+	/* Resulting Y location of the terrain point we hit, in local OpenGL           *
+	 * coordinates.                                                                */
+	float locationY;
+	/* Resulting Z location of the terrain point we hit, in local OpenGL           *
+	 * coordinates.                                                                */
+	float locationZ;
+	/* X component of the normal vector to the terrain we found.                   */
+	float normalX;
+	/* Y component of the normal vector to the terrain we found.                   */
+	float normalY;
+	/* Z component of the normal vector to the terrain we found.                   */
+	float normalZ;
+	/* X component of the velocity vector of the terrain we found.                 */
+	float velocityX;
+	/* Y component of the velocity vector of the terrain we found.                 */
+	float velocityY;
+	/* Z component of the velocity vector of the terrain we found.                 */
+	float velocityZ;
+	/* Tells if the surface we hit is water (otherwise it is land).                */
+	int is_wet;
+}XPLMProbeInfo_t;
 
 /*
  * XPLMCreateProbe
@@ -143,8 +162,8 @@ typedef struct {
  * Creates a new probe object of a given type and returns.                     
  *
  */
-XPLM_API XPLMProbeRef         XPLMCreateProbe(
-                                   XPLMProbeType        inProbeType);    
+XPLM_API XPLMProbeRef XPLMCreateProbe(
+		XPLMProbeType inProbeType);
 
 /*
  * XPLMDestroyProbe
@@ -152,8 +171,8 @@ XPLM_API XPLMProbeRef         XPLMCreateProbe(
  * Deallocates an existing probe object.                                       
  *
  */
-XPLM_API void                 XPLMDestroyProbe(
-                                   XPLMProbeRef         inProbe);    
+XPLM_API void XPLMDestroyProbe(
+		XPLMProbeRef inProbe);
 
 /*
  * XPLMProbeTerrainXYZ
@@ -164,12 +183,12 @@ XPLM_API void                 XPLMDestroyProbe(
  * is returned.                                                                
  *
  */
-XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
-                                   XPLMProbeRef         inProbe,    
-                                   float                inX,    
-                                   float                inY,    
-                                   float                inZ,    
-                                   XPLMProbeInfo_t *    outInfo);    
+XPLM_API XPLMProbeResult XPLMProbeTerrainXYZ(
+		XPLMProbeRef inProbe,
+		float inX,
+		float inY,
+		float inZ,
+		XPLMProbeInfo_t * outInfo);
 
 #endif /* XPLM200 */
 #if defined(XPLM300)
@@ -190,7 +209,6 @@ XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
  *
  */
 
-
 /*
  * XPLMGetMagneticVariation
  * 
@@ -198,9 +216,9 @@ XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
  * indication latitude and longitude.                                          
  *
  */
-XPLM_API float                XPLMGetMagneticVariation(
-                                   double               latitude,    
-                                   double               longitude);    
+XPLM_API float XPLMGetMagneticVariation(
+		double latitude,
+		double longitude);
 
 /*
  * XPLMDegTrueToDegMagnetic
@@ -209,8 +227,8 @@ XPLM_API float                XPLMGetMagneticVariation(
  * to magnetic north at the user's current location.                           
  *
  */
-XPLM_API float                XPLMDegTrueToDegMagnetic(
-                                   float                headingDegreesTrue);    
+XPLM_API float XPLMDegTrueToDegMagnetic(
+		float headingDegreesTrue);
 
 /*
  * XPLMDegMagneticToDegTrue
@@ -219,8 +237,8 @@ XPLM_API float                XPLMDegTrueToDegMagnetic(
  * current location into a value relative to true north.                       
  *
  */
-XPLM_API float                XPLMDegMagneticToDegTrue(
-                                   float                headingDegreesMagnetic);    
+XPLM_API float XPLMDegMagneticToDegTrue(
+		float headingDegreesMagnetic);
 
 #endif /* XPLM300 */
 /***************************************************************************
@@ -233,7 +251,6 @@ XPLM_API float                XPLMDegMagneticToDegTrue(
  * every successful call to XPLMLoadObject with a call to XPLMUnloadObject!    
  *
  */
-
 
 #if defined(XPLM200)
 /*
@@ -255,22 +272,23 @@ typedef void * XPLMObjectRef;
  * future expansion.                                                           
  *
  */
-typedef struct {
-     /* Set this to the size of this structure!                                     */
-     int                       structSize;
-     /* X location of the object in local coordinates.                              */
-     float                     x;
-     /* Y location of the object in local coordinates.                              */
-     float                     y;
-     /* Z location of the object in local coordinates.                              */
-     float                     z;
-     /* Pitch in degres to rotate the object, positive is up.                       */
-     float                     pitch;
-     /* Heading in local coordinates to rotate the object, clockwise.               */
-     float                     heading;
-     /* Roll to rotate the object.                                                  */
-     float                     roll;
-} XPLMDrawInfo_t;
+typedef struct
+{
+	/* Set this to the size of this structure!                                     */
+	int structSize;
+	/* X location of the object in local coordinates.                              */
+	float x;
+	/* Y location of the object in local coordinates.                              */
+	float y;
+	/* Z location of the object in local coordinates.                              */
+	float z;
+	/* Pitch in degres to rotate the object, positive is up.                       */
+	float pitch;
+	/* Heading in local coordinates to rotate the object, clockwise.               */
+	float heading;
+	/* Roll to rotate the object.                                                  */
+	float roll;
+}XPLMDrawInfo_t;
 #endif /* XPLM200 */
 
 #if defined(XPLM210)
@@ -288,8 +306,8 @@ typedef struct {
  *
  */
 typedef void (* XPLMObjectLoaded_f)(
-                                   XPLMObjectRef        inObject,    
-                                   void *               inRefcon);    
+		XPLMObjectRef inObject,
+		void * inRefcon);
 #endif /* XPLM210 */
 
 #if defined(XPLM200)
@@ -317,8 +335,8 @@ typedef void (* XPLMObjectLoaded_f)(
  * defer object loading until the sim has fully started.                       
  *
  */
-XPLM_API XPLMObjectRef        XPLMLoadObject(
-                                   const char *         inPath);    
+XPLM_API XPLMObjectRef XPLMLoadObject(
+		const char * inPath);
 #endif /* XPLM200 */
 
 #if defined(XPLM210)
@@ -339,10 +357,10 @@ XPLM_API XPLMObjectRef        XPLMLoadObject(
  * desired.                                                                    
  *
  */
-XPLM_API void                 XPLMLoadObjectAsync(
-                                   const char *         inPath,    
-                                   XPLMObjectLoaded_f   inCallback,    
-                                   void *               inRefcon);    
+XPLM_API void XPLMLoadObjectAsync(
+		const char * inPath,
+		XPLMObjectLoaded_f inCallback,
+		void * inRefcon);
 #endif /* XPLM210 */
 
 #if defined(XPLM200)
@@ -370,12 +388,12 @@ XPLM_API void                 XPLMLoadObjectAsync(
  * Y axis.                                                                     
  *
  */
-XPLM_API void                 XPLMDrawObjects(
-                                   XPLMObjectRef        inObject,    
-                                   int                  inCount,    
-                                   XPLMDrawInfo_t *     inLocations,    
-                                   int                  lighting,    
-                                   int                  earth_relative);    
+XPLM_API void XPLMDrawObjects(
+		XPLMObjectRef inObject,
+		int inCount,
+		XPLMDrawInfo_t * inLocations,
+		int lighting,
+		int earth_relative);
 #endif /* XPLM200 */
 
 #if defined(XPLM200)
@@ -388,8 +406,8 @@ XPLM_API void                 XPLMDrawObjects(
  * successful call to XPLMLoadObject.                                          
  *
  */
-XPLM_API void                 XPLMUnloadObject(
-                                   XPLMObjectRef        inObject);    
+XPLM_API void XPLMUnloadObject(
+		XPLMObjectRef inObject);
 #endif /* XPLM200 */
 
 #if defined(XPLM200)
@@ -404,7 +422,6 @@ XPLM_API void                 XPLMUnloadObject(
  *
  */
 
-
 /*
  * XPLMLibraryEnumerator_f
  * 
@@ -414,8 +431,8 @@ XPLM_API void                 XPLMUnloadObject(
  *
  */
 typedef void (* XPLMLibraryEnumerator_f)(
-                                   const char *         inFilePath,    
-                                   void *               inRef);    
+		const char * inFilePath,
+		void * inRef);
 
 /*
  * XPLMLookupObjects
@@ -431,12 +448,12 @@ typedef void (* XPLMLibraryEnumerator_f)(
  * latitude/longitude you provide will be returned.                            
  *
  */
-XPLM_API int                  XPLMLookupObjects(
-                                   const char *         inPath,    
-                                   float                inLatitude,    
-                                   float                inLongitude,    
-                                   XPLMLibraryEnumerator_f enumerator,    
-                                   void *               ref);    
+XPLM_API int XPLMLookupObjects(
+		const char * inPath,
+		float inLatitude,
+		float inLongitude,
+		XPLMLibraryEnumerator_f enumerator,
+		void * ref);
 
 #endif /* XPLM200 */
 #ifdef __cplusplus

@@ -22,102 +22,61 @@
  *   @date [dd/mm/yyyy] 3/9/2018
  *   @brief UAV Ground Station Data Manager source file
  */
-#include <ros/node_handle.h>
-#include "ground_station/DataManager.h"
+
 #include <QFile>
-#include <uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h>
-#include <uavAP/Core/Logging/APLogger.h>
 #include <QJsonDocument>
+#include <ros/node_handle.h>
+
+#include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "ground_station/ConfigManager.h"
 #include "ground_station/MapLogic.h"
+#include "ground_station/DataManager.h"
+#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 
 std::shared_ptr<DataManager>
 DataManager::create(const boost::property_tree::ptree&)
 {
-    return std::make_shared<DataManager>();
+	return std::make_shared<DataManager>();
 }
 
 void
 DataManager::setMission(const radio_comm::serialized_object& mission)
 {
-	Content content = Content::INVALID;
 	Packet packet(mission.serialized);
-	boost::any any = dataPresentation_.deserialize(packet, content);
-	if (content != Content::MISSION)
-	{
-		APLOG_ERROR << "Trajectory received cannot be deserialized.";
-		return;
-	}
+	Mission t = dp::deserialize<Mission>(packet);
 
-	Mission t;
-	try
-	{
-		t = boost::any_cast<Mission>(any);
-	} catch (boost::bad_any_cast& err)
-	{
-		APLOG_ERROR << "Bad any cast for trajectory." << err.what();
-		return;
-	}
-    mapLogic_.get()->setMission(t);
-    emit onMission(t);
+	mapLogic_.get()->setMission(t);
+	emit onMission(t);
 }
 
 void
 DataManager::setPath(const radio_comm::serialized_object& traj)
 {
-	Trajectory t;
-	Content content = Content::INVALID;
 	Packet packet(traj.serialized);
-	boost::any any = dataPresentation_.deserialize(packet, content);
-	if (content != Content::TRAJECTORY)
-	{
-		APLOG_ERROR << "Trajectory received cannot be deserialized.";
-		return;
-	}
+	Trajectory t = dp::deserialize<Trajectory>(packet);
 
-	try
-	{
-		t = boost::any_cast<Trajectory>(any);
-	} catch (boost::bad_any_cast& err)
-	{
-		APLOG_ERROR << "Bad any cast for trajectory." << err.what();
-		return;
-	}
-    mapLogic_.get()->setPath(t);
-    emit onTrajectory(t);
+	mapLogic_.get()->setPath(t);
+	emit onTrajectory(t);
 }
 
 void
 DataManager::addSensorData(const simulation_interface::sensor_data &sd)
 {
-    //adding location to location history
-    mapLogic_.get()->addLocation(Vector3(sd.position.x, sd.position.y, sd.position.z));
-    mapLogic_.get()->sensorData_ = sd;
+	//adding location to location history
+	mapLogic_.get()->addLocation(Vector3(sd.position.x, sd.position.y, sd.position.z));
+	mapLogic_.get()->sensorData_ = sd;
 
-    emit onSensorData(sd);
+	emit onSensorData(sd);
 }
 
 void
-DataManager::setLocalPlannerStatus(const radio_comm::local_planner_status& status)
+DataManager::setLocalPlannerStatus(const radio_comm::serialized_proto& status)
 {
-    LocalPlannerStatus s;
-    s.mutable_linear_status()->set_current_path_section(status.linear_status.current_path_section);
-    s.mutable_linear_status()->mutable_velocity_target()->set_velocity_x(status.linear_status.velocity_target.velocity_x);
-    s.mutable_linear_status()->mutable_velocity_target()->set_velocity_y(status.linear_status.velocity_target.velocity_y);
-    s.mutable_linear_status()->mutable_velocity_target()->set_velocity_z(status.linear_status.velocity_target.velocity_z);
-    s.mutable_linear_status()->set_yaw_rate_target(status.linear_status.yaw_rate_target);
-    s.mutable_linear_status()->mutable_airplane_status()->set_heading_target(status.linear_status.airplane_status.heading_target);
-    if (s.has_linear_status())
-    {
-        lpStatus_ = s;
-        mapLogic_.get()->setLocalPlannerStatus(s);
-        if (s.linear_status().current_path_section()
-                != lpStatus_.linear_status().current_path_section())
-        {
-            emit onPathSectionChange((int) lpStatus_.linear_status().current_path_section());
-        }
-    }
-
+	LocalPlannerStatus s;
+	s.ParseFromString(status.proto_message);
+	mapLogic_.get()->setLocalPlannerStatus(s);
 }
 
 void
@@ -127,53 +86,113 @@ DataManager::onPredictedPower(const power_modeling::power_info& power)
 }
 
 void
-DataManager::addPIDStati(const radio_comm::pidstati &stati)
+DataManager::addOverride(const radio_comm::serialized_object& override)
 {
-    emit onPIDStati(stati);
+	Packet packet(override.serialized);
+	Override t = dp::deserialize<Override>(packet);
+
+	emit onOverride(t);
 }
 
 void
-DataManager::notifyAggregationOnUpdate(Aggregator &agg)
+DataManager::addPIDStati(const radio_comm::pidstati &stati)
 {
-    mapLogic_.setFromAggregationIfNotSet(agg);
+	emit onPIDStati(stati);
+}
+
+void
+DataManager::addInspectingMetrics(const radio_comm::serialized_object& inspectingMetrics)
+{
+	Packet packet(inspectingMetrics.serialized);
+	SteadyStateMetrics t = dp::deserialize<SteadyStateMetrics>(packet);
+
+	emit onInspectingMetrics(t);
+}
+
+void
+DataManager::notifyAggregationOnUpdate(const Aggregator &agg)
+{
+	mapLogic_.setFromAggregationIfNotSet(agg);
+}
+
+void
+DataManager::setSafetyBounds(const std_msgs::String& bounds)
+{
+	std::string boundsString = bounds.data;
+
+	Rectanguloid rect;
+	rect.ParseFromString(boundsString);
+	auto ml = mapLogic_.get();
+
+	if (!ml)
+	{
+		APLOG_ERROR << "DataManager: Map Logic Missing.";
+		return;
+	}
+
+	ml->setSafetyBounds(rect);
+}
+
+void
+DataManager::setLocalFrame(const radio_comm::serialized_object& localFrame)
+{
+	Packet packet(localFrame.serialized);
+	VehicleOneFrame frame = dp::deserialize<VehicleOneFrame>(packet);
+
+	mapLogic_.get()->setLocalFrame(frame);
+	emit onLocalFrame(frame);
 }
 
 void
 DataManager::subscribeOnRos()
 {
-    ros::NodeHandle nh;
-    sensorDataSubscriptionRos_ = nh.subscribe("radio_comm/sensor_data", 20, &DataManager::addSensorData, this);
-    trajectorySubscriptionRos_ = nh.subscribe("radio_comm/trajectory", 20, &DataManager::setPath, this);
-    missionSubscriptionRos_ = nh.subscribe("radio_comm/mission", 20, &DataManager::setMission, this);
-    localPlannerDataSubscriptionRos_ = nh.subscribe("radio_comm/local_planner_status", 20, &DataManager::setLocalPlannerStatus, this);
-    PIDStatiSubscriptionRos_ = nh.subscribe("radio_comm/pid_stati",20,&DataManager::addPIDStati, this);
-    powerModelSubscriptionRos_ = nh.subscribe("power_model/predicted_power", 20, &DataManager::onPredictedPower, this);
-    APLOG_DEBUG<<"reached subscribeOnRos";
+	ros::NodeHandle nh;
+	sensorDataSubscriptionRos_ = nh.subscribe("radio_comm/sensor_data", 20,
+			&DataManager::addSensorData, this);
+	trajectorySubscriptionRos_ = nh.subscribe("radio_comm/trajectory", 20, &DataManager::setPath,
+			this);
+	missionSubscriptionRos_ = nh.subscribe("radio_comm/mission", 20, &DataManager::setMission,
+			this);
+	overrideSubscriptionRos_ = nh.subscribe("radio_comm/override", 20,
+				&DataManager::addOverride, this);
+	localFrameSubscriptionRos_ = nh.subscribe("radio_comm/local_frame", 20,
+			&DataManager::setLocalFrame, this);
+	localPlannerDataSubscriptionRos_ = nh.subscribe("radio_comm/local_planner_status", 20,
+			&DataManager::setLocalPlannerStatus, this);
+	PIDStatiSubscriptionRos_ = nh.subscribe("radio_comm/pid_stati", 20, &DataManager::addPIDStati,
+			this);
+	inspectingMetricsSubscriptionRos_ = nh.subscribe("radio_comm/inspecting_metrics", 20,
+			&DataManager::addInspectingMetrics, this);
+	powerModelSubscriptionRos_ = nh.subscribe("power_model/predicted_power", 20,
+			&DataManager::onPredictedPower, this);
+
+	safetyBoundsSubscriptionRos_ = nh.subscribe("radio_comm/safety_bounds", 20,
+			&DataManager::setSafetyBounds, this);
 }
 
 bool
 DataManager::run(RunStage stage)
 {
-    switch (stage)
-    {
-    case RunStage::INIT:
-    {
-        if (!mapLogic_.isSet())
-        {
-            APLOG_ERROR << "DataManager: MapLogic not set";
-            return true;
-        }
-        break;
-    }
-    case RunStage::NORMAL:
-    {
-        subscribeOnRos();
-        break;
-    }
-    case RunStage::FINAL:
-        break;
-    default:
-        break;
-    }
-    return false;
+	switch (stage)
+	{
+	case RunStage::INIT:
+	{
+		if (!mapLogic_.isSet())
+		{
+			APLOG_ERROR << "DataManager: MapLogic not set";
+			return true;
+		}
+		break;
+	}
+	case RunStage::NORMAL:
+	{
+		subscribeOnRos();
+		break;
+	}
+	case RunStage::FINAL:
+		break;
+	default:
+		break;
+	}
+	return false;
 }

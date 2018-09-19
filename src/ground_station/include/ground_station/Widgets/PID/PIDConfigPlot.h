@@ -21,7 +21,7 @@
 
 #include <QWidget>
 #include "ground_station/ConfigManager.h"
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "ground_station/IPIDConfigurator.h"
 
 namespace Ui

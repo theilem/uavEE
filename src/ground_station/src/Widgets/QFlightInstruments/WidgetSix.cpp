@@ -59,38 +59,31 @@
 #include <string>
 ////////////////////////////////////////////////////////////////////////////////
 
-WidgetSix::WidgetSix( QWidget* parent ) :
-    QWidget ( parent ),
-    m_ui ( new Ui::WidgetSix ),
+WidgetSix::WidgetSix(QWidget* parent) :
+		QWidget(parent), m_ui(new Ui::WidgetSix),
 
-    m_widgetADI ( 0 ),
-    m_widgetALT ( 0 ),
-    m_widgetASI ( 0 ),
-    m_widgetHSI ( 0 ),
-    m_widgetTC  ( 0 ),
-    m_widgetVSI ( 0 )
+		m_widgetADI(0), m_widgetALT(0), m_widgetASI(0), m_widgetHSI(0), m_widgetTC(0), m_widgetVSI(
+				0)
 {
-    m_ui->setupUi( this );
+	m_ui->setupUi(this);
 
-    m_widgetADI = m_ui->widgetADI;
-    m_widgetALT = m_ui->widgetALT;
-    m_widgetASI = m_ui->widgetASI;
-    m_widgetHSI = m_ui->widgetHSI;
-    m_widgetTC  = m_ui->widgetTC;
-    m_widgetVSI = m_ui->widgetVSI;
+	m_widgetADI = m_ui->widgetADI;
+	m_widgetALT = m_ui->widgetALT;
+	m_widgetASI = m_ui->widgetASI;
+	m_widgetHSI = m_ui->widgetHSI;
+	m_widgetTC = m_ui->widgetTC;
+	m_widgetVSI = m_ui->widgetVSI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
 WidgetSix::~WidgetSix()
 {
-    if ( m_ui )
-    {
-        delete m_ui;
-        m_ui = 0;
-    }
+	if (m_ui)
+	{
+		delete m_ui;
+		m_ui = 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,38 +91,38 @@ WidgetSix::~WidgetSix()
 void
 WidgetSix::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {
-    if(!interface)
-    {
-        APLOG_WARN << "WidgetSix received null interface";
-        return;
-    }
-    if (auto ds = interface->getIDataSignals().get())
-        QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)), this,
-                         SLOT(on_hasNewSample(const simulation_interface::sensor_data&)));
-    else
-        APLOG_ERROR << "Cannot connect WidgetSix to SensorData. IDataSignals missing.";
+	if (!interface)
+	{
+		APLOG_WARN << "WidgetSix received null interface";
+		return;
+	}
+	if (auto ds = interface->getIDataSignals().get())
+		QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)),
+				this, SLOT(on_hasNewSample(const simulation_interface::sensor_data&)));
+	else
+		APLOG_ERROR << "Cannot connect WidgetSix to SensorData. IDataSignals missing.";
 }
 
 void
 WidgetSix::update()
 {
-    m_ui->widgetADI->update();
-    m_ui->widgetALT->update();
-    m_ui->widgetASI->update();
-    m_ui->widgetHSI->update();
-    m_ui->widgetTC->update();
-    m_ui->widgetVSI->update();
+	m_ui->widgetADI->update();
+	m_ui->widgetALT->update();
+	m_ui->widgetASI->update();
+	m_ui->widgetHSI->update();
+	m_ui->widgetTC->update();
+	m_ui->widgetVSI->update();
 }
 
 void
-WidgetSix::on_hasNewSample(const simulation_interface::sensor_data& s)//TODO Update widget images for SI and change data to SI
+WidgetSix::on_hasNewSample(const simulation_interface::sensor_data& s) //TODO Update widget images for SI and change data to SI
 {
-    m_ui->widgetADI->setRoll(s.attitude.x * 180. / M_PI);
-    m_ui->widgetADI->setPitch(s.attitude.y * 180. / M_PI);
-    m_ui->widgetALT->setAltitude(s.position.z * 3.28084); //convert from ENU in meters to altitude in feet
-    //m_ui->widgetASI->setAirspeed(s.velocityAir*1.94384); //convert from m/s to knots TODO fixme
-    m_ui->widgetHSI->setHeading(s.attitude.z * 180. / M_PI);
-    m_ui->widgetTC->setTurnRate(s.acceleration.angular.z * 180. / M_PI);
-    m_ui->widgetVSI->setClimbRate(s.velocity.linear.z * 19.685); //convert from m/s to 100ft/min
-    this->update();
+	m_ui->widgetADI->setRoll(s.attitude.x * 180. / M_PI);
+	m_ui->widgetADI->setPitch(s.attitude.y * 180. / M_PI);
+	m_ui->widgetALT->setAltitude(s.position.z * 3.28084); //convert from ENU in meters to altitude in feet
+	//m_ui->widgetASI->setAirspeed(s.velocityAir*1.94384); //convert from m/s to knots TODO fixme
+	m_ui->widgetHSI->setHeading(s.attitude.z * 180. / M_PI);
+	m_ui->widgetTC->setTurnRate(s.acceleration.angular.z * 180. / M_PI);
+	m_ui->widgetVSI->setClimbRate(s.velocity.linear.z * 19.685); //convert from m/s to 100ft/min
+	this->update();
 }

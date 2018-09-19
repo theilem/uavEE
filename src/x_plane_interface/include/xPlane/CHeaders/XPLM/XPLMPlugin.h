@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMPlugin_h_
 #define _XPLMPlugin_h_
 
@@ -19,7 +37,8 @@
 #include "XPLMDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -33,7 +52,6 @@ extern "C" {
  *
  */
 
-
 /*
  * XPLMGetMyID
  * 
@@ -41,7 +59,8 @@ extern "C" {
  * get your own ID.                                                            
  *
  */
-XPLM_API XPLMPluginID         XPLMGetMyID(void);
+XPLM_API XPLMPluginID
+XPLMGetMyID(void);
 
 /*
  * XPLMCountPlugins
@@ -50,7 +69,8 @@ XPLM_API XPLMPluginID         XPLMGetMyID(void);
  * disabled and enabled.                                                       
  *
  */
-XPLM_API int                  XPLMCountPlugins(void);
+XPLM_API int
+XPLMCountPlugins(void);
 
 /*
  * XPLMGetNthPlugin
@@ -60,8 +80,8 @@ XPLM_API int                  XPLMCountPlugins(void);
  * order.                                                                      
  *
  */
-XPLM_API XPLMPluginID         XPLMGetNthPlugin(
-                                   int                  inIndex);    
+XPLM_API XPLMPluginID
+XPLMGetNthPlugin(int inIndex);
 
 /*
  * XPLMFindPluginByPath
@@ -71,8 +91,8 @@ XPLM_API XPLMPluginID         XPLMGetNthPlugin(
  * path does not point to a currently loaded plug-in.                          
  *
  */
-XPLM_API XPLMPluginID         XPLMFindPluginByPath(
-                                   const char *         inPath);    
+XPLM_API XPLMPluginID
+XPLMFindPluginByPath(const char * inPath);
 
 /*
  * XPLMFindPluginBySignature
@@ -85,8 +105,8 @@ XPLM_API XPLMPluginID         XPLMFindPluginByPath(
  * locate another plugin that your plugin interoperates with                   
  *
  */
-XPLM_API XPLMPluginID         XPLMFindPluginBySignature(
-                                   const char *         inSignature);    
+XPLM_API XPLMPluginID
+XPLMFindPluginBySignature(const char * inSignature);
 
 /*
  * XPLMGetPluginInfo
@@ -101,12 +121,11 @@ XPLM_API XPLMPluginID         XPLMFindPluginBySignature(
  * human-readable description of this plug-in.                                 
  *
  */
-XPLM_API void                 XPLMGetPluginInfo(
-                                   XPLMPluginID         inPlugin,    
-                                   char *               outName,    /* Can be NULL */
-                                   char *               outFilePath,    /* Can be NULL */
-                                   char *               outSignature,    /* Can be NULL */
-                                   char *               outDescription);    /* Can be NULL */
+XPLM_API void
+XPLMGetPluginInfo(XPLMPluginID inPlugin, char * outName, /* Can be NULL */
+char * outFilePath, /* Can be NULL */
+char * outSignature, /* Can be NULL */
+char * outDescription); /* Can be NULL */
 
 /***************************************************************************
  * ENABLING/DISABLING PLUG-INS
@@ -117,15 +136,14 @@ XPLM_API void                 XPLMGetPluginInfo(
  *
  */
 
-
 /*
  * XPLMIsPluginEnabled
  * 
  * Returns whether the specified plug-in is enabled for running.               
  *
  */
-XPLM_API int                  XPLMIsPluginEnabled(
-                                   XPLMPluginID         inPluginID);    
+XPLM_API int
+XPLMIsPluginEnabled(XPLMPluginID inPluginID);
 
 /*
  * XPLMEnablePlugin
@@ -136,8 +154,8 @@ XPLM_API int                  XPLMIsPluginEnabled(
  * by returning 0 from their XPluginEnable callback.                           
  *
  */
-XPLM_API int                  XPLMEnablePlugin(
-                                   XPLMPluginID         inPluginID);    
+XPLM_API int
+XPLMEnablePlugin(XPLMPluginID inPluginID);
 
 /*
  * XPLMDisablePlugin
@@ -145,8 +163,8 @@ XPLM_API int                  XPLMEnablePlugin(
  * This routine disableds an enabled plug-in.                                  
  *
  */
-XPLM_API void                 XPLMDisablePlugin(
-                                   XPLMPluginID         inPluginID);    
+XPLM_API void
+XPLMDisablePlugin(XPLMPluginID inPluginID);
 
 /*
  * XPLMReloadPlugins
@@ -158,7 +176,8 @@ XPLM_API void                 XPLMDisablePlugin(
  * up.                                                                         
  *
  */
-XPLM_API void                 XPLMReloadPlugins(void);
+XPLM_API void
+XPLMReloadPlugins(void);
 
 /***************************************************************************
  * INTERPLUGIN MESSAGING
@@ -181,7 +200,6 @@ XPLM_API void                 XPLMReloadPlugins(void);
  * The following messages are sent to your plugin by X-Plane.                  
  *
  */
-
 
 /* This message is sent to your plugin whenever the user's plane crashes.      */
 #define XPLM_MSG_PLANE_CRASHED 101
@@ -239,10 +257,8 @@ XPLM_API void                 XPLMReloadPlugins(void);
  * a message receive function receive the message.                             
  *
  */
-XPLM_API void                 XPLMSendMessageToPlugin(
-                                   XPLMPluginID         inPlugin,    
-                                   int                  inMessage,    
-                                   void *               inParam);    
+XPLM_API void
+XPLMSendMessageToPlugin(XPLMPluginID inPlugin, int inMessage, void * inParam);
 
 #if defined(XPLM200)
 /***************************************************************************
@@ -260,7 +276,6 @@ XPLM_API void                 XPLMSendMessageToPlugin(
  *
  */
 
-
 /*
  * XPLMFeatureEnumerator_f
  * 
@@ -270,8 +285,8 @@ XPLM_API void                 XPLMSendMessageToPlugin(
  *
  */
 typedef void (* XPLMFeatureEnumerator_f)(
-                                   const char *         inFeature,    
-                                   void *               inRef);    
+		const char * inFeature,
+		void * inRef);
 
 /*
  * XPLMHasFeature
@@ -280,8 +295,8 @@ typedef void (* XPLMFeatureEnumerator_f)(
  * 0 if it does not.                                                           
  *
  */
-XPLM_API int                  XPLMHasFeature(
-                                   const char *         inFeature);    
+XPLM_API int XPLMHasFeature(
+		const char * inFeature);
 
 /*
  * XPLMIsFeatureEnabled
@@ -291,8 +306,8 @@ XPLM_API int                  XPLMHasFeature(
  * feature.                                                                    
  *
  */
-XPLM_API int                  XPLMIsFeatureEnabled(
-                                   const char *         inFeature);    
+XPLM_API int XPLMIsFeatureEnabled(
+		const char * inFeature);
 
 /*
  * XPLMEnableFeature
@@ -302,9 +317,9 @@ XPLM_API int                  XPLMIsFeatureEnabled(
  * depending on the feature.                                                   
  *
  */
-XPLM_API void                 XPLMEnableFeature(
-                                   const char *         inFeature,    
-                                   int                  inEnable);    
+XPLM_API void XPLMEnableFeature(
+		const char * inFeature,
+		int inEnable);
 
 /*
  * XPLMEnumerateFeatures
@@ -314,9 +329,9 @@ XPLM_API void                 XPLMEnableFeature(
  * the features that X-Plane can support.                                      
  *
  */
-XPLM_API void                 XPLMEnumerateFeatures(
-                                   XPLMFeatureEnumerator_f inEnumerator,    
-                                   void *               inRef);    
+XPLM_API void XPLMEnumerateFeatures(
+		XPLMFeatureEnumerator_f inEnumerator,
+		void * inRef);
 
 #endif /* XPLM200 */
 #ifdef __cplusplus

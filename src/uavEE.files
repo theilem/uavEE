@@ -2,6 +2,7 @@ CMakeLists.txt
 Doxyfile
 format.astylerc
 uavAP.cmake
+uavEE.includes2
 x_plane_interface/xplane_ros_plugin.cpp
 x_plane_interface/xplane.cmake
 x_plane_interface/CMakeLists.txt
@@ -87,6 +88,7 @@ radio_comm/msg/velocity_body.msg
 radio_comm/msg/serialized_object.msg
 radio_comm/msg/pidstatus.msg
 radio_comm/msg/pidstati.msg
+radio_comm/msg/override_status.msg
 radio_comm/msg/local_planner_status.msg
 radio_comm/msg/local_planner_params.msg
 radio_comm/msg/linear_local_planner_status.msg
@@ -124,6 +126,14 @@ pan_tilt_handler/include/pan_tilt_handler/deviceclass.h
 pan_tilt_handler/include/pan_tilt_handler/CMakeLists.txt
 pan_tilt_handler/include/pan_tilt_handler/Widgets/WidgetAntennaDataManipulator.h
 pan_tilt_handler/include/pan_tilt_handler/Widgets/WidgetAntenna.h
+maneuver_override/CMakeLists.txt
+maneuver_override/package.xml
+maneuver_override/src/SteadyStateChecker.cpp
+maneuver_override/src/maneuver_override_node.cpp
+maneuver_override/msg/step_metrics.msg
+maneuver_override/include/maneuver_override/SteadyStateChecker.h
+maneuver_override/include/maneuver_override/ManeuverOverrideHelper.h
+maneuver_override/config/config.json
 ground_station/CMakeLists.txt
 ground_station/package.xml
 ground_station/src/GSWidgetFactory.cpp
@@ -229,11 +239,6 @@ ground_station/include/ground_station/Widgets/FlightView/SubWidgets/WidgetLevelM
 ground_station/config/layoutPhantom.json
 ground_station/config/layoutFDAQ.json
 ground_station/config/layoutCessna.json
-fault_modeling/CMakeLists.txt
-fault_modeling/package.xml
-fault_modeling/srv/add_actuator_fault.srv
-fault_modeling/src/fault_modeling_node.cpp
-fault_modeling/include/fault_modeling/FaultModeling.h
 autopilot_interface/CMakeLists.txt
 autopilot_interface/package.xml
 autopilot_interface/src/AutopilotInterface.cpp

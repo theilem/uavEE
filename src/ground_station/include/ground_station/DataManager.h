@@ -24,23 +24,26 @@
  */
 #ifndef DATAMANAGER_H
 #define DATAMANAGER_H
-#include <map>
+
 #include <QObject>
-#include <uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h>
+#include <QJsonObject>
+#include <map>
+#include <std_msgs/String.h>
+#include <boost/property_tree/ptree.hpp>
+#include <ros/subscriber.h>
 #include <uavAP/Core/Runner/SimpleRunner.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/LinearAlgebra.h>
-#include <QJsonObject>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
-#include "ground_station/IDataSignals.h"
-#include <boost/property_tree/ptree.hpp>
-#include <ros/subscriber.h>
-#include <radio_comm/local_planner_status.h>
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
+#include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h>
 #include <radio_comm/serialized_object.h>
 #include <power_modeling/power_info.h>
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
+
+#include "ground_station/IDataSignals.h"
 
 class MapLogic;
 class ConfigManager;
@@ -48,143 +51,191 @@ class ConfigManager;
 /**
  * @brief   The DataManager class manages all data going through the ground station.
  */
-class DataManager: public IDataSignals,
-        public IRunnableObject,
-        public IAggregatableObject
+class DataManager: public IDataSignals, public IRunnableObject, public IAggregatableObject
 {
+
 Q_OBJECT
+
 public:
 
-    /**
-     * @brief default constructor
-     */
+	static constexpr TypeId typeId = "data_manager";
+
+	/**
+	 * @brief default constructor
+	 */
 	DataManager() = default;
 
-    /**
-     * @brief   creates a DataManager. Has a placeholder parameter for json config
-     *          that is not used
-     * @return  std::shared_ptr<DataManager> to newly instantiated ConfigManager
-     */
-    static std::shared_ptr<DataManager>
+	/**
+	 * @brief   creates a DataManager. Has a placeholder parameter for json config
+	 *          that is not used
+	 * @return  std::shared_ptr<DataManager> to newly instantiated ConfigManager
+	 */
+	static std::shared_ptr<DataManager>
 	create(const boost::property_tree::ptree&);
 
-    /**
-     * @brief   notifyAggregationOnUpdate sets references to ConfigManager and MapLogic
-     * @param   agg is the reference to aggregator that contains all the references
-     */
+	/**
+	 * @brief   notifyAggregationOnUpdate sets references to ConfigManager and MapLogic
+	 * @param   agg is the reference to aggregator that contains all the references
+	 */
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
-    /**
-     * @brief   run calls the runstages. init checks to see if the objectHandles
-     *          are set properly and normal subscribes on ros messages
-     * @param   stage enum defining which runstage is being run
-     * @return  false on success, true if error occured
-     */
+	/**
+	 * @brief   run calls the runstages. init checks to see if the objectHandles
+	 *          are set properly and normal subscribes on ros messages
+	 * @param   stage enum defining which runstage is being run
+	 * @return  false on success, true if error occured
+	 */
 	bool
 	run(RunStage stage) override;
 
 signals:
+
 	void
 	onActuationData(const simulation_interface::actuation&) override;
+
 	void
 	onSensorData(const simulation_interface::sensor_data&) override;
+
 	void
 	onMission(const Mission&) override;
+
 	void
 	onTrajectory(const Trajectory&) override;
+
 	void
 	onPathSectionChange(int) override;
+
 	void
-	onLocalPlannerStatus(const LocalPlannerStatus&) override;
+	onLocalPlannerStatus(const radio_comm::serialized_proto&) override;
+
+	void
+	onOverride(const Override&) override;
+
 	void
 	onPIDStati(const radio_comm::pidstati&) override;
 
+	void
+	onInspectingMetrics(const SteadyStateMetrics&) override;
+
+	void
+	onLocalFrame(const VehicleOneFrame&) override;
+
 private:
 
-    /**
-     * @brief setMission handles onMission. It sends the mission to the linked
-     * mapLogic and signals all widgets subscribed to onMission
-     * @param mission the mission recieved
-     */
+	/**
+	 * @brief setMission handles onMission. It sends the mission to the linked
+	 * mapLogic and signals all widgets subscribed to onMission
+	 * @param mission the mission received
+	 */
 	void
 	setMission(const radio_comm::serialized_object& mission);
 
-    /**
-     * @brief setPath handles onTrajectory. It sends the trajectory to the
-     * linked mapLogic and signals all widgets subscribed to onTrajectory
-     * @param traj is the trajectroy recieved
-     */
+	void
+	setLocalFrame(const radio_comm::serialized_object& localFrame);
+
+	/**
+	 * @brief setPath handles onTrajectory. It sends the trajectory to the
+	 * linked mapLogic and signals all widgets subscribed to onTrajectory
+	 * @param traj is the trajectroy received
+	 */
 	void
 	setPath(const radio_comm::serialized_object& traj);
 
-    /**
-     * @brief addSensorData is the handler function of onSensorData. It sets the
-     * member sensor data to the new recieved sensor data and signals all the
-     * widgets subscribed to onSensorData
-     * @param sd is the recieved sensor data
-     */
+	/**
+	 * @brief addSensorData is the handler function of onSensorData. It sets the
+	 * member sensor data to the new received sensor data and signals all the
+	 * widgets subscribed to onSensorData
+	 * @param sd is the received sensor data
+	 */
 	void
 	addSensorData(const simulation_interface::sensor_data &sd);
 
-    /**
-     * @brief setLocalPlannerStatus handles onLocalPlannerStatus. It sets the
-     *        member local planner status to the new recieved local planner status and
-     *        signals all the widgets subscribed onLocalPlannerStatus
-     *
-     * @param status
-     */
+	/**
+	 * @brief setLocalPlannerStatus handles onLocalPlannerStatus. It sets the
+	 *        member local planner status to the new received local planner status and
+	 *        signals all the widgets subscribed onLocalPlannerStatus
+	 *
+	 * @param status
+	 */
 	void
-	setLocalPlannerStatus(const radio_comm::local_planner_status& status);
+	setLocalPlannerStatus(const radio_comm::serialized_proto& status);
 
-    /**
-     * @brief onPredictedPower handlers ROS messages containing predicted power
-     * @param power ROS power message
-     */
-    void
+	/**
+	 * @brief onPredictedPower handlers ROS messages containing predicted power
+	 * @param power ROS power message
+	 */
+	void
 	onPredictedPower(const power_modeling::power_info& power);
 
-    /**
-     * @brief addPIDStati handles onPIDStati. It signals all connected widgets
-     * that there is new PIDStati
-     * @param stati
-     */
+	/**
+	 * @brief addOverride handles onOverride. It signals all widgets
+	 * subscribed to onOverride
+	 * @param override the override received
+	 */
+	void
+	addOverride(const radio_comm::serialized_object& override);
+
+	/**
+	 * @brief addPIDStati handles onPIDStati. It signals all connected widgets
+	 * that there is new PIDStati
+	 * @param stati
+	 */
 	void
 	addPIDStati(const radio_comm::pidstati &stati);
 
-    /**
-     * @brief subscribeOnRos is an initializer function that initializes
-     */
+	/**
+	 * @brief addInspectingMetrics handles onPIDMetrics. It signals all connected widgets
+	 * that there is new PIDMetrics
+	 * @param stati
+	 */
+	void
+	addInspectingMetrics(const radio_comm::serialized_object& inspectingMetrics);
+
+	void
+	setSafetyBounds(const std_msgs::String& bounds);
+
+	/**
+	 * @brief subscribeOnRos is an initializer function that initializes
+	 */
 	void
 	subscribeOnRos();
 
-    ///! member used to check if the current path section has changed
+	///! member used to check if the current path section has changed
 	LocalPlannerStatus lpStatus_;
 
-    ///! reference to MapLogic for map widgets to have latest data
+	///! reference to MapLogic for map widgets to have latest data
 	ObjectHandle<MapLogic> mapLogic_;
 
-    ///! dataPresentation_ used to deserialize incoming missions that are sent
-    ///  as raw binary data
-	APDataPresentation<Content, Target> dataPresentation_;
-
-    ///! subscription to incoming ROS sensor data messages
+	///! subscription to incoming ROS sensor data messages
 	ros::Subscriber sensorDataSubscriptionRos_;
 
-    ///! subscription to incoming ROS trajectory messages
+	///! subscription to incoming ROS trajectory messages
 	ros::Subscriber trajectorySubscriptionRos_;
 
-    ///! subscription to incoming ROS mission messages
-    ros::Subscriber missionSubscriptionRos_;
+	///! subscription to incoming ROS mission messages
+	ros::Subscriber missionSubscriptionRos_;
 
-    ///! subscription to incoming ROS PIDStati messages
+	///! subscription to incoming ROS override messages
+	ros::Subscriber overrideSubscriptionRos_;
+
+	///! subscription to incoming ROS local frame messages
+	ros::Subscriber localFrameSubscriptionRos_;
+
+	///! subscription to incoming ROS PIDStati messages
 	ros::Subscriber PIDStatiSubscriptionRos_;
 
-    ///! subscription to incoming ROS local planner status messages
-    ros::Subscriber localPlannerDataSubscriptionRos_;
+	///! subscription to incoming ROS Inspecting Metrics messages
+	ros::Subscriber inspectingMetricsSubscriptionRos_;
 
-    ///! subscription to incoming ROS power info messages
+	///! subscription to incoming ROS local planner status messages
+	ros::Subscriber localPlannerDataSubscriptionRos_;
+
+	///! subscription to incoming ROS power info messages
 	ros::Subscriber powerModelSubscriptionRos_;
+
+	///! subscription to incoming ROS safety bounds messages
+	ros::Subscriber safetyBoundsSubscriptionRos_;
 };
 
 #endif // DATAMANAGER_H

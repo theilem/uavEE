@@ -1,0 +1,22 @@
+{
+	"network": {
+		"type": "serial",
+		"ports": {
+			"sim_sense": {
+				"serial_port": "/dev/ttyUSB0",
+				"delimiter_string": "\u0000",
+				"direction": "receive",
+				"use_crc": false
+			},
+			"sim_act": {
+				"serial_port": "/dev/ttyUSB0",
+				"delimiter_string": "\r\n",
+				"direction": "send",
+				"use_crc": false
+			}
+		}
+	},
+	"simulation_connector": {
+		"correct_sim_delay": false
+	}
+}

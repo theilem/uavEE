@@ -3,4 +3,7 @@ geometry_msgs/Point position
 geometry_msgs/Vector3 attitude
 geometry_msgs/Twist velocity
 geometry_msgs/Accel acceleration
+float64 air_speed
+float64 ground_speed
 uint32 sequenceNr
+float64 battery_voltage

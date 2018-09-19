@@ -36,7 +36,7 @@ public:
 	static MapLocation
 	fromUTM(double northing, double easting);
 	static MapLocation
-	fromVector3(Vector3 vect);
+	fromVector3(Vector3 vect, int zone = 0, char hemi = 'N');
 
 	double
 	northing() const;
@@ -50,6 +50,16 @@ public:
 	latitude() const;
 	double
 	longitude() const;
+	int
+	getZone() const;
+	char
+	getHemi() const;
+
+	void
+	setZone(int);
+
+	void
+	setHemi(char);
 
 private:
 	double n;

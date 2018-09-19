@@ -25,16 +25,19 @@
 
 #ifndef CONFIGMANAGER_H
 #define CONFIGMANAGER_H
+
 #include <QJsonObject>
-#include <uavAP/Core/Object/IAggregatableObject.h>
-#include <uavAP/Core/Runner/IRunnableObject.h>
-#include <uavAP/Core/Object/ObjectHandle.h>
-#include <uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h>
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
-#include <uavAP/MissionControl/MissionPlanner/ControlOverride.h>
+#include <ros/ros.h>
+
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Runner/IRunnableObject.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
+#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "IConfigManager.h"
 #include "IPIDConfigurator.h"
-#include <ros/ros.h>
 
 class LayoutGenerator;
 
@@ -45,7 +48,7 @@ class LayoutGenerator;
  */
 enum Mode
 {
-    AIRPLANE, HELICOPTER, UNDEFINED
+	AIRPLANE, HELICOPTER, UNDEFINED
 };
 
 /**
@@ -53,135 +56,162 @@ enum Mode
  *          to widgets and sends configs to the aircraft
  */
 class ConfigManager: public IAggregatableObject,
-    public IRunnableObject,
-    public IPIDConfigurator,
-    public IConfigManager
+		public IRunnableObject,
+		public IPIDConfigurator,
+		public IConfigManager
 {
 public:
-    /**
-     * @brief   ConfigManager's constructor - does nothing. Create is used instead
-     */
-    ConfigManager();
 
-    /**
-     * @brief   creates a ConfigManager based on json config
-     * @param   config is directly passed to configure
-     * @return  std::shared_ptr<ConfigManager> to newly instantiated ConfigManager
-     */
-    static std::shared_ptr<ConfigManager>
-    create(const boost::property_tree::ptree& config);
+	static constexpr TypeId typeId = "config_manager";
+	/**
+	 * @brief   ConfigManager's constructor - does nothing. Create is used instead
+	 */
+	ConfigManager();
 
-    /**
-     * @brief   called by create,
-     * @param   config is a json configuration that should specify
-     *          ground_station_config_path and ground_station_resource_path
-     * @return true on success, false on failure
-     */
-    bool
-    configure(const boost::property_tree::ptree& config);
+	/**
+	 * @brief   creates a ConfigManager based on json config
+	 * @param   config is directly passed to configure
+	 * @return  std::shared_ptr<ConfigManager> to newly instantiated ConfigManager
+	 */
+	static std::shared_ptr<ConfigManager>
+	create(const boost::property_tree::ptree& config);
 
-    const PIDParametersMap&
-    getPIDMap() const override;
+	/**
+	 * @brief   called by create,
+	 * @param   config is a json configuration that should specify
+	 *          ground_station_config_path and ground_station_resource_path
+	 * @return true on success, false on failure
+	 */
+	bool
+	configure(const boost::property_tree::ptree& config);
 
-    boost::property_tree::ptree
-    getWidgetConfigByName(const std::string& key) const override;
+	const PIDParametersMap&
+	getPIDMap() const override;
 
-    const boost::property_tree::ptree&
-    getMissionConfig() const override;
+	boost::property_tree::ptree
+	getWidgetConfigByName(const std::string& key) const override;
 
-    const boost::property_tree::ptree&
-    getFlightConfig() const override;
+	const boost::property_tree::ptree&
+	getMissionConfig() const override;
 
-    const boost::property_tree::ptree&
-    getGSConfig() const override;
+	const boost::property_tree::ptree&
+	getFlightConfig() const override;
 
-    void
-    notifyAggregationOnUpdate(Aggregator&) override;
+	const boost::property_tree::ptree&
+	getGSConfig() const override;
 
-    const std::string&
-    getResourcePath() const override;
+	void
+	notifyAggregationOnUpdate(const Aggregator&) override;
 
-    bool
-    run(RunStage stage) override;
+	const std::string&
+	getResourcePath() const override;
 
-    bool
-    tunePID(const PIDTuning& tunePID) override;
+	bool
+	run(RunStage stage) override;
 
-    bool
-    sendManeuverOverride(const radio_comm::send_control_override::Request& maneuverOverride) override;
+	bool
+	tunePID(const PIDTuning& tunePID) override;
 
-    bool
-    sendManeuverSequence(const std::string& maneuver) override;
+	bool
+	tuneLocalPlanner(const LocalPlannerParams& params) override;
 
-    bool
-    sendMission(const std::string& mission) override;
+	bool
+	tuneManeuverPlanner(const ManeuverPlannerParams& params) override;
 
-    /**
-     * @brief   startFDAQ starts autopilot data logging
-     * @return  true if request was recieved
-     */
-    bool
-    startFDAQ() const;
+	bool
+	sendOverride(const Override& override) override;
 
-    /**
-     * @brief   stopFDAQ stops autopilot data logging
-     * @return  true if request was recieved
-     */
-    bool
-    stopFDAQ() const;
+	bool
+	sendAdvancedControl(const radio_comm::send_advanced_control::Request& maneuverOverride)
+			override;
+
+	bool
+	sendManeuverSet(const std::string& maneuver) override;
+
+	bool
+	sendInspectingMetrics(const InspectingMetricsPair& pair) override;
+
+	bool
+	sendMission(const std::string& mission) override;
+
+	/**
+	 * @brief   startFDAQ starts autopilot data logging
+	 * @return  true if request was recieved
+	 */
+	bool
+	startFDAQ() const;
+
+	/**
+	 * @brief   stopFDAQ stops autopilot data logging
+	 * @return  true if request was recieved
+	 */
+	bool
+	stopFDAQ() const;
 
 private:
-    /**
-     * @brief   getWidgetConfigs is a private helper function to specifically get
-     *          widget configs from ground station config
-     * @return  json containing widget configs
-     */
-    boost::property_tree::ptree
-    getWidgetConfigs() const;
+	/**
+	 * @brief   getWidgetConfigs is a private helper function to specifically get
+	 *          widget configs from ground station config
+	 * @return  json containing widget configs
+	 */
+	boost::property_tree::ptree
+	getWidgetConfigs() const;
 
-    /**
-     * @brief   getMainConfig is a private helper function to specifically get
-     *          main config from ground station config
-     * @return  json containing main config
-     */
-    boost::property_tree::ptree
-    getMainConfig() const;
+	/**
+	 * @brief   getMainConfig is a private helper function to specifically get
+	 *          main config from ground station config
+	 * @return  json containing main config
+	 */
+	boost::property_tree::ptree
+	getMainConfig() const;
 
-    /**
-     * @brief   setPIDMap sets internal PIDParameter map to PIDs defined in
-     *          flight controller config
-     * @param   path string path to aircraft flight controller config
-     */
-    void
-    setPIDMap(const std::string& path);
+	/**
+	 * @brief   setPIDMap sets internal PIDParameter map to PIDs defined in
+	 *          flight controller config
+	 * @param   path string path to aircraft flight controller config
+	 */
+	void
+	setPIDMap(const std::string& path);
 
-    ///! property tree representing json configuration for ground station
-    boost::property_tree::ptree gsConfig_;
+	///! property tree representing json configuration for ground station
+	boost::property_tree::ptree gsConfig_;
 
-    ///! property tree representing json configuration for aircraft flight config
-    boost::property_tree::ptree flightConfig_;
+	///! property tree representing json configuration for aircraft flight config
+	boost::property_tree::ptree flightConfig_;
 
-    ///! propery tree representing json configuration for aircraft mission config
-    boost::property_tree::ptree missionConfig_;
+	///! propery tree representing json configuration for aircraft mission config
+	boost::property_tree::ptree missionConfig_;
 
-    ///! string representation of path to resource folder
-    std::string resourcePath_;
+	///! string representation of path to resource folder
+	std::string resourcePath_;
 
-    ///! Mapping between integer PID controller ID and PIDInfo, which contains
-    ///  human readable name and parameters
-    PIDParametersMap pidParams_;
+	///! Mapping between integer PID controller ID and PIDInfo, which contains
+	///  human readable name and parameters
+	PIDParametersMap pidParams_;
 
-    ///! enum representing what mode the aircraft is set to
-    Mode mode_;
+	///! enum representing what mode the aircraft is set to
+	Mode mode_;
 
-    ///! ROS service called to tune PIDs
-    ros::ServiceClient tunePIDService_;
+	///! ROS service called to tune generic protobuf params
+	ros::ServiceClient genericTuningService_;
 
-    ///! ROS service called to request a mission
-    ros::ServiceClient selectMissionService_;
+	///! ROS service called to tune PIDs
+	ros::ServiceClient tunePIDService_;
 
-    ///! ROS service called to request an override
-    ros::ServiceClient manueverOverrideService_;
+	///! ROS service called to request a mission
+	ros::ServiceClient selectMissionService_;
+
+	///! ROS service called to request a maneuver set
+	ros::ServiceClient selectManeuverService_;
+
+	///! ROS service called to request an inspecting metrics
+	ros::ServiceClient selectInspectingMetricsService_;
+
+	///! ROS service called to request an override
+	ros::ServiceClient overrideService_;
+
+	///! ROS service called to request an override
+	ros::ServiceClient advancedControlService_;
 };
 
 #endif // CONFIGMANAGER_H

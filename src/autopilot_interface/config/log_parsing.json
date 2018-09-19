@@ -1,0 +1,18 @@
+{
+	"autopilot_interface":
+	{
+		"type":"ap_ext",
+		"alvolo_config":"/home/mircot/Documents/flights/pulsar/may_7_2018/alvolo.json"
+	},
+	"log_parser":
+	{
+		"log_file_path":"/home/mircot/Documents/flights/pulsar/may_7_2018/DAQ_363.log",
+		"log_header_path":"/home/mircot/Documents/flights/pulsar/may_7_2018/351header.txt",
+		"period":10
+	},
+	"autopilot_launcher":
+	{
+		"watchdog_binary":"/usr/local/bin/uavAP/Watchdog",
+		"watchdog_config":"/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar/watchdog.json"
+	}
+}

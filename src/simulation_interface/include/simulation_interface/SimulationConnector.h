@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -26,10 +26,11 @@
 #ifndef UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #define UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #include <boost/property_tree/ptree.hpp>
-#include <uavAP/Core/IDC/Sender.h>
+#include <uavAP/Core/IDC/IDCSender.h>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+#include <uavAP/Core/Time.h>
 
 #include "simulation_interface/actuation.h"
 #include "simulation_interface/sensor_data.h"
@@ -37,27 +38,27 @@
 #include <ros/ros.h>
 #include <tf/LinearMath/Quaternion.h>
 #include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/IDC/IDCSender.h>
 #include <atomic>
 #include <memory>
+#include <mutex>
 
 class IScheduler;
 class ITimeProvider;
 template<typename C, typename T>
 class IDataPresentation;
-class SerialIDC;
 class SensorData;
-class ChannelMixing;
+class IDC;
 
 class SimulationConnector: public IRunnableObject, public IAggregatableObject
 {
 public:
 
+	static constexpr TypeId typeId = "simulation_connector";
+
 	SimulationConnector();
 
 	~SimulationConnector();
-
-	void
-	setNodeHandle(std::shared_ptr<ros::NodeHandle> nodeHandle);
 
 	static std::shared_ptr<SimulationConnector>
 	create(const boost::property_tree::ptree& config);
@@ -69,7 +70,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -87,21 +88,15 @@ private:
 
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<ITimeProvider> timeProvider_;
-	ObjectHandle<SerialIDC> idc_;
-	ObjectHandle<ChannelMixing> channelMixing_;
+	ObjectHandle<IDC> idc_;
 	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 
-//	Subscription actuationSubscription_;
-//	Subscription communicationSubscription_;
-
-	std::shared_ptr<ros::NodeHandle> nodeHandle_;
 	ros::Publisher sensorPublisher_;
 	ros::Publisher delayPublisher_;
 	ros::Subscriber actuationSubscriber_;
 
-	Sender actuationSender_;
-
-	std::string serialPort_;
+	IDCSender actuationSender_;
+	boost::signals2::connection sensorReceiver_;
 
 	uint32_t lastSequenceNr_;
 	std::mutex timePointsMutex_;

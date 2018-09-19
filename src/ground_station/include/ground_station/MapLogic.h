@@ -28,91 +28,109 @@
 #include <radio_comm/request_data.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
 
 class IConfigManager;
+class IScheduler;
 
 #define FLIGHT_PATH_SIZE 600
 
 class MapLogic: public IAggregatableObject, public IRunnableObject
 {
-    friend class DataManager;
+	friend class DataManager;
 public:
-    MapLogic();
 
-    static std::shared_ptr<MapLogic>
-    create(const boost::property_tree::ptree&);
+	static constexpr TypeId typeId = "map_logic";
 
-    void
-    notifyAggregationOnUpdate(Aggregator& agg) override;
+	MapLogic();
 
-    bool
-    run(RunStage stage) override;
+	static std::shared_ptr<MapLogic>
+	create(const boost::property_tree::ptree&);
 
-    const std::vector<Waypoint>&
-    getWaypoints() const;
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
-    const Trajectory&
-    getPath() const;
+	bool
+	run(RunStage stage) override;
 
-    const std::vector<MapLocation>&
-    getPathHistory() const;
+	const std::vector<Waypoint>&
+	getWaypoints() const;
 
-    int
-    getCurrentPathSection() const;
+	const Trajectory&
+	getPath() const;
 
-    const LocalPlannerStatus&
-    getLocalPlannerStatus() const;
+	const std::vector<MapLocation>&
+	getPathHistory() const;
 
-    bool
-    askForMission();
+	int
+	getCurrentPathSection() const;
 
-    bool
-    askForTrajectory();
+	const LocalPlannerStatus&
+	getLocalPlannerStatus() const;
 
-    bool
-    askForSafetyNet();
+	bool
+	askForAll();
 
-    void
-    setSafetyBounds(const Rectangle& rect);
+	bool
+	askForMission();
 
-    const Rectangle&
-    getSafetyBounds() const;
+	bool
+	askForTrajectory();
 
-    const simulation_interface::sensor_data&
-    getSensorData() const;
+	bool
+	askForSafetyNet();
 
-    std::string
-    getMapTileDirectory() const;
+	bool
+	askForLocalFrame();
 
-    std::string
-    getIconPath() const;
+	void
+	setSafetyBounds(const Rectanguloid& rect);
+
+	void
+	setLocalFrame(const VehicleOneFrame& frame);
+
+	const Rectanguloid&
+	getSafetyBounds() const;
+
+	const simulation_interface::sensor_data&
+	getSensorData() const;
+
+	std::string
+	getMapTileDirectory() const;
+
+	std::string
+	getIconPath() const;
+
+
 
 private:
 
-    void
-    setLocalPlannerStatus(const LocalPlannerStatus& lpStatus);
+	void
+	setLocalPlannerStatus(const LocalPlannerStatus& lpStatus);
 
-    void
-    addLocation(const Vector3& pos);
+	void
+	addLocation(const Vector3& pos);
 
-    void
-    setMission(const Mission& mission);
+	void
+	setMission(const Mission& mission);
 
-    void
-    setPath(const Trajectory& traj);
+	void
+	setPath(const Trajectory& traj);
 
-    Rectangle safetyRect_;
-    ObjectHandle<IConfigManager> configManager_;
-    Mission waypoints_;
-    Trajectory pathSections_;
-    int currentPath_;
-    std::vector<MapLocation> pathHistory_;
-    LocalPlannerStatus lpStatus_;
-    ControllerTarget controllerTarget_;
-    simulation_interface::sensor_data sensorData_;
+	Rectanguloid safetyRect_;
+	ObjectHandle<IConfigManager> configManager_;
+	ObjectHandle<IScheduler> scheduler_;
+	Mission waypoints_;
+	Trajectory pathSections_;
+	int currentPath_;
+	std::vector<MapLocation> pathHistory_;
+	LocalPlannerStatus lpStatus_;
+	ControllerTarget controllerTarget_;
+	simulation_interface::sensor_data sensorData_;
+	VehicleOneFrame localFrame_;
 
-    ros::ServiceClient requestDataService_;
+	ros::ServiceClient requestDataService_;
 };
 
 #endif // MAPLOGIC_H

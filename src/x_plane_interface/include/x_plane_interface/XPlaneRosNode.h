@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -37,58 +37,58 @@
 
 class IScheduler;
 
-class XPlaneRosNode : public IAggregatableObject, public IRunnableObject
+class XPlaneRosNode: public IAggregatableObject, public IRunnableObject
 {
 public:
 
-    XPlaneRosNode();
+	static constexpr TypeId typeId = "ros_node";
 
-    ~XPlaneRosNode();
+	XPlaneRosNode();
 
-    static std::shared_ptr<XPlaneRosNode>
-    create(const boost::property_tree::ptree& config);
+	~XPlaneRosNode();
 
-    void
-    notifyAggregationOnUpdate(Aggregator& agg) override;
+	static std::shared_ptr<XPlaneRosNode>
+	create(const boost::property_tree::ptree& config);
 
-    bool
-    run(RunStage stage) override;
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
-    void
-    toggleAutopilot();
+	bool
+	run(RunStage stage) override;
+
+	void
+	toggleAutopilot();
 
 private:
 
-    void
-    getSensorData();
+	void
+	getSensorData();
 
-    void
-    actuate(const simulation_interface::actuation& act);
+	void
+	actuate(const simulation_interface::actuation& act);
 
-    ObjectHandle<IScheduler> scheduler_;
+	ObjectHandle<IScheduler> scheduler_;
 
-    ros::NodeHandle* nodeHandle_;
+	ros::NodeHandle* nodeHandle_;
 
-    int sensorFrequency_;
+	int sensorFrequency_;
 
-    ros::Publisher sensorDataPublisher_;
-    ros::Subscriber actuationSubscriber_;
+	ros::Publisher sensorDataPublisher_;
+	ros::Subscriber actuationSubscriber_;
 
-    XPLMDataRef positionRefs_[3];
-    XPLMDataRef velocityRefs_[3];
-    XPLMDataRef accelerationRefs_[3];
-    XPLMDataRef attitudeRefs_[3];
-    XPLMDataRef angularRateRefs_[3];
+	XPLMDataRef positionRefs_[3];
+	XPLMDataRef velocityRefs_[3];
+	XPLMDataRef accelerationRefs_[3];
+	XPLMDataRef attitudeRefs_[3];
+	XPLMDataRef angularRateRefs_[3];
 
-    XPLMDataRef overridesRef_[2];
-    XPLMDataRef joystickAttitudeRef_[3];
-    XPLMDataRef throttleRef_;
+	XPLMDataRef overridesRef_[2];
+	XPLMDataRef joystickAttitudeRef_[3];
+	XPLMDataRef throttleRef_;
 
-    unsigned int sequenceNr_;
+	unsigned int sequenceNr_;
 
-    bool autopilotActive_;
+	bool autopilotActive_;
 };
-
-
 
 #endif // XPLANEROSNODE_H

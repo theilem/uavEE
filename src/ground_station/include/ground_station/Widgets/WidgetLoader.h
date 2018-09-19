@@ -39,12 +39,13 @@ public:
 
 	using ChangeWidget = std::function<void (WidgetLoader*,const QString&)>;
 
-    using ChangeLayout = std::function<void (WidgetLoader*,const QString&, int, int)>;
+	using ChangeLayout = std::function<void (WidgetLoader*,const QString&, int, int)>;
 
 	explicit
 	WidgetLoader(QWidget *parent = 0);
 	void
-    linkLayoutGenerator(const ChangeWidget& changeWidget, const ChangeLayout &changeLayout, const std::vector<std::string> &widgets);
+	linkLayoutGenerator(const ChangeWidget& changeWidget, const ChangeLayout &changeLayout,
+			const std::vector<std::string> &widgets);
 	void
 	setLayoutHandle(QGridLayout * inLayout);
 	QGridLayout*
@@ -68,8 +69,8 @@ public slots:
 private:
 	void
 	widgetSelected(WidgetLoader *wid, const QString &widget);
-    ChangeWidget changeWidget_;
-    ChangeLayout changeLayout_;
+	ChangeWidget changeWidget_;
+	ChangeLayout changeLayout_;
 	Ui::WidgetLoader *ui;
 	QGridLayout * layout;
 	QTabWidget *tab;

@@ -60,43 +60,48 @@
 
 namespace Ui
 {
-    class WidgetTC;
+class WidgetTC;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetTC : public QWidget
+class WidgetTC: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    explicit WidgetTC( QWidget * parent = 0 );
+	explicit
+	WidgetTC(QWidget * parent = 0);
 
-    ~WidgetTC();
+	~WidgetTC();
 
-    inline void update()
-    {
-        m_tc->update();
-    }
+	inline void
+	update()
+	{
+		m_tc->update();
+	}
 
-    inline void setTurnRate( float turnRate )
-    {
-        m_tc->setTurnRate( turnRate );
-    }
+	inline void
+	setTurnRate(float turnRate)
+	{
+		m_tc->setTurnRate(turnRate);
+	}
 
-    inline void setSlipSkid( float slipSkid )
-    {
-        m_tc->setSlipSkid( slipSkid );
-    }
+	inline void
+	setSlipSkid(float slipSkid)
+	{
+		m_tc->setSlipSkid(slipSkid);
+	}
 
 private:
 
-    Ui::WidgetTC * m_ui;
-    qfi_TC       * m_tc;
-    LayoutSquare * m_layoutSq;
+	Ui::WidgetTC * m_ui;
+	qfi_TC * m_tc;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

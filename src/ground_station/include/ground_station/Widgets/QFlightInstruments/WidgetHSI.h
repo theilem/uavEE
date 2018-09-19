@@ -60,38 +60,42 @@
 
 namespace Ui
 {
-    class WidgetHSI;
+class WidgetHSI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetHSI : public QWidget
+class WidgetHSI: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    explicit WidgetHSI( QWidget * parent = 0 );
+	explicit
+	WidgetHSI(QWidget * parent = 0);
 
-    ~WidgetHSI();
+	~WidgetHSI();
 
-    inline void update()
-    {
-        m_hsi->update();
-    }
+	inline void
+	update()
+	{
+		m_hsi->update();
+	}
 
-    inline void setHeading( float heading )
-    {
-        m_hsi->setHeading( heading );
-    }
+	inline void
+	setHeading(float heading)
+	{
+		m_hsi->setHeading(heading);
+	}
 
 private:
 
-    Ui::WidgetHSI * m_ui;
-    qfi_HSI       * m_hsi;
-    LayoutSquare  * m_layoutSq;
+	Ui::WidgetHSI * m_ui;
+	qfi_HSI * m_hsi;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

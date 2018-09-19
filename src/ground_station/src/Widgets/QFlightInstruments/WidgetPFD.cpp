@@ -58,76 +58,73 @@
 #include <uavAP/Core/Logging/APLogger.h>
 ////////////////////////////////////////////////////////////////////////////////
 
-
-WidgetPFD::WidgetPFD( QWidget* parent ) :
-    QWidget( parent ),
-    m_ui( new Ui::WidgetPFD ),
-    m_pfd ( 0 ),
-    m_layoutSq ( 0 )
+WidgetPFD::WidgetPFD(QWidget* parent) :
+		QWidget(parent), m_ui(new Ui::WidgetPFD), m_pfd(0), m_layoutSq(0)
 {
-    m_ui->setupUi( this );
+	m_ui->setupUi(this);
 
-    setupUi();
+	setupUi();
 
-    m_pfd = m_ui->graphicsPFD;
+	m_pfd = m_ui->graphicsPFD;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 WidgetPFD::~WidgetPFD()
 {
-    if ( m_layoutSq )
-    {
-        delete m_layoutSq;
-        m_layoutSq = 0;
-    }
+	if (m_layoutSq)
+	{
+		delete m_layoutSq;
+		m_layoutSq = 0;
+	}
 
-    if ( m_ui )
-    {
-        delete m_ui;
-        m_ui = 0;
-    }
+	if (m_ui)
+	{
+		delete m_ui;
+		m_ui = 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /*auto sender = std::dynamic_pointer_cast<QObject>(dataSignals);
-if (sender)
-    QObject::connect(sender.get(), SIGNAL(onSensorData(const SensorData&)), this, SLOT(on_hasNewSample(const SensorData&)));
-else
-    APLOG_ERROR << "WidgetPFD: Couldn't dynamic cast signal sender!";*/
+ if (sender)
+ QObject::connect(sender.get(), SIGNAL(onSensorData(const SensorData&)), this, SLOT(on_hasNewSample(const SensorData&)));
+ else
+ APLOG_ERROR << "WidgetPFD: Couldn't dynamic cast signal sender!";*/
 
 void
 WidgetPFD::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {
-    if(!interface)
-    {
-        APLOG_ERROR << "WidgetPFD received null interface";
-    }
-    if (auto ds = interface->getIDataSignals().get())
-        QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)), this, SLOT(on_hasNewSample(const simulation_interface::sensor_data&)));
-    else
-        APLOG_ERROR << "Cannot connect WidgetPFD. IDataSignals missing.";
+	if (!interface)
+	{
+		APLOG_ERROR << "WidgetPFD received null interface";
+	}
+	if (auto ds = interface->getIDataSignals().get())
+		QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)),
+				this, SLOT(on_hasNewSample(const simulation_interface::sensor_data&)));
+	else
+		APLOG_ERROR << "Cannot connect WidgetPFD. IDataSignals missing.";
 }
 
 void
 WidgetPFD::on_hasNewSample(const simulation_interface::sensor_data& s)
 {
-    //setGroundspeed(s.velocityGround); //TODO fix
-    //setAirspeed(s.velocityAir);
-    setRoll(s.attitude.x * 180. / M_PI);
-    setPitch(s.attitude.y * 180. / M_PI);
-    setHeading(s.attitude.z * 180. / M_PI);
-    update();
+	//setGroundspeed(s.velocityGround); //TODO fix
+	//setAirspeed(s.velocityAir);
+	setRoll(s.attitude.x * 180. / M_PI);
+	setPitch(s.attitude.y * 180. / M_PI);
+	setHeading(s.attitude.z * 180. / M_PI);
+	update();
 }
 
 void
 WidgetPFD::setupUi()
 {
-    m_layoutSq = new LayoutSquare( this );
+	m_layoutSq = new LayoutSquare(this);
 
-    m_layoutSq->setContentsMargins( 0, 0, 0, 0 );
-    m_layoutSq->addWidget( m_ui->framePFD );
+	m_layoutSq->setContentsMargins(0, 0, 0, 0);
+	m_layoutSq->addWidget(m_ui->framePFD);
 
-    this->setLayout( m_layoutSq );
+	this->setLayout(m_layoutSq);
 }

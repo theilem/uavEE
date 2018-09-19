@@ -218,7 +218,7 @@
           </widget>
          </item>
          <item row="0" column="5">
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="displaySafetyRectangle">
            <property name="text">
             <string>Show Safety Net</string>
            </property>

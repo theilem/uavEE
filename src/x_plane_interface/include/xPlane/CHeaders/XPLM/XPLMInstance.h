@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMInstance_h_
 #define _XPLMInstance_h_
 
@@ -43,7 +61,8 @@
 #include "XPLMScenery.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -53,7 +72,6 @@ extern "C" {
  * Registers and unregisters instances.                                        
  *
  */
-
 
 /*
  * XPLMInstanceRef
@@ -69,9 +87,8 @@ typedef void * XPLMInstanceRef;
  * Registers an instance of an X-Plane object.                                 
  *
  */
-XPLM_API XPLMInstanceRef      XPLMCreateInstance(
-                                   XPLMObjectRef        obj,    
-                                   const char **        datarefs);    
+XPLM_API XPLMInstanceRef
+XPLMCreateInstance(XPLMObjectRef obj, const char ** datarefs);
 
 /*
  * XPLMDestroyInstance
@@ -79,8 +96,8 @@ XPLM_API XPLMInstanceRef      XPLMCreateInstance(
  * Unregisters an instance.                                                    
  *
  */
-XPLM_API void                 XPLMDestroyInstance(
-                                   XPLMInstanceRef      instance);    
+XPLM_API void
+XPLMDestroyInstance(XPLMInstanceRef instance);
 
 /***************************************************************************
  * Instance Manipulation
@@ -97,10 +114,9 @@ XPLM_API void                 XPLMDestroyInstance(
  * for it.                                                                     
  *
  */
-XPLM_API void                 XPLMInstanceSetPosition(
-                                   XPLMInstanceRef      instance,    
-                                   const XPLMDrawInfo_t * new_position,    
-                                   const float *        data);    
+XPLM_API void
+XPLMInstanceSetPosition(XPLMInstanceRef instance, const XPLMDrawInfo_t * new_position,
+		const float * data);
 
 #ifdef __cplusplus
 }

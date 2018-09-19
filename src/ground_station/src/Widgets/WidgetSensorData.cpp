@@ -16,108 +16,122 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include <autopilot_interface/detail/uavAPConversions.h>
 #include "ground_station/Widgets/WidgetSensorData.h"
 #include "ui_WidgetSensorData.h"
 #include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/SensorData.h>
 #include "ground_station/IDataSignals.h"
 #include "ground_station/IWidgetInterface.h"
 #include <uavAP/Core/Time.h>
+#include <uavAP/Core/Frames/InertialFrame.h>
 #include <ctime>
 
 WidgetSensorData::WidgetSensorData(QWidget* parent) :
-    QWidget(parent), ui(new Ui::WidgetSensorData)
+		QWidget(parent), ui(new Ui::WidgetSensorData)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 }
 
 WidgetSensorData::~WidgetSensorData()
 {
-    APLOG_DEBUG << "Wdget SensorData deleted";
-    delete ui;
+	APLOG_DEBUG << "Wdget SensorData deleted";
+	delete ui;
+}
+
+void
+WidgetSensorData::onLocalFrame(const VehicleOneFrame& localFrame)
+{
+	localFrame_ = localFrame;
 }
 
 void
 WidgetSensorData::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {
-    if(!interface)
-    {
-        APLOG_WARN << "WidgetSensorData received null interface";
-        return;
-    }
-    if (auto ds = interface->getIDataSignals().get())
-        QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)), this,
-                         SLOT(onSensorData(const simulation_interface::sensor_data&)));
-    else
-        APLOG_ERROR << "Cannot connect WidgetSensorData to SensorData. IDataSignals missing.";
+	if (!interface)
+	{
+		APLOG_WARN << "WidgetSensorData received null interface";
+		return;
+	}
+	if (auto ds = interface->getIDataSignals().get())
+	{
+		QObject::connect(ds.get(), SIGNAL(onSensorData(const simulation_interface::sensor_data&)),
+				this, SLOT(onSensorData(const simulation_interface::sensor_data&)));
+		QObject::connect(ds.get(), SIGNAL(onLocalFrame(const VehicleOneFrame&)),
+				this, SLOT(onLocalFrame(const VehicleOneFrame&)));
+	}
+	else
+		APLOG_ERROR << "Cannot connect WidgetSensorData to SensorData. IDataSignals missing.";
 }
 
 void
-WidgetSensorData::onSensorData(const simulation_interface::sensor_data& sd)
+WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 {
-    QString t;
+	QString t;
 
-    t.sprintf("%10.5f m", sd.position.x);
-    ui->peValue->setText(t);
+	SensorData sd = rosToAp(data);
 
-    t.sprintf("%10.5f m", sd.position.y);
-    ui->pnValue->setText(t);
+	if (ui->earthFrameCheckBox->isChecked())
+	{
+		changeFrame(localFrame_, InertialFrame(), sd);
+	}
 
-    t.sprintf("%10.5f m", sd.position.z);
-    ui->puValue->setText(t);
+	t = QString::fromStdString(boost::posix_time::to_simple_string(sd.timestamp));
+	ui->timeValue->setText(t);
 
-    t.sprintf("%10.5f m/s", sd.velocity.linear.x);
-    ui->veValue->setText(t);
+	t.sprintf("%10.5f", sd.position.x());
+	ui->peValue->setText(t);
 
-    t.sprintf("%10.5f m/s", sd.velocity.linear.y);
-    ui->vnValue->setText(t);
+	t.sprintf("%10.5f", sd.position.y());
+	ui->pnValue->setText(t);
 
-    t.sprintf("%10.5f m/s", sd.velocity.linear.z);
-    ui->vuValue->setText(t);
+	t.sprintf("%10.5f", sd.position.z());
+	ui->puValue->setText(t);
 
-    t.sprintf("%10.5f m/s/s", sd.acceleration.linear.x);
-    ui->auValue->setText(t);
+	t.sprintf("%10.5f", sd.velocity.x());
+	ui->veValue->setText(t);
 
-    t.sprintf("%10.5f m/s/s", sd.acceleration.linear.y);
-    ui->avValue->setText(t);
+	t.sprintf("%10.5f", sd.velocity.y());
+	ui->vnValue->setText(t);
 
-    t.sprintf("%10.5f m/s/s", sd.acceleration.linear.z);
-    ui->awValue->setText(t);
+	t.sprintf("%10.5f", sd.velocity.z());
+	ui->vuValue->setText(t);
 
-    t.sprintf("%10.5f degrees", sd.attitude.x * 180 / M_PI);
-    ui->rollValue->setText(t);
+	t.sprintf("%10.5f", sd.airSpeed);
+	ui->vaValue->setText(t);
 
-    t.sprintf("%10.5f degrees", sd.attitude.y * 180 / M_PI);
-    ui->pitchValue->setText(t);
+	t.sprintf("%10.5f", sd.groundSpeed);
+	ui->vgValue->setText(t);
 
-    t.sprintf("%10.5f degrees", sd.attitude.z * 180 / M_PI);
-    ui->yawValue->setText(t);
+	t.sprintf("%10.5f", sd.acceleration.x());
+	ui->auValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s", sd.velocity.angular.x * 180 / M_PI);
-    ui->rollrValue->setText(t);
+	t.sprintf("%10.5f", sd.acceleration.y());
+	ui->avValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s", sd.velocity.angular.y * 180 / M_PI);
-    ui->pitchrValue->setText(t);
+	t.sprintf("%10.5f", sd.acceleration.z());
+	ui->awValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s", sd.velocity.angular.z * 180 / M_PI);
-    ui->yawrValue->setText(t);
+	t.sprintf("%10.5f", sd.attitude.x() * 180 / M_PI);
+	ui->rollValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s/s", sd.acceleration.angular.x * 180 / M_PI);
-    ui->rollaValue->setText(t);
+	t.sprintf("%10.5f", sd.attitude.y() * 180 / M_PI);
+	ui->pitchValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s/s", sd.acceleration.angular.y * 180 / M_PI);
-    ui->pitchaValue->setText(t);
+	t.sprintf("%10.5f", sd.attitude.z() * 180 / M_PI);
+	ui->yawValue->setText(t);
 
-    t.sprintf("%10.5f degrees/s/s", sd.acceleration.angular.z * 180 / M_PI);
-    ui->yawaValue->setText(t);
+	t.sprintf("%10.5f", sd.angularRate.x() * 180 / M_PI);
+	ui->rollrValue->setText(t);
 
-    t.sprintf("not yet implemented");
-    ui->vaValue->setText(t);
+	t.sprintf("%10.5f", sd.angularRate.y() * 180 / M_PI);
+	ui->pitchrValue->setText(t);
 
-    t.sprintf("not yet implemented");
-    ui->vgValue->setText(t);
+	t.sprintf("%10.5f", sd.angularRate.z() * 180 / M_PI);
+	ui->yawrValue->setText(t);
 
-    t = QString::fromStdString(boost::posix_time::to_simple_string(sd.header.stamp.toBoost()));
-    ui->timeValue->setText(t);
+	t.sprintf("%10.5f", sd.batteryVoltage);
+	ui->voltValue->setText(t);
 
-    update();
+	update();
 }

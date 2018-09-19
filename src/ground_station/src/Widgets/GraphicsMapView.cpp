@@ -16,18 +16,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-#include "ground_station/Widgets/GraphicsMapView.h"
 
+#include <string>
+#include <math.h>
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QtGui>
 #include <QMenu>
-#include <string>
-#include <math.h>
+#include <autopilot_interface/detail/uavAPConversions.h>
+
+#include "ground_station/Widgets/GraphicsMapView.h"
 
 GraphicsMapView::GraphicsMapView(QWidget *parent) :
-		QGraphicsView(parent), zoom(16), drawWaypoints(0), drawPaths(0), drawSafetyRectangle(0)
+		QGraphicsView(parent), zoom_(16), drawWaypoints(0), drawPaths(0), drawSafetyRectangle(0)
 {
 	aircraftHeading = 45;
 	aircraftScale = 1.0;
@@ -39,7 +41,7 @@ void
 GraphicsMapView::connect(std::shared_ptr<IDataSignals> dataSignals,
 		std::shared_ptr<MapLogic> mapLogic)
 {
-	auto sender = std::dynamic_pointer_cast<QObject>(dataSignals);
+	auto sender = std::dynamic_pointer_cast < QObject > (dataSignals);
 	if (sender)
 	{
 		QObject::connect(sender.get(),
@@ -51,6 +53,8 @@ GraphicsMapView::connect(std::shared_ptr<IDataSignals> dataSignals,
 				SLOT(on_hasNewMission(const Mission&)));
 		QObject::connect(sender.get(), SIGNAL(onPathSectionChange(int)), this,
 				SLOT(on_hasNewActivePath(int)));
+		QObject::connect(sender.get(), SIGNAL(onLocalFrame(const VehicleOneFrame&)), this,
+				SLOT(on_localFrame(const VehicleOneFrame&)));
 	}
 	else
 		APLOG_ERROR << "GraphicsMapView: Couldn't dynamic cast signal sender!";
@@ -104,9 +108,9 @@ GraphicsMapView::drawMap(QPainter *painter, const QRectF &rect)
 	const int TILE_SIZE = 256;
 	//const double d = TILE_SIZE*scale;
 	const double d = TILE_SIZE;
-	int x = (int) floor(focus.x(zoom));
-	int y = (int) floor(focus.y(zoom));
-	QPointF focusedTileDraw = -QPointF(d * (focus.x(zoom) - x), d * (focus.y(zoom) - y));
+	int x = (int) floor(focus.x(zoom_));
+	int y = (int) floor(focus.y(zoom_));
+	QPointF focusedTileDraw = -QPointF(d * (focus.x(zoom_) - x), d * (focus.y(zoom_) - y));
 	QPointF mapDraw = focusedTileDraw;
 	QPointF mapBR = focusedTileDraw;
 	QPoint nwXY(x, y);
@@ -146,7 +150,7 @@ GraphicsMapView::drawMap(QPainter *painter, const QRectF &rect)
 		for (int j = 0; j < seXY.y() - nwXY.y(); j++)
 		{
 			QString path;
-			path = path.sprintf("%s/%d/%d/%d.jpg", tileDir.c_str(), zoom, nwXY.x() + i,
+			path = path.sprintf("%s/%d/%d/%d.jpg", tileDir.c_str(), zoom_, nwXY.x() + i,
 					nwXY.y() + j);
 			APLOG_TRACE << "tile path is: " << path.toStdString();
 			QPixmap tile; // load from tileDirectory or cache
@@ -162,8 +166,8 @@ GraphicsMapView::drawMap(QPainter *painter, const QRectF &rect)
 			}
 		}
 	}
-	nwCorner = MapLocation::fromMapTileCoords(nwXY.x(), nwXY.y(), zoom);
-	seCorner = MapLocation::fromMapTileCoords(seXY.x(), seXY.y(), zoom);
+	nwCorner = MapLocation::fromMapTileCoords(nwXY.x(), nwXY.y(), zoom_);
+	seCorner = MapLocation::fromMapTileCoords(seXY.x(), seXY.y(), zoom_);
 	xPxM = map.width() / (seCorner.easting() - nwCorner.easting());
 	yPxM = map.height() / (nwCorner.northing() - seCorner.northing());
 	QPixmap croppedMap = map;
@@ -182,7 +186,7 @@ GraphicsMapView::drawMission(QPainter *painter)
 	painter->setPen(Qt::cyan);
 	for (auto wp : mapLogic->getWaypoints())
 	{
-		QPointF wpLoc = UTMToMapPoint(wp.location.x(), wp.location.y());
+		QPointF wpLoc = LocalFrameToMapPoint(wp.location.x(), wp.location.y());
 		QRectF r;
 		r.setCoords(wpLoc.x() - 2, wpLoc.y() - 2, wpLoc.x() + 2, wpLoc.y() + 2);
 		painter->fillRect(r, Qt::cyan);
@@ -192,153 +196,46 @@ GraphicsMapView::drawMission(QPainter *painter)
 void
 GraphicsMapView::drawTrajectory(QPainter *painter)
 {
-	QPen pen;
-	pen.setColor(QColor(255, 200, 0));
+	QPen pen(QColor(255, 200, 0));
 	pen.setWidth(2);
 	painter->setPen(pen);
-	//bool inf = mapLogic_.get()->getLocalPlannerStatus().; I thought infinite was
-	Vector3 startpoint;
-	Vector3 *startpointer = nullptr;
 	auto mapLogic = mapLogic_.get();
 	if (!mapLogic)
 	{
 		APLOG_ERROR << "GraphicsMapView: MapLogic not set!";
 		return;
 	}
-	if (mapLogic->getPath().pathSections.size() == 0)
+
+	LocalPlannerStatus status = mapLogic->getLocalPlannerStatus();
+	Trajectory traj = mapLogic->getPath();
+
+	if (traj.pathSections.empty())
 		return;
-	if (auto curve = std::dynamic_pointer_cast<Curve>(mapLogic->getPath().pathSections.back()))
+
+	Vector3 lastPoint = traj.pathSections.back()->getEndPoint();
+
+	if (traj.pathSections.size() == 0)
+		return;
+
+
+	if (status.has_linear_status())
 	{
-		startpoint = curve->getEndPoint();
-		startpointer = &startpoint;
+		if (status.linear_status().is_in_approach() && traj.approachSection)
+		{
+			drawPathSection(painter, traj.approachSection, lastPoint);
+		}
 	}
-	else if (auto line = std::dynamic_pointer_cast<Line>(mapLogic->getPath().pathSections.back()))
+
+	for (auto ps : traj.pathSections)
 	{
-		startpoint = line->getEndPoint();
-		startpointer = &startpoint;
+		drawPathSection(painter, ps, lastPoint);
 	}
-	else if (auto spline = std::dynamic_pointer_cast<CubicSpline>(
-			mapLogic->getPath().pathSections.back()))
-	{
-		startpoint = spline->getEndPoint();
-		startpointer = &startpoint;
-	}
-
-	for (auto ps : mapLogic->getPath().pathSections)
-	{
-		if (std::shared_ptr<Curve> curve = std::dynamic_pointer_cast<Curve>(ps))
-		{
-			startpoint = drawCurve(painter, *curve, startpointer);
-		}
-		else if (std::shared_ptr<Orbit> orbit = std::dynamic_pointer_cast<Orbit>(ps))
-		{
-			drawOrbit(painter, *orbit);
-		}
-		else if (auto spline = std::dynamic_pointer_cast<CubicSpline>(ps))
-		{
-			startpoint = drawCubicSpline(painter, *spline, startpointer);
-		}
-		else if (std::shared_ptr<Line> line = std::dynamic_pointer_cast<Line>(ps))
-		{
-			startpoint = drawLine(painter, *line, startpointer);
-		}
-		else
-		{
-			APLOG_WARN << "Unknown PathSection encountered in list during drawTrajectory";
-		}
-		startpointer = &startpoint;
-	}
-}
-
-Vector3
-GraphicsMapView::drawLine(QPainter *painter, Line &line, Vector3 *startPoint)
-{
-	QPointF first;
-	if (startPoint)
-		first = UTMToMapPoint(startPoint->x(), startPoint->y());
-	else
-		first = UTMToMapPoint(line.origin().x(), line.origin().y());
-	QPointF second = UTMToMapPoint(line.getEndPoint().x(), line.getEndPoint().y());
-
-	painter->drawLine(first, second);
-	return line.getEndPoint();
-}
-
-Vector3
-GraphicsMapView::drawCurve(QPainter *painter, Curve &curve, Vector3 *startPoint)
-{
-	QPointF center = UTMToMapPoint(curve.getCenter().x(), curve.getCenter().y());
-	QPointF toFindRadius = UTMToMapPoint(curve.getCenter().x() + curve.getRadius(),
-			curve.getCenter().y() + curve.getRadius());
-	double rX = toFindRadius.x() - center.x();
-	double rY = -toFindRadius.y() + center.y();
-	if (!startPoint)
-	{
-		painter->drawEllipse(center, rX, rY);
-	}
-	else
-	{ //formula taken from http://www.qtcentre.org/threads/64705-QPainter-drawArc-question
-		QRectF rect(center.x() - rX, center.y() - rY, rX * 2, rY * 2);
-		QPointF start = UTMToMapPoint(startPoint->x(), startPoint->y());
-		QPointF end = UTMToMapPoint(curve.getEndPoint().x(), curve.getEndPoint().y());
-		double startAngle = 16 * std::atan2(center.y() - start.y(), start.x() - center.x())
-				* 180.0/ M_PI; //Qt gives all angles a multiplier of 16
-		double endAngle = 16 * std::atan2(center.y() - end.y(), end.x() - center.x()) * 180.0 / M_PI;
-		double spanAngle = endAngle - startAngle;
-		if (spanAngle < -16 * 180)
-		{
-			spanAngle += 16 * 360;
-		}
-		else if (spanAngle > 16 * 180)
-		{
-			spanAngle -= 16 * 360;
-		}
-		painter->drawArc(rect, startAngle, spanAngle);
-	}
-	return curve.getEndPoint();
-}
-
-Vector3
-GraphicsMapView::drawCubicSpline(QPainter *painter, CubicSpline &spline, Vector3* startPoint)
-{
-	const double stepSize = 0.05;
-	QPointF first;
-	if (startPoint)
-		first = UTMToMapPoint(startPoint->x(), startPoint->y());
-	else
-	{
-		first = UTMToMapPoint(spline.c0_.x(), spline.c0_.y());
-	}
-
-	Vector2 c0 = spline.c0_.head(2);
-	Vector2 c1 = spline.c1_.head(2);
-	Vector2 c2 = spline.c2_.head(2);
-	Vector2 c3 = spline.c3_.head(2);
-
-	for (double u = stepSize; u <= 1; u += stepSize)
-	{
-		auto p = c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3);
-		QPointF next = UTMToMapPoint(p.x(), p.y());
-		painter->drawLine(first, next);
-		first = next;
-	}
-	return spline.getEndPoint();
-}
-
-void
-GraphicsMapView::drawOrbit(QPainter *painter, const Orbit& orbit)
-{
-	QPointF center = UTMToMapPoint(orbit.getCenter().x(), orbit.getCenter().y());
-	QPointF toFindRadius = UTMToMapPoint(orbit.getCenter().x() + orbit.getRadius(),
-			orbit.getCenter().y() + orbit.getRadius());
-	double rX = toFindRadius.x() - center.x();
-	painter->drawEllipse(center, rX, rX);
 }
 
 void
 GraphicsMapView::drawPathHistory(QPainter *painter)
 {
-	QPointF aircraftCenter = UTMToMapPoint(aircraftLocation.easting(), aircraftLocation.northing());
+	QPointF aircraftCenter = LocalFrameToMapPoint(aircraftLocation.easting(), aircraftLocation.northing());
 	QPointF first = aircraftCenter;
 	QPointF second;
 	QColor color = QColor(255, 255, 255);
@@ -353,7 +250,7 @@ GraphicsMapView::drawPathHistory(QPainter *painter)
 	{
 		float f = 1.0 - (float) (i - 1) / flightPath.size();
 		color.setAlpha(255 * f);
-		second = UTMToMapPoint(flightPath[i].easting(), flightPath[i].northing());
+		second = LocalFrameToMapPoint(flightPath[i].easting(), flightPath[i].northing());
 		painter->setPen(QPen(QBrush(color), 2));
 		painter->drawLine(first, second);
 		first = second;
@@ -364,57 +261,56 @@ GraphicsMapView::drawPathHistory(QPainter *painter)
 void
 GraphicsMapView::highlightActivePath(QPainter *painter) //highlights active path
 {
-	QPen pen;
-	pen.setColor(Qt::green);
+	QPen pen(Qt::green);
 	pen.setWidth(4);
 	painter->setPen(pen);
-	auto lp = mapLogic_.get()->getLocalPlannerStatus();
-	int pathIndex;
+	auto ml = mapLogic_.get();
+	if (!ml)
+	{
+		APLOG_ERROR << "Map logic missing. Cannot highlight active path";
+		return;
+	}
+
+	unsigned int pathIndex = 0;
+	bool inApproach = false;
+
+
+	LocalPlannerStatus lp = ml->getLocalPlannerStatus();
 	if (lp.has_linear_status())
 	{
-		pathIndex = (int) lp.linear_status().current_path_section();
+		pathIndex =  lp.linear_status().current_path_section();
+		inApproach = lp.linear_status().is_in_approach();
+	}
+	else if (lp.has_maneuver_status())
+	{
+		pathIndex =  lp.maneuver_status().current_path_section();
+		inApproach = lp.maneuver_status().is_in_approach();
 	}
 	else
 	{
+		APLOG_ERROR << "Status cannot be displayed.";
 		return;
 	}
-	if (mapLogic_.get()->getPath().pathSections.size() <= (unsigned) pathIndex)
+
+
+
+	Trajectory traj = ml->getPath();
+
+	if (pathIndex >= traj.pathSections.size())
 	{
 		return;
 	}
-	std::shared_ptr<IPathSection> ps = mapLogic_.get()->getPath().pathSections.at(pathIndex);
+
+	std::shared_ptr<IPathSection> ps;
+	if (inApproach)
+		ps = traj.approachSection;
+	else
+		ps = traj.pathSections.at(pathIndex);
+
 	if (ps)
 	{
-		if (std::shared_ptr<Curve> curve = std::dynamic_pointer_cast<Curve>(ps))
-		{
-			if (pathIndex == 0)
-			{
-				drawCurve(painter, *curve, NULL);
-			}
-			else
-			{
-				std::shared_ptr<IPathSection> ps = mapLogic_.get()->getPath().pathSections.at(
-						pathIndex - 1);
-				Vector3 end = ps->getEndPoint();
-				drawCurve(painter, *curve, &end);
-			}
-		}
-		else if (std::shared_ptr<Orbit> orbit = std::dynamic_pointer_cast<Orbit>(ps))
-		{
-			drawOrbit(painter, *orbit);
-		}
-		else if (std::shared_ptr<Line> line = std::dynamic_pointer_cast<Line>(ps))
-		{
-			drawLine(painter, *line, NULL);
-		}
-		else if (std::shared_ptr<CubicSpline> spline = std::dynamic_pointer_cast<CubicSpline>(ps))
-		{
-			drawCubicSpline(painter, *spline, NULL);
-		}
-		else
-		{
-			APLOG_WARN << "Unknown PathSection encountered in highlightActivePath";
-		}
+		Vector3 lastPoint(0,0,0);
+		drawPathSection(painter, ps, lastPoint);
 	}
 }
 
@@ -425,7 +321,7 @@ GraphicsMapView::drawAircraft(QPainter* painter)
 	QTransform aircraftTransform;
 	aircraftTransform.translate(aircraftImage.size().width() / 2,
 			aircraftImage.size().height() / 2);
-	aircraftTransform.rotate(aircraftHeading * 180 / M_PI);
+	aircraftTransform.rotate(-(aircraftHeading - M_PI/2) * 180 / M_PI);
 	aircraftTransform.scale(aircraftScale / 10.0, aircraftScale / 10.0);
 	aircraftTransform.translate(aircraftImage.size().width() / -2,
 			aircraftImage.size().height() / -2);
@@ -436,68 +332,156 @@ GraphicsMapView::drawAircraft(QPainter* painter)
 	aircraftPainter.setTransform(aircraftTransform);
 	aircraftPainter.drawPixmap(0, 0, aircraftImage);
 	aircraftPainter.end();
-	QPointF aircraftCenter = UTMToMapPoint(aircraftLocation.easting(), aircraftLocation.northing());
+	QPointF aircraftCenter = LocalFrameToMapPoint(aircraftLocation.easting(), aircraftLocation.northing());
 	QPointF halfAircraftSize = QPointF(rotatedAircraftImage.width() / 2,
 			rotatedAircraftImage.height() / 2);
 	QPointF aircraftDrawPoint = aircraftCenter - halfAircraftSize;
 	painter->drawPixmap(aircraftDrawPoint, rotatedAircraftImage);
 }
 
-//void
-//GraphicsMapView::drawAntenna(QPainter *painter)
-//{
-//	// Antenna
-//	QTransform antennaTransform;
-//	antennaTransform.translate(antennaImage.size().width() / 2, antennaImage.size().height() / 2);
-//	antennaTransform.rotate(mapLogic_.get()->getAntennaCurrentHeading() * 180 / M_PI); //image rotated by 90
-//	antennaTransform.scale(0.1, 0.1); //hardcoded to 1 as hard to format checkboxes into current graphic
-//	antennaTransform.translate(antennaImage.size().width() / -2, antennaImage.size().height() / -2);
-//	QPixmap rotatedAntennaImage(antennaImage.size());
-//	rotatedAntennaImage.fill(Qt::transparent);
-//	QPainter antennaPainter;
-//	antennaPainter.begin(&rotatedAntennaImage);
-//	antennaPainter.setTransform(antennaTransform);
-//	antennaPainter.drawPixmap(0, 0, antennaImage);
-//	antennaPainter.end();
-//	Vector2 location = mapLogic_.get()->getAntennaLocation();
-//	QPointF antennaCenter = UTMToMapPoint(location[0], location[1]);
-//	QPointF halfAntennaSize = QPointF(rotatedAntennaImage.width() / 2,
-//			rotatedAntennaImage.height() / 2);
-//	QPointF antennaDrawPoint = antennaCenter - halfAntennaSize;
-//	painter->drawPixmap(antennaDrawPoint, rotatedAntennaImage);
-//}
+void
+GraphicsMapView::drawPathSection(QPainter* painter, std::shared_ptr<IPathSection> ps,
+		Vector3& lastPoint)
+{
+	if (auto curve = std::dynamic_pointer_cast < Curve > (ps))
+	{
+		drawCurve(painter, curve, lastPoint);
+	}
+	else if (auto orbit = std::dynamic_pointer_cast < Orbit > (ps))
+	{
+		drawOrbit(painter, orbit, lastPoint);
+	}
+	else if (auto spline = std::dynamic_pointer_cast < CubicSpline > (ps))
+	{
+		drawCubicSpline(painter, spline, lastPoint);
+	}
+	else if (auto line = std::dynamic_pointer_cast < Line > (ps))
+	{
+		drawLine(painter, line, lastPoint);
+	}
+	else
+	{
+		APLOG_WARN << "Unknown PathSection encountered in list during drawTrajectory";
+	}
+}
+
+void
+GraphicsMapView::drawLine(QPainter* painter, std::shared_ptr<Line> line, Vector3& lastPoint)
+{
+	QPointF first = LocalFrameToMapPoint(line->origin().x(), line->origin().y());
+	QPointF second = LocalFrameToMapPoint(line->getEndPoint().x(), line->getEndPoint().y());
+
+	painter->drawLine(first, second);
+	lastPoint = line->getEndPoint();
+}
+
+void
+GraphicsMapView::drawCurve(QPainter* painter, std::shared_ptr<Curve> curve, Vector3& lastPoint)
+{
+	QPointF center = LocalFrameToMapPoint(curve->getCenter().x(), curve->getCenter().y());
+	QPointF toFindRadius = LocalFrameToMapPoint(curve->getCenter().x() + curve->getRadius(),
+			curve->getCenter().y() + curve->getRadius());
+	double rX = toFindRadius.x() - center.x();
+	double rY = -toFindRadius.y() + center.y();
+	QRectF rect(center.x() - rX, center.y() - rY, rX * 2, rY * 2);
+	QPointF start = LocalFrameToMapPoint(lastPoint.x(), lastPoint.y());
+	QPointF end = LocalFrameToMapPoint(curve->getEndPoint().x(), curve->getEndPoint().y());
+	double startAngle = 16 * std::atan2(center.y() - start.y(), start.x() - center.x())
+			* 180.0/ M_PI; //Qt gives all angles as a multiplier of 16
+	double endAngle = 16 * std::atan2(center.y() - end.y(), end.x() - center.x()) * 180.0 / M_PI;
+	double spanAngle = endAngle - startAngle;
+	if (spanAngle < -16 * 180)
+	{
+		spanAngle += 16 * 360;
+	}
+	else if (spanAngle > 16 * 180)
+	{
+		spanAngle -= 16 * 360;
+	}
+	painter->drawArc(rect, startAngle, spanAngle);
+	lastPoint = curve->getEndPoint();
+}
+
+void
+GraphicsMapView::drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline> spline,
+		Vector3& lastPoint)
+{
+	const double stepSize = 0.05;
+	QPointF first = LocalFrameToMapPoint(spline->c0_.x(), spline->c0_.y());
+
+	Vector2 c0 = spline->c0_.head(2);
+	Vector2 c1 = spline->c1_.head(2);
+	Vector2 c2 = spline->c2_.head(2);
+	Vector2 c3 = spline->c3_.head(2);
+
+	for (double u = stepSize; u <= 1; u += stepSize)
+	{
+		auto p = c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3);
+		QPointF next = LocalFrameToMapPoint(p.x(), p.y());
+		painter->drawLine(first, next);
+		first = next;
+	}
+	lastPoint = spline->getEndPoint();
+}
+
+void
+GraphicsMapView::drawOrbit(QPainter* painter, std::shared_ptr<Orbit> orbit, Vector3& lastPoint)
+{
+	QPointF center = LocalFrameToMapPoint(orbit->getCenter().x(), orbit->getCenter().y());
+	QPointF toFindRadius = LocalFrameToMapPoint(orbit->getCenter().x() + orbit->getRadius(),
+			orbit->getCenter().y() + orbit->getRadius());
+	double rX = sqrt(pow(toFindRadius.x() - center.x(),2) + pow(toFindRadius.y() - center.y(),2)) / sqrt(2);
+	painter->drawEllipse(center, rX, rX);
+	lastPoint = orbit->getCenter();
+}
+
+void
+GraphicsMapView::on_localFrame(const VehicleOneFrame& frame)
+{
+	localFrame_ = frame;
+	int zone = center.getZone();
+	char hemi = center.getHemi();
+	center = MapLocation::fromVector3(localFrame_.toInertialFramePosition(Vector3(0,0,0)), zone, hemi);
+}
 
 void
 GraphicsMapView::drawSafetyNet(QPainter *painter)
 {
 	auto mapLogic = mapLogic_.get();
+
 	if (!mapLogic)
 	{
-		APLOG_ERROR << "GraphicsMapView: MapLogic not set!";
+		APLOG_ERROR << "GraphicsMapView: MapLogic Missing.";
 		return;
 	}
+
 	const auto& bounds = mapLogic->getSafetyBounds();
+
 	if (!bounds.has_center())
 	{
-		APLOG_ERROR << "GraphicsMapView: Safety bounds center not set";
+		APLOG_TRACE << "GraphicsMapView: Safety Bounds Center Missing.";
 		return;
 	}
+
 	auto center = toVector(bounds.center());
-	double rotation = -1 * bounds.major_side_orientation() * M_PI / 180.0; //Negative, because of the Heading definition as clockwise
+	double rotation = bounds.major_side_orientation() * M_PI / 180.0;
 	double majorOffset = bounds.major_side_length() / 2;
 	double minorOffset = bounds.minor_side_length() / 2;
-	Vector2 Q1 = rotate2Drad(Vector2(minorOffset, majorOffset), rotation) + center.head(2);
-	Vector2 Q2 = rotate2Drad(Vector2(-minorOffset, majorOffset), rotation) + center.head(2);
-	Vector2 Q3 = rotate2Drad(Vector2(-minorOffset, -majorOffset), rotation) + center.head(2);
-	Vector2 Q4 = rotate2Drad(Vector2(minorOffset, -majorOffset), rotation) + center.head(2);
 
-	QPointF M1 = UTMToMapPoint(Q1.x(), Q1.y());
-	QPointF M2 = UTMToMapPoint(Q2.x(), Q2.y());
-	QPointF M3 = UTMToMapPoint(Q3.x(), Q3.y());
-	QPointF M4 = UTMToMapPoint(Q4.x(), Q4.y());
+	Vector2 Q1 = rotate2Drad(Vector2(majorOffset, minorOffset), rotation) + center.head(2);
+	Vector2 Q2 = rotate2Drad(Vector2(-majorOffset, minorOffset), rotation) + center.head(2);
+	Vector2 Q3 = rotate2Drad(Vector2(-majorOffset, -minorOffset), rotation) + center.head(2);
+	Vector2 Q4 = rotate2Drad(Vector2(majorOffset, -minorOffset), rotation) + center.head(2);
+
+	QPointF M1 = LocalFrameToMapPoint(Q1.x(), Q1.y());
+	QPointF M2 = LocalFrameToMapPoint(Q2.x(), Q2.y());
+	QPointF M3 = LocalFrameToMapPoint(Q3.x(), Q3.y());
+	QPointF M4 = LocalFrameToMapPoint(Q4.x(), Q4.y());
+
 	QPen pen;
 	pen.setColor(Qt::red);
 	pen.setWidth(2);
+
 	painter->setPen(pen);
 	painter->drawLine(M1, M2);
 	painter->drawLine(M2, M3);
@@ -522,7 +506,7 @@ GraphicsMapView::drawControllerTarget(QPainter* painter)
 		//drawing controller target
 
 		double command = status.linear_status().airplane_status().heading_target();
-		QPointF airplaneLoc = UTMToMapPoint(aircraftLocation.easting(),
+		QPointF airplaneLoc = LocalFrameToMapPoint(aircraftLocation.easting(),
 				aircraftLocation.northing()); //ENU
 		QPointF dest = QPointF(airplaneLoc.x() + 50 * cos(-command + M_PI / 2),
 				airplaneLoc.y() - 50 * sin(-command + M_PI / 2));
@@ -534,18 +518,21 @@ GraphicsMapView::drawControllerTarget(QPainter* painter)
 
 		//drawing position deviation
 		auto pathIndex = status.linear_status().current_path_section();
-		if (mapLogic_.get()->getPath().pathSections.size() <= pathIndex)
+		if (mapLogic->getPath().pathSections.size() <= pathIndex)
 		{
 			return;
 		}
-		std::shared_ptr<IPathSection> ps = mapLogic_.get()->getPath().pathSections.at(pathIndex);
-		Vector3 currentPos = Vector3(mapLogic_.get()->getSensorData().position.x,
-						mapLogic_.get()->getSensorData().position.y,
-						mapLogic_.get()->getSensorData().position.z);
+
+		std::shared_ptr<IPathSection> ps;
+		if (status.linear_status().is_in_approach())
+			ps = mapLogic->getPath().approachSection;
+		else
+			ps = mapLogic->getPath().pathSections.at(pathIndex);
+		Vector3 currentPos = xyzTypeToVector3(mapLogic->getSensorData().position);
 		ps->updatePosition(currentPos);
 
 		Vector3 closestPoint = currentPos + ps->getPositionDeviation();
-		QPointF mapPoint = UTMToMapPoint(closestPoint[0], closestPoint[1]);
+		QPointF mapPoint = LocalFrameToMapPoint(closestPoint[0], closestPoint[1]);
 		pen.setColor(Qt::blue);
 		pen.setWidth(2);
 		painter->setPen(pen);
@@ -554,45 +541,6 @@ GraphicsMapView::drawControllerTarget(QPainter* painter)
 		painter->setPen(pen);
 		painter->drawPoint(mapPoint);
 	}
-}
-
-void
-GraphicsMapView::mouseReleaseEvent(QMouseEvent *event)
-{
-	/*if(event->button() == Qt::LeftButton) {
-	 QPointF pos = event->localPos();
-	 QPointF diff = pos - this->rect().center();
-	 float northing = focus.northing() - diff.y()/yPxM;
-	 float easting = focus.easting() + diff.x()/xPxM;
-	 qDebug() << pos;
-	 qDebug() << diff;
-	 qDebug() << xPxM << yPxM;
-	 qDebug() << northing << easting << focus.northing() << focus.easting();
-	 Vector3 position = mapPointToUTM(event->localPos(),-200);
-	 mapLogic_.get()->setAirplaneLocation(position);
-	 }
-	 if(event->button() == Qt::RightButton) {
-	 QPointF pos = event->localPos();
-	 QPointF diff = pos - this->rect().center();
-	 float northing = focus.northing() - diff.y()/yPxM;
-	 float easting = focus.easting() + diff.x()/xPxM;
-	 qDebug() << pos;
-	 qDebug() << diff;
-	 qDebug() << xPxM << yPxM;
-	 qDebug() << northing << easting << focus.northing() << focus.easting();
-	 bool ok = false;
-	 double north = QInputDialog::getDouble(this, "Pn", "Enter Pn in UTM", 0, -2147483647, 2147483647, 10, &ok);
-	 if(ok){
-	 double east = QInputDialog::getDouble(this, "Pe", "Enter Pe in UTM", 0, -2147483647, 2147483647, 10, &ok);
-	 if(ok){
-	 double down = QInputDialog::getDouble(this, "Pd", "Enter Pd in UTM", 0, -2147483647, 2147483647, 10, &ok);
-	 if(ok) {
-	 Vector3 position(north,east,down);
-	 mapLogic_.get()->setAirplaneLocation(position);
-	 }
-	 }
-	 }
-	 }*/
 }
 
 Vector3
@@ -612,6 +560,14 @@ GraphicsMapView::UTMToMapPoint(double e, double n) const
 	float x = (e - nwCorner.easting()) * xPxM - mapCenter.x();
 	float y = (nwCorner.northing() - n) * yPxM - mapCenter.y();
 	return QPointF(x, y);
+}
+
+QPointF
+GraphicsMapView::LocalFrameToMapPoint(double e, double n) const
+{
+	Vector3 local(e, n, 0);
+	local = localFrame_.toInertialFramePosition(local);
+	return UTMToMapPoint(local.x(), local.y());
 }
 
 void
@@ -645,6 +601,27 @@ void
 GraphicsMapView::on_hasNewSensorData(const simulation_interface::sensor_data &sd)
 {
 	aircraftLocation = MapLocation(sd.position.x, sd.position.y);
-	aircraftHeading = sd.attitude.z;
+	aircraftHeading = localFrame_.toInertialFrameRotation(Vector3(0,0,sd.attitude.z)).z();
 	viewport()->update();
+}
+
+void
+GraphicsMapView::mouseMoveEvent(QMouseEvent* move)
+{
+	QPointF newCenter = lastCenterTileCoords_ - (move->localPos() - moveStart_)/256.0;
+	center = MapLocation::fromMapTileCoords(newCenter.x(), newCenter.y(), zoom_);
+	viewport()->update();
+}
+
+void
+GraphicsMapView::mousePressEvent(QMouseEvent* event)
+{
+	moveStart_ = event->localPos();
+	lastCenter_ = center;
+	lastCenterTileCoords_ = QPointF(lastCenter_.x(zoom_), lastCenter_.y(zoom_));
+}
+
+void
+GraphicsMapView::mouseReleaseEvent(QMouseEvent *event)
+{
 }

@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPWidgets_h_
 #define _XPWidgets_h_
 
@@ -81,7 +99,8 @@
 #include "XPWidgetDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -129,16 +148,9 @@ extern "C" {
  * into root widgets later to activate them if you wish.                       
  *
  */
-WIDGET_API XPWidgetID           XPCreateWidget(
-                                   int                  inLeft,    
-                                   int                  inTop,    
-                                   int                  inRight,    
-                                   int                  inBottom,    
-                                   int                  inVisible,    
-                                   const char *         inDescriptor,    
-                                   int                  inIsRoot,    
-                                   XPWidgetID           inContainer,    
-                                   XPWidgetClass        inClass);    
+WIDGET_API XPWidgetID
+XPCreateWidget(int inLeft, int inTop, int inRight, int inBottom, int inVisible,
+		const char * inDescriptor, int inIsRoot, XPWidgetID inContainer, XPWidgetClass inClass);
 
 /*
  * XPCreateCustomWidget
@@ -150,16 +162,9 @@ WIDGET_API XPWidgetID           XPCreateWidget(
  * the widget function.                                                        
  *
  */
-WIDGET_API XPWidgetID           XPCreateCustomWidget(
-                                   int                  inLeft,    
-                                   int                  inTop,    
-                                   int                  inRight,    
-                                   int                  inBottom,    
-                                   int                  inVisible,    
-                                   const char *         inDescriptor,    
-                                   int                  inIsRoot,    
-                                   XPWidgetID           inContainer,    
-                                   XPWidgetFunc_t       inCallback);    
+WIDGET_API XPWidgetID
+XPCreateCustomWidget(int inLeft, int inTop, int inRight, int inBottom, int inVisible,
+		const char * inDescriptor, int inIsRoot, XPWidgetID inContainer, XPWidgetFunc_t inCallback);
 
 /*
  * XPDestroyWidget
@@ -172,9 +177,8 @@ WIDGET_API XPWidgetID           XPCreateCustomWidget(
  * flag, the child widgets will simply end up with their parent set to 0.      
  *
  */
-WIDGET_API void                 XPDestroyWidget(
-                                   XPWidgetID           inWidget,    
-                                   int                  inDestroyChildren);    
+WIDGET_API void
+XPDestroyWidget(XPWidgetID inWidget, int inDestroyChildren);
 
 /*
  * XPSendMessageToWidget
@@ -193,12 +197,9 @@ WIDGET_API void                 XPDestroyWidget(
  * the message in order until it is handled.                                   
  *
  */
-WIDGET_API int                  XPSendMessageToWidget(
-                                   XPWidgetID           inWidget,    
-                                   XPWidgetMessage      inMessage,    
-                                   XPDispatchMode       inMode,    
-                                   intptr_t             inParam1,    
-                                   intptr_t             inParam2);    
+WIDGET_API int
+XPSendMessageToWidget(XPWidgetID inWidget, XPWidgetMessage inMessage, XPDispatchMode inMode,
+		intptr_t inParam1, intptr_t inParam2);
 
 /***************************************************************************
  * WIDGET POSITIONING AND VISIBILITY
@@ -226,9 +227,8 @@ WIDGET_API int                  XPSendMessageToWidget(
  * SetWidgetGeometry.                                                          
  *
  */
-WIDGET_API void                 XPPlaceWidgetWithin(
-                                   XPWidgetID           inSubWidget,    
-                                   XPWidgetID           inContainer);    
+WIDGET_API void
+XPPlaceWidgetWithin(XPWidgetID inSubWidget, XPWidgetID inContainer);
 
 /*
  * XPCountChildWidgets
@@ -236,8 +236,8 @@ WIDGET_API void                 XPPlaceWidgetWithin(
  * This routine returns the number of widgets another widget contains.         
  *
  */
-WIDGET_API int                  XPCountChildWidgets(
-                                   XPWidgetID           inWidget);    
+WIDGET_API int
+XPCountChildWidgets(XPWidgetID inWidget);
 
 /*
  * XPGetNthChildWidget
@@ -247,9 +247,8 @@ WIDGET_API int                  XPCountChildWidgets(
  * inclusive. If the index is invalid, 0 is returned.                          
  *
  */
-WIDGET_API XPWidgetID           XPGetNthChildWidget(
-                                   XPWidgetID           inWidget,    
-                                   int                  inIndex);    
+WIDGET_API XPWidgetID
+XPGetNthChildWidget(XPWidgetID inWidget, int inIndex);
 
 /*
  * XPGetParentWidget
@@ -258,8 +257,8 @@ WIDGET_API XPWidgetID           XPGetNthChildWidget(
  * parent. Root widgets never have parents and therefore always return 0.      
  *
  */
-WIDGET_API XPWidgetID           XPGetParentWidget(
-                                   XPWidgetID           inWidget);    
+WIDGET_API XPWidgetID
+XPGetParentWidget(XPWidgetID inWidget);
 
 /*
  * XPShowWidget
@@ -269,8 +268,8 @@ WIDGET_API XPWidgetID           XPGetParentWidget(
  * visible, it will still not be visible to the user.                          
  *
  */
-WIDGET_API void                 XPShowWidget(
-                                   XPWidgetID           inWidget);    
+WIDGET_API void
+XPShowWidget(XPWidgetID inWidget);
 
 /*
  * XPHideWidget
@@ -279,8 +278,8 @@ WIDGET_API void                 XPShowWidget(
  * widget might not be visible despite its own visibility state.               
  *
  */
-WIDGET_API void                 XPHideWidget(
-                                   XPWidgetID           inWidget);    
+WIDGET_API void
+XPHideWidget(XPWidgetID inWidget);
 
 /*
  * XPIsWidgetVisible
@@ -290,8 +289,8 @@ WIDGET_API void                 XPHideWidget(
  * routine to tell if the user can see the widget.                             
  *
  */
-WIDGET_API int                  XPIsWidgetVisible(
-                                   XPWidgetID           inWidget);    
+WIDGET_API int
+XPIsWidgetVisible(XPWidgetID inWidget);
 
 /*
  * XPFindRootWidget
@@ -301,8 +300,8 @@ WIDGET_API int                  XPIsWidgetVisible(
  * hierarchy.                                                                  
  *
  */
-WIDGET_API XPWidgetID           XPFindRootWidget(
-                                   XPWidgetID           inWidget);    
+WIDGET_API XPWidgetID
+XPFindRootWidget(XPWidgetID inWidget);
 
 /*
  * XPBringRootWidgetToFront
@@ -314,8 +313,8 @@ WIDGET_API XPWidgetID           XPFindRootWidget(
  * top of the tree), this routine does nothing.                                
  *
  */
-WIDGET_API void                 XPBringRootWidgetToFront(
-                                   XPWidgetID           inWidget);    
+WIDGET_API void
+XPBringRootWidgetToFront(XPWidgetID inWidget);
 
 /*
  * XPIsWidgetInFront
@@ -325,8 +324,8 @@ WIDGET_API void                 XPBringRootWidgetToFront(
  * if the widget is not in a rooted hierarchy.                                 
  *
  */
-WIDGET_API int                  XPIsWidgetInFront(
-                                   XPWidgetID           inWidget);    
+WIDGET_API int
+XPIsWidgetInFront(XPWidgetID inWidget);
 
 /*
  * XPGetWidgetGeometry
@@ -335,12 +334,11 @@ WIDGET_API int                  XPIsWidgetInFront(
  * Pass NULL for any parameter you are not interested in.                      
  *
  */
-WIDGET_API void                 XPGetWidgetGeometry(
-                                   XPWidgetID           inWidget,    
-                                   int *                outLeft,    /* Can be NULL */
-                                   int *                outTop,    /* Can be NULL */
-                                   int *                outRight,    /* Can be NULL */
-                                   int *                outBottom);    /* Can be NULL */
+WIDGET_API void
+XPGetWidgetGeometry(XPWidgetID inWidget, int * outLeft, /* Can be NULL */
+int * outTop, /* Can be NULL */
+int * outRight, /* Can be NULL */
+int * outBottom); /* Can be NULL */
 
 /*
  * XPSetWidgetGeometry
@@ -348,12 +346,8 @@ WIDGET_API void                 XPGetWidgetGeometry(
  * This function changes the bounding box of a widget.                         
  *
  */
-WIDGET_API void                 XPSetWidgetGeometry(
-                                   XPWidgetID           inWidget,    
-                                   int                  inLeft,    
-                                   int                  inTop,    
-                                   int                  inRight,    
-                                   int                  inBottom);    
+WIDGET_API void
+XPSetWidgetGeometry(XPWidgetID inWidget, int inLeft, int inTop, int inRight, int inBottom);
 
 /*
  * XPGetWidgetForLocation
@@ -373,12 +367,9 @@ WIDGET_API void                 XPSetWidgetGeometry(
  * location.                                                                   
  *
  */
-WIDGET_API XPWidgetID           XPGetWidgetForLocation(
-                                   XPWidgetID           inContainer,    
-                                   int                  inXOffset,    
-                                   int                  inYOffset,    
-                                   int                  inRecursive,    
-                                   int                  inVisibleOnly);    
+WIDGET_API XPWidgetID
+XPGetWidgetForLocation(XPWidgetID inContainer, int inXOffset, int inYOffset, int inRecursive,
+		int inVisibleOnly);
 
 /*
  * XPGetWidgetExposedGeometry
@@ -392,12 +383,11 @@ WIDGET_API XPWidgetID           XPGetWidgetForLocation(
  * frame rates up, although you could use it internally.                       
  *
  */
-WIDGET_API void                 XPGetWidgetExposedGeometry(
-                                   XPWidgetID           inWidgetID,    
-                                   int *                outLeft,    /* Can be NULL */
-                                   int *                outTop,    /* Can be NULL */
-                                   int *                outRight,    /* Can be NULL */
-                                   int *                outBottom);    /* Can be NULL */
+WIDGET_API void
+XPGetWidgetExposedGeometry(XPWidgetID inWidgetID, int * outLeft, /* Can be NULL */
+int * outTop, /* Can be NULL */
+int * outRight, /* Can be NULL */
+int * outBottom); /* Can be NULL */
 
 /***************************************************************************
  * ACCESSING WIDGET DATA
@@ -419,9 +409,8 @@ WIDGET_API void                 XPGetWidgetExposedGeometry(
  * descriptor, many do.                                                        
  *
  */
-WIDGET_API void                 XPSetWidgetDescriptor(
-                                   XPWidgetID           inWidget,    
-                                   const char *         inDescriptor);    
+WIDGET_API void
+XPSetWidgetDescriptor(XPWidgetID inWidget, const char * inDescriptor);
 
 /*
  * XPGetWidgetDescriptor
@@ -435,10 +424,8 @@ WIDGET_API void                 XPSetWidgetDescriptor(
  * terminated (this routine has 'strncpy' semantics).                          
  *
  */
-WIDGET_API int                  XPGetWidgetDescriptor(
-                                   XPWidgetID           inWidget,    
-                                   char *               outDescriptor,    
-                                   int                  inMaxDescLength);    
+WIDGET_API int
+XPGetWidgetDescriptor(XPWidgetID inWidget, char * outDescriptor, int inMaxDescLength);
 
 /*
  * XPSetWidgetProperty
@@ -447,10 +434,8 @@ WIDGET_API int                  XPGetWidgetDescriptor(
  * associated by a widget by ID.                                               
  *
  */
-WIDGET_API void                 XPSetWidgetProperty(
-                                   XPWidgetID           inWidget,    
-                                   XPWidgetPropertyID   inProperty,    
-                                   intptr_t             inValue);    
+WIDGET_API void
+XPSetWidgetProperty(XPWidgetID inWidget, XPWidgetPropertyID inProperty, intptr_t inValue);
 
 /*
  * XPGetWidgetProperty
@@ -462,10 +447,8 @@ WIDGET_API void                 XPSetWidgetProperty(
  * information.                                                                
  *
  */
-WIDGET_API intptr_t             XPGetWidgetProperty(
-                                   XPWidgetID           inWidget,    
-                                   XPWidgetPropertyID   inProperty,    
-                                   int *                inExists);    /* Can be NULL */
+WIDGET_API intptr_t
+XPGetWidgetProperty(XPWidgetID inWidget, XPWidgetPropertyID inProperty, int * inExists); /* Can be NULL */
 
 /***************************************************************************
  * KEYBOARD MANAGEMENT
@@ -493,8 +476,8 @@ WIDGET_API intptr_t             XPGetWidgetProperty(
  * 
  *  *
  */
-WIDGET_API XPWidgetID           XPSetKeyboardFocus(
-                                   XPWidgetID           inWidget);    
+WIDGET_API XPWidgetID
+XPSetKeyboardFocus(XPWidgetID inWidget);
 
 /*
  * XPLoseKeyboardFocus
@@ -504,8 +487,8 @@ WIDGET_API XPWidgetID           XPSetKeyboardFocus(
  * if this widget does not have focus.                                         
  *
  */
-WIDGET_API void                 XPLoseKeyboardFocus(
-                                   XPWidgetID           inWidget);    
+WIDGET_API void
+XPLoseKeyboardFocus(XPWidgetID inWidget);
 
 /*
  * XPGetWidgetWithFocus
@@ -515,7 +498,8 @@ WIDGET_API void                 XPLoseKeyboardFocus(
  * has focus.                                                                  
  *
  */
-WIDGET_API XPWidgetID           XPGetWidgetWithFocus(void);
+WIDGET_API XPWidgetID
+XPGetWidgetWithFocus(void);
 
 /***************************************************************************
  * CREATING CUSTOM WIDGETS
@@ -542,9 +526,8 @@ WIDGET_API XPWidgetID           XPGetWidgetWithFocus(void);
  * widget behavior.                                                            
  *
  */
-WIDGET_API void                 XPAddWidgetCallback(
-                                   XPWidgetID           inWidget,    
-                                   XPWidgetFunc_t       inNewCallback);    
+WIDGET_API void
+XPAddWidgetCallback(XPWidgetID inWidget, XPWidgetFunc_t inNewCallback);
 
 /*
  * XPGetWidgetClassFunc
@@ -553,8 +536,8 @@ WIDGET_API void                 XPAddWidgetCallback(
  * widget class.                                                               
  *
  */
-WIDGET_API XPWidgetFunc_t       XPGetWidgetClassFunc(
-                                   XPWidgetClass        inWidgetClass);    
+WIDGET_API XPWidgetFunc_t
+XPGetWidgetClassFunc(XPWidgetClass inWidgetClass);
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMCamera_h_
 #define _XPLMCamera_h_
 
@@ -44,7 +62,8 @@
 #include "XPLMDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -62,14 +81,14 @@ extern "C" {
  * You can retain it indefinitely or until the user selects a new view.        
  *
  */
-enum {
-     /* Control the camera until the user picks a new view.                         */
-     xplm_ControlCameraUntilViewChanges       = 1
+enum
+{
+	/* Control the camera until the user picks a new view.                         */
+	xplm_ControlCameraUntilViewChanges = 1
 
-     /* Control the camera until your plugin is disabled or another plugin forcably *
-      * takes control.                                                              */
-    ,xplm_ControlCameraForever                = 2
-
+	/* Control the camera until your plugin is disabled or another plugin forcably *
+	 * takes control.                                                              */
+	, xplm_ControlCameraForever = 2
 
 };
 typedef int XPLMCameraControlDuration;
@@ -85,14 +104,15 @@ typedef int XPLMCameraControlDuration;
  * magnifying by 2x (objects appear larger).                                   
  *
  */
-typedef struct {
-     float                     x;
-     float                     y;
-     float                     z;
-     float                     pitch;
-     float                     heading;
-     float                     roll;
-     float                     zoom;
+typedef struct
+{
+	float x;
+	float y;
+	float z;
+	float pitch;
+	float heading;
+	float roll;
+	float zoom;
 } XPLMCameraPosition_t;
 
 /*
@@ -109,10 +129,9 @@ typedef struct {
  * called with inIsLosingControl set to 1 and ioCameraPosition NULL.           
  *
  */
-typedef int (* XPLMCameraControl_f)(
-                                   XPLMCameraPosition_t * outCameraPosition,    /* Can be NULL */
-                                   int                  inIsLosingControl,    
-                                   void *               inRefcon);    
+typedef int
+(*XPLMCameraControl_f)(XPLMCameraPosition_t * outCameraPosition, /* Can be NULL */
+int inIsLosingControl, void * inRefcon);
 
 /*
  * XPLMControlCamera
@@ -122,10 +141,9 @@ typedef int (* XPLMCameraControl_f)(
  * control (indefinitely or until a key is pressed).                           
  *
  */
-XPLM_API void                 XPLMControlCamera(
-                                   XPLMCameraControlDuration inHowLong,    
-                                   XPLMCameraControl_f  inControlFunc,    
-                                   void *               inRefcon);    
+XPLM_API void
+XPLMControlCamera(XPLMCameraControlDuration inHowLong, XPLMCameraControl_f inControlFunc,
+		void * inRefcon);
 
 /*
  * XPLMDontControlCamera
@@ -138,7 +156,8 @@ XPLM_API void                 XPLMControlCamera(
  * posession of the camera.                                                    
  *
  */
-XPLM_API void                 XPLMDontControlCamera(void);
+XPLM_API void
+XPLMDontControlCamera(void);
 
 /*
  * XPLMIsCameraBeingControlled
@@ -148,8 +167,8 @@ XPLM_API void                 XPLMDontControlCamera(void);
  * current control duration will be returned.                                  
  *
  */
-XPLM_API int                  XPLMIsCameraBeingControlled(
-                                   XPLMCameraControlDuration * outCameraControlDuration);    /* Can be NULL */
+XPLM_API int
+XPLMIsCameraBeingControlled(XPLMCameraControlDuration * outCameraControlDuration); /* Can be NULL */
 
 /*
  * XPLMReadCameraPosition
@@ -157,8 +176,8 @@ XPLM_API int                  XPLMIsCameraBeingControlled(
  * This function reads the current camera position.                            
  *
  */
-XPLM_API void                 XPLMReadCameraPosition(
-                                   XPLMCameraPosition_t * outCameraPosition);    
+XPLM_API void
+XPLMReadCameraPosition(XPLMCameraPosition_t * outCameraPosition);
 
 #ifdef __cplusplus
 }

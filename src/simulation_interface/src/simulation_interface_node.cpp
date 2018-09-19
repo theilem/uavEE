@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -24,6 +24,7 @@
  */
 
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <simulation_interface/sensor_data.h>
 #include <simulation_interface/codec/Codec.h>
 #include <boost/thread/thread_time.hpp>
@@ -40,22 +41,16 @@ main(int argc, char** argv)
 	APLogger::instance()->setModuleName("SimulationInterface");
 	ros::init(argc, argv, "simulation_interface");
 
-	auto nodeHandle = std::make_shared<ros::NodeHandle>();
+	ros::NodeHandle nh;
 
-	std::string simulationConfigPath;
-	if (!nodeHandle->getParam("/simulation_interface_node/simulation_config", simulationConfigPath))
-	{
-		APLOG_ERROR << "Alvolo config path missing";
-		return 1;
-	}
+
+	std::string config;
+	nh.getParam("/simulation_interface_node/config_path", config);
 
 	ros::Rate loopRate(10000);
 	SimulationInterfaceHelper helper;
-	Aggregator aggregator = helper.createAggregation(simulationConfigPath);
+	Aggregator aggregator = helper.createAggregation(config);
 	SimpleRunner run(aggregator);
-
-	auto con = aggregator.getOne<SimulationConnector>();
-	con->setNodeHandle(nodeHandle);
 
 	if (run.runAllStages())
 	{
@@ -71,4 +66,3 @@ main(int argc, char** argv)
 	return 0;
 
 }
-

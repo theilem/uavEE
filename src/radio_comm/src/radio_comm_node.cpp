@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -30,19 +30,14 @@
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::WARN);
+	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("RadioComm");
 	ros::init(argc, argv, "radio_comm");
 
 	ros::NodeHandle nh;
 
-	std::string serialPort;
-	nh.getParam("/radio_comm_node/serial_port", serialPort);
-
-	boost::property_tree::ptree config;
-	boost::property_tree::ptree radioCommConfig;
-	radioCommConfig.add("serial_port", serialPort);
-	config.add_child("radio_comm", radioCommConfig);
+	std::string config;
+	nh.getParam("/radio_comm_node/config_path", config);
 
 	RadioCommHelper helper;
 

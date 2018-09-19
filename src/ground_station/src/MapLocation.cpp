@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include <autopilot_interface/detail/UTMToLatLong.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include "ground_station/MapLocation.h"
 
@@ -30,16 +31,16 @@ MapLocation
 MapLocation::fromJson(const boost::property_tree::ptree &json)
 {
 	/*if (json.contains("lat") && json.contains("lon"))
-	{
-		return MapLocation::fromLatLong(json["lat"].toDouble(), json["lon"].toDouble());
-	}*/
+	 {
+	 return MapLocation::fromLatLong(json["lat"].toDouble(), json["lon"].toDouble());
+	 }*/
 	PropertyMapper pm(json);
 	double x, y;
-	if(pm.add("lat",x,false)&&pm.add("lon",y,false))
-		return MapLocation::fromLatLong(x,y);
-	if(pm.add("utm_n",x,false)&&pm.add("utm_e",y,false))
-		return MapLocation::fromUTM(x,y);
-	APLOG_ERROR<<"MapLocation::fromJson called on json without valid coordinates";
+	if (pm.add<double>("lat", x, false) && pm.add<double>("lon", y, false))
+		return MapLocation::fromLatLong(x, y);
+	if (pm.add<double>("utm_n", x, false) && pm.add<double>("utm_e", y, false))
+		return MapLocation::fromUTM(x, y);
+	APLOG_ERROR << "MapLocation::fromJson called on json without valid coordinates";
 	return MapLocation();
 }
 
@@ -72,9 +73,11 @@ MapLocation::fromUTM(double northing, double easting)
 }
 
 MapLocation
-MapLocation::fromVector3(Vector3 vect)
+MapLocation::fromVector3(Vector3 vect, int zone, char hemi)
 {
-	return MapLocation(vect.x(), vect.y());
+	double lati, longi;
+	UTMtoLL(22, vect.y(), vect.x(), zone, lati, longi);
+	return MapLocation::fromLatLong(lati, longi);
 }
 
 double
@@ -231,6 +234,30 @@ MapLocation::latLongToUTM(double Lat, double Long, double *northing, double *eas
 	*hemi = (Lat < 0) ? 'S' : 'N';
 }
 
+int
+MapLocation::getZone() const
+{
+	return zone;
+}
+
+char
+MapLocation::getHemi() const
+{
+	return hemi;
+}
+
+void
+MapLocation::setZone(int z)
+{
+	zone = z;
+}
+
+void
+MapLocation::setHemi(char h)
+{
+	hemi = h;
+}
+
 void
 MapLocation::mapTileCoordsToLatLong(double x, double y, int z, double *Lat, double *Long)
 {
@@ -238,3 +265,4 @@ MapLocation::mapTileCoordsToLatLong(double x, double y, int z, double *Lat, doub
 	*Long = (x / n) * 360.0 - 180.0;
 	*Lat = atan(sinh(M_PI - (y / n) * 2 * M_PI)) * 180 / M_PI;
 }
+

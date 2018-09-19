@@ -30,15 +30,15 @@ PIDConfigPlot::PIDConfigPlot(QWidget *parent, int key, std::string name,
 	title = QString::fromStdString(name);
 	// Set title and PID params
 	ui->kP->setText(QString::number(param.kp));
-    ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 	ui->kI->setText(QString::number(param.ki));
-    ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 	ui->kD->setText(QString::number(param.kd));
-    ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 	ui->IMax->setText(QString::number(param.imax));
-    ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 	ui->FF->setText(QString::number(param.ff));
-    ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 }
 
 PIDConfigPlot::~PIDConfigPlot()

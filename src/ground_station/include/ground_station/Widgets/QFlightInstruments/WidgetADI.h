@@ -60,43 +60,48 @@
 
 namespace Ui
 {
-    class WidgetADI;
+class WidgetADI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetADI : public QWidget
+class WidgetADI: public QWidget
 {
-    Q_OBJECT
-    
+Q_OBJECT
+
 public:
 
-    explicit WidgetADI( QWidget * parent = 0 );
+	explicit
+	WidgetADI(QWidget * parent = 0);
 
-    ~WidgetADI();
+	~WidgetADI();
 
-    inline void update()
-    {
-        m_adi->update();
-    }
+	inline void
+	update()
+	{
+		m_adi->update();
+	}
 
-    inline void setRoll( float roll )
-    {
-        m_adi->setRoll( roll );
-    }
+	inline void
+	setRoll(float roll)
+	{
+		m_adi->setRoll(roll);
+	}
 
-    inline void setPitch( float pitch )
-    {
-        m_adi->setPitch( pitch );
-    }
+	inline void
+	setPitch(float pitch)
+	{
+		m_adi->setPitch(pitch);
+	}
 
 private:
 
-    Ui::WidgetADI * m_ui;
-    qfi_ADI       * m_adi;
-    LayoutSquare  * m_layoutSq;
+	Ui::WidgetADI * m_ui;
+	qfi_ADI * m_adi;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

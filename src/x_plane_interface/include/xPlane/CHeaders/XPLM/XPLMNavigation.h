@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMNavigation_h_
 #define _XPLMNavigation_h_
 
@@ -27,7 +45,8 @@
 #include "XPLMDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -51,33 +70,33 @@ extern "C" {
  * XPLMSetFMSEntryLatLon to set a lat/lon waypoint.                            
  *
  */
-enum {
-     xplm_Nav_Unknown                         = 0
+enum
+{
+	xplm_Nav_Unknown = 0
 
-    ,xplm_Nav_Airport                         = 1
+	, xplm_Nav_Airport = 1
 
-    ,xplm_Nav_NDB                             = 2
+	, xplm_Nav_NDB = 2
 
-    ,xplm_Nav_VOR                             = 4
+	, xplm_Nav_VOR = 4
 
-    ,xplm_Nav_ILS                             = 8
+	, xplm_Nav_ILS = 8
 
-    ,xplm_Nav_Localizer                       = 16
+	, xplm_Nav_Localizer = 16
 
-    ,xplm_Nav_GlideSlope                      = 32
+	, xplm_Nav_GlideSlope = 32
 
-    ,xplm_Nav_OuterMarker                     = 64
+	, xplm_Nav_OuterMarker = 64
 
-    ,xplm_Nav_MiddleMarker                    = 128
+	, xplm_Nav_MiddleMarker = 128
 
-    ,xplm_Nav_InnerMarker                     = 256
+	, xplm_Nav_InnerMarker = 256
 
-    ,xplm_Nav_Fix                             = 512
+	, xplm_Nav_Fix = 512
 
-    ,xplm_Nav_DME                             = 1024
+	, xplm_Nav_DME = 1024
 
-    ,xplm_Nav_LatLon                          = 2048
-
+	, xplm_Nav_LatLon = 2048
 
 };
 typedef int XPLMNavType;
@@ -108,7 +127,8 @@ typedef int XPLMNavRef;
  * empty.                                                                      
  *
  */
-XPLM_API XPLMNavRef           XPLMGetFirstNavAid(void);
+XPLM_API XPLMNavRef
+XPLMGetFirstNavAid(void);
 
 /*
  * XPLMGetNextNavAid
@@ -123,8 +143,8 @@ XPLM_API XPLMNavRef           XPLMGetFirstNavAid(void);
  * returns a bogus nav aid.  Using this nav aid can crash X-Plane.             
  *
  */
-XPLM_API XPLMNavRef           XPLMGetNextNavAid(
-                                   XPLMNavRef           inNavAidRef);    
+XPLM_API XPLMNavRef
+XPLMGetNextNavAid(XPLMNavRef inNavAidRef);
 
 /*
  * XPLMFindFirstNavAidOfType
@@ -138,8 +158,8 @@ XPLM_API XPLMNavRef           XPLMGetNextNavAid(
  * nav aid.  Using this nav aid can crash X-Plane.                             
  *
  */
-XPLM_API XPLMNavRef           XPLMFindFirstNavAidOfType(
-                                   XPLMNavType          inType);    
+XPLM_API XPLMNavRef
+XPLMFindFirstNavAidOfType(XPLMNavType inType);
 
 /*
  * XPLMFindLastNavAidOfType
@@ -153,8 +173,8 @@ XPLM_API XPLMNavRef           XPLMFindFirstNavAidOfType(
  * nav aid.  Using this nav aid can crash X-Plane.                             
  *
  */
-XPLM_API XPLMNavRef           XPLMFindLastNavAidOfType(
-                                   XPLMNavType          inType);    
+XPLM_API XPLMNavRef
+XPLMFindLastNavAidOfType(XPLMNavType inType);
 
 /*
  * XPLMFindNavAid
@@ -184,13 +204,13 @@ XPLM_API XPLMNavRef           XPLMFindLastNavAidOfType(
  * "Chicago".                                                                  
  *
  */
-XPLM_API XPLMNavRef           XPLMFindNavAid(
-                                   const char *         inNameFragment,    /* Can be NULL */
-                                   const char *         inIDFragment,    /* Can be NULL */
-                                   float *              inLat,    /* Can be NULL */
-                                   float *              inLon,    /* Can be NULL */
-                                   int *                inFrequency,    /* Can be NULL */
-                                   XPLMNavType          inType);    
+XPLM_API XPLMNavRef
+XPLMFindNavAid(const char * inNameFragment, /* Can be NULL */
+const char * inIDFragment, /* Can be NULL */
+float * inLat, /* Can be NULL */
+float * inLon, /* Can be NULL */
+int * inFrequency, /* Can be NULL */
+XPLMNavType inType);
 
 /*
  * XPLMGetNavAidInfo
@@ -212,17 +232,16 @@ XPLM_API XPLMNavRef           XPLMFindNavAid(
  * string.                                                                     
  *
  */
-XPLM_API void                 XPLMGetNavAidInfo(
-                                   XPLMNavRef           inRef,    
-                                   XPLMNavType *        outType,    /* Can be NULL */
-                                   float *              outLatitude,    /* Can be NULL */
-                                   float *              outLongitude,    /* Can be NULL */
-                                   float *              outHeight,    /* Can be NULL */
-                                   int *                outFrequency,    /* Can be NULL */
-                                   float *              outHeading,    /* Can be NULL */
-                                   char *               outID,    /* Can be NULL */
-                                   char *               outName,    /* Can be NULL */
-                                   char *               outReg);    /* Can be NULL */
+XPLM_API void
+XPLMGetNavAidInfo(XPLMNavRef inRef, XPLMNavType * outType, /* Can be NULL */
+float * outLatitude, /* Can be NULL */
+float * outLongitude, /* Can be NULL */
+float * outHeight, /* Can be NULL */
+int * outFrequency, /* Can be NULL */
+float * outHeading, /* Can be NULL */
+char * outID, /* Can be NULL */
+char * outName, /* Can be NULL */
+char * outReg); /* Can be NULL */
 
 /***************************************************************************
  * FLIGHT MANAGEMENT COMPUTER
@@ -238,14 +257,14 @@ XPLM_API void                 XPLMGetNavAidInfo(
  *
  */
 
-
 /*
  * XPLMCountFMSEntries
  * 
  * This routine returns the number of entries in the FMS.                      
  *
  */
-XPLM_API int                  XPLMCountFMSEntries(void);
+XPLM_API int
+XPLMCountFMSEntries(void);
 
 /*
  * XPLMGetDisplayedFMSEntry
@@ -253,7 +272,8 @@ XPLM_API int                  XPLMCountFMSEntries(void);
  * This routine returns the index of the entry the pilot is viewing.           
  *
  */
-XPLM_API int                  XPLMGetDisplayedFMSEntry(void);
+XPLM_API int
+XPLMGetDisplayedFMSEntry(void);
 
 /*
  * XPLMGetDestinationFMSEntry
@@ -261,7 +281,8 @@ XPLM_API int                  XPLMGetDisplayedFMSEntry(void);
  * This routine returns the index of the entry the FMS is flying to.           
  *
  */
-XPLM_API int                  XPLMGetDestinationFMSEntry(void);
+XPLM_API int
+XPLMGetDestinationFMSEntry(void);
 
 /*
  * XPLMSetDisplayedFMSEntry
@@ -269,8 +290,8 @@ XPLM_API int                  XPLMGetDestinationFMSEntry(void);
  * This routine changes which entry the FMS is showing to the index specified. 
  *  *
  */
-XPLM_API void                 XPLMSetDisplayedFMSEntry(
-                                   int                  inIndex);    
+XPLM_API void
+XPLMSetDisplayedFMSEntry(int inIndex);
 
 /*
  * XPLMSetDestinationFMSEntry
@@ -278,8 +299,8 @@ XPLM_API void                 XPLMSetDisplayedFMSEntry(
  * This routine changes which entry the FMS is flying the aircraft toward.     
  *
  */
-XPLM_API void                 XPLMSetDestinationFMSEntry(
-                                   int                  inIndex);    
+XPLM_API void
+XPLMSetDestinationFMSEntry(int inIndex);
 
 /*
  * XPLMGetFMSEntryInfo
@@ -293,14 +314,13 @@ XPLM_API void                 XPLMSetDestinationFMSEntry(
  * length.                                                                     
  *
  */
-XPLM_API void                 XPLMGetFMSEntryInfo(
-                                   int                  inIndex,    
-                                   XPLMNavType *        outType,    /* Can be NULL */
-                                   char *               outID,    /* Can be NULL */
-                                   XPLMNavRef *         outRef,    /* Can be NULL */
-                                   int *                outAltitude,    /* Can be NULL */
-                                   float *              outLat,    /* Can be NULL */
-                                   float *              outLon);    /* Can be NULL */
+XPLM_API void
+XPLMGetFMSEntryInfo(int inIndex, XPLMNavType * outType, /* Can be NULL */
+char * outID, /* Can be NULL */
+XPLMNavRef * outRef, /* Can be NULL */
+int * outAltitude, /* Can be NULL */
+float * outLat, /* Can be NULL */
+float * outLon); /* Can be NULL */
 
 /*
  * XPLMSetFMSEntryInfo
@@ -311,10 +331,8 @@ XPLM_API void                 XPLMGetFMSEntryInfo(
  * support VORs and NDBs. Use the routines below to clear or fly to a lat/lon. 
  *
  */
-XPLM_API void                 XPLMSetFMSEntryInfo(
-                                   int                  inIndex,    
-                                   XPLMNavRef           inRef,    
-                                   int                  inAltitude);    
+XPLM_API void
+XPLMSetFMSEntryInfo(int inIndex, XPLMNavRef inRef, int inAltitude);
 
 /*
  * XPLMSetFMSEntryLatLon
@@ -323,11 +341,8 @@ XPLM_API void                 XPLMSetFMSEntryInfo(
  * coordinates.                                                                
  *
  */
-XPLM_API void                 XPLMSetFMSEntryLatLon(
-                                   int                  inIndex,    
-                                   float                inLat,    
-                                   float                inLon,    
-                                   int                  inAltitude);    
+XPLM_API void
+XPLMSetFMSEntryLatLon(int inIndex, float inLat, float inLon, int inAltitude);
 
 /*
  * XPLMClearFMSEntry
@@ -336,8 +351,8 @@ XPLM_API void                 XPLMSetFMSEntryLatLon(
  * plan.                                                                       
  *
  */
-XPLM_API void                 XPLMClearFMSEntry(
-                                   int                  inIndex);    
+XPLM_API void
+XPLMClearFMSEntry(int inIndex);
 
 /***************************************************************************
  * GPS RECEIVER
@@ -354,7 +369,8 @@ XPLM_API void                 XPLMClearFMSEntry(
  * one of fix, airport, VOR or NDB.                                            
  *
  */
-XPLM_API XPLMNavType          XPLMGetGPSDestinationType(void);
+XPLM_API XPLMNavType
+XPLMGetGPSDestinationType(void);
 
 /*
  * XPLMGetGPSDestination
@@ -362,7 +378,8 @@ XPLM_API XPLMNavType          XPLMGetGPSDestinationType(void);
  * This routine returns the current GPS destination.                           
  *
  */
-XPLM_API XPLMNavRef           XPLMGetGPSDestination(void);
+XPLM_API XPLMNavRef
+XPLMGetGPSDestination(void);
 
 #ifdef __cplusplus
 }

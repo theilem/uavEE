@@ -31,16 +31,16 @@
 
 class IWidgetInterface;
 
-class IGSWidget : public QWidget
+class IGSWidget: public QWidget
 {
 public:
-    virtual
-    ~IGSWidget()
-    {
-    }
+	virtual
+	~IGSWidget()
+	{
+	}
 
-    //virtual static IGSWidget*
-    //createGSWidget(std::shared_ptr<IWidgetInterface>, QWidget*) = 0;
+	//virtual static IGSWidget*
+	//createGSWidget(std::shared_ptr<IWidgetInterface>, QWidget*) = 0;
 
 private:
 

@@ -58,19 +58,20 @@ add_message_files(
    FILES
    pidstatus.msg
    pidstati.msg
-   velocity_body.msg
-   airplane_linear_local_planner_status.msg
-   linear_local_planner_status.msg
-   local_planner_status.msg
    serialized_object.msg
+   serialized_proto.msg
+   velocity_body.msg
 )
 
 ## Generate services in the 'srv' folder
 add_service_files(
    FILES
-   send_control_override.srv
+   serialized_service.srv
+   send_advanced_control.srv
    select_mission.srv
+   select_maneuver.srv
    request_data.srv
+   tune_generic.srv
    tune_pid.srv
 )
 
@@ -168,6 +169,7 @@ add_executable(${PROJECT_NAME}_node src/radio_comm_node.cpp
 target_link_libraries(${PROJECT_NAME}_node
    	${catkin_LIBRARIES}
    	uavap_core
+   	uavap_flight_analysis
    	protobuf   	
    	boost_thread
    	pthread

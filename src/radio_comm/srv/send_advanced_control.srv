@@ -1,0 +1,8 @@
+string special_sel
+float64 special_val
+string camber_sel
+float64 camber_val
+string throws_sel
+
+---
+bool valid_request

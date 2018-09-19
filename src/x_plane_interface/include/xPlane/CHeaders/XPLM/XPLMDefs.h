@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMDefs_h_
 #define _XPLMDefs_h_
 
@@ -22,9 +40,9 @@
  *
  */
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #if IBM
@@ -46,79 +64,78 @@ extern "C" {
  *
  */
 
-
 #ifdef __cplusplus
-	#if APL
-        #if __GNUC__ >= 4
-            #define PLUGIN_API extern "C" __attribute__((visibility("default")))
-        #elif __MACH__
-			#define PLUGIN_API extern "C"
-		#else		
-			#define PLUGIN_API extern "C" __declspec(dllexport)
-		#endif
-	#elif IBM
-		#define PLUGIN_API extern "C" __declspec(dllexport)
-	#elif LIN
-		#if __GNUC__ >= 4
-			#define PLUGIN_API extern "C" __attribute__((visibility("default")))
-		#else
-			#define PLUGIN_API extern "C"
-		#endif
-	#else
-		#error "Platform not defined!"
-	#endif
+#if APL
+#if __GNUC__ >= 4
+#define PLUGIN_API extern "C" __attribute__((visibility("default")))
+#elif __MACH__
+#define PLUGIN_API extern "C"
+#else		
+#define PLUGIN_API extern "C" __declspec(dllexport)
+#endif
+#elif IBM
+#define PLUGIN_API extern "C" __declspec(dllexport)
+#elif LIN
+#if __GNUC__ >= 4
+#define PLUGIN_API extern "C" __attribute__((visibility("default")))
 #else
-	#if APL
-        #if __GNUC__ >= 4
-            #define PLUGIN_API __attribute__((visibility("default")))
-        #elif __MACH__
-			#define PLUGIN_API 
-		#else
-			#define PLUGIN_API __declspec(dllexport)
-		#endif		
-	#elif IBM
-		#define PLUGIN_API __declspec(dllexport)
-	#elif LIN
-        #if __GNUC__ >= 4
-            #define PLUGIN_API __attribute__((visibility("default")))
-		#else
-			#define PLUGIN_API
-		#endif		
-	#else
-		#error "Platform not defined!"
-	#endif
+#define PLUGIN_API extern "C"
+#endif
+#else
+#error "Platform not defined!"
+#endif
+#else
+#if APL
+#if __GNUC__ >= 4
+#define PLUGIN_API __attribute__((visibility("default")))
+#elif __MACH__
+#define PLUGIN_API 
+#else
+#define PLUGIN_API __declspec(dllexport)
+#endif		
+#elif IBM
+#define PLUGIN_API __declspec(dllexport)
+#elif LIN
+#if __GNUC__ >= 4
+#define PLUGIN_API __attribute__((visibility("default")))
+#else
+#define PLUGIN_API
+#endif		
+#else
+#error "Platform not defined!"
+#endif
 #endif
 
 #if APL
-	#if XPLM
-        #if __GNUC__ >= 4
-            #define XPLM_API __attribute__((visibility("default")))
-        #elif __MACH__
-			#define XPLM_API 
-		#else
-			#define XPLM_API __declspec(dllexport)
-		#endif
-	#else
-		#define XPLM_API 
-	#endif
-#elif IBM
-	#if XPLM
-		#define XPLM_API __declspec(dllexport)
-	#else
-		#define XPLM_API __declspec(dllimport)
-	#endif
-#elif LIN
-	#if XPLM
-		#if __GNUC__ >= 4
-            #define XPLM_API __attribute__((visibility("default")))
-		#else
-			#define XPLM_API
-		#endif
-	#else
-		#define XPLM_API
-	#endif	
+#if XPLM
+#if __GNUC__ >= 4
+#define XPLM_API __attribute__((visibility("default")))
+#elif __MACH__
+#define XPLM_API 
 #else
-	#error "Platform not defined!"
+#define XPLM_API __declspec(dllexport)
+#endif
+#else
+#define XPLM_API 
+#endif
+#elif IBM
+#if XPLM
+#define XPLM_API __declspec(dllexport)
+#else
+#define XPLM_API __declspec(dllimport)
+#endif
+#elif LIN
+#if XPLM
+#if __GNUC__ >= 4
+#define XPLM_API __attribute__((visibility("default")))
+#else
+#define XPLM_API
+#endif
+#else
+#define XPLM_API
+#endif	
+#else
+#error "Platform not defined!"
 #endif
 
 /***************************************************************************
@@ -128,7 +145,6 @@ extern "C" {
  * These definitions are used in all parts of the SDK.                         
  *
  */
-
 
 /*
  * XPLMPluginID
@@ -173,22 +189,22 @@ typedef int XPLMPluginID;
  * #ifdefed code.                                                              
  *
  */
-enum {
-     /* The shift key is down                                                       */
-     xplm_ShiftFlag                           = 1
+enum
+{
+	/* The shift key is down                                                       */
+	xplm_ShiftFlag = 1
 
-     /* The option or alt key is down                                               */
-    ,xplm_OptionAltFlag                       = 2
+	/* The option or alt key is down                                               */
+	, xplm_OptionAltFlag = 2
 
-     /* The control key is down*                                                    */
-    ,xplm_ControlFlag                         = 4
+	/* The control key is down*                                                    */
+	, xplm_ControlFlag = 4
 
-     /* The key is being pressed down                                               */
-    ,xplm_DownFlag                            = 8
+	/* The key is being pressed down                                               */
+	, xplm_DownFlag = 8
 
-     /* The key is being released                                                   */
-    ,xplm_UpFlag                              = 16
-
+	/* The key is being released                                                   */
+	, xplm_UpFlag = 16
 
 };
 typedef int XPLMKeyFlags;
@@ -208,7 +224,6 @@ typedef int XPLMKeyFlags;
  * keys.                                                                       
  *
  */
-
 
 #define XPLM_KEY_RETURN      13
 
@@ -279,7 +294,6 @@ typedef int XPLMKeyFlags;
  * with MS v-keys.                                                             
  *
  */
-
 
 #define XPLM_VK_BACK         0x08
 

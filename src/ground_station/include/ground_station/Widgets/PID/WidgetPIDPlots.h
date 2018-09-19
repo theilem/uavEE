@@ -19,7 +19,6 @@
 #ifndef WIDGETPIDPLOTS_H
 #define WIDGETPIDPLOTS_H
 
-
 #include <QWidget>
 #include "ground_station/IDataSignals.h"
 #include "ground_station/IPIDConfigurator.h"
@@ -33,51 +32,51 @@ class WidgetPIDPlots;
 
 class WidgetPIDPlots: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "pid_plots";
+	static constexpr auto widgetName = "pid_plots";
 
-    explicit
-    WidgetPIDPlots(QWidget* parent = 0);
-    ~WidgetPIDPlots();
+	explicit
+	WidgetPIDPlots(QWidget* parent = 0);
+	~WidgetPIDPlots();
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetPIDPlots(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetPIDPlots(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
 
 private slots:
 
-    void
-    on_rowsOnly_pressed();
+	void
+	on_rowsOnly_pressed();
 
-    void
-    on_columnsOnly_pressed();
+	void
+	on_columnsOnly_pressed();
 
-    void
-    on_custom_pressed();
+	void
+	on_custom_pressed();
 
-    void
-    on_numCols_valueChanged(int arg1);
+	void
+	on_numCols_valueChanged(int arg1);
 
-    void
-    onPIDStati(const radio_comm::pidstati& data);
+	void
+	onPIDStati(const radio_comm::pidstati& data);
 
 private:
 
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 
-    void
-    clearGrid();
+	void
+	clearGrid();
 
-    Ui::WidgetPIDPlots* ui;
-    std::map<int, std::shared_ptr<PIDCustomPlot>> plots;
+	Ui::WidgetPIDPlots* ui;
+	std::map<int, std::shared_ptr<PIDCustomPlot>> plots;
 };
 
 #endif // WIDGETPIDPLOTS_H

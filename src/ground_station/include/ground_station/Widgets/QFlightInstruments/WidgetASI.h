@@ -60,38 +60,42 @@
 
 namespace Ui
 {
-    class WidgetASI;
+class WidgetASI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetASI : public QWidget
+class WidgetASI: public QWidget
 {
-    Q_OBJECT
-    
+Q_OBJECT
+
 public:
 
-    explicit WidgetASI( QWidget * parent = 0 );
+	explicit
+	WidgetASI(QWidget * parent = 0);
 
-    ~WidgetASI();
+	~WidgetASI();
 
-    inline void update()
-    {
-        m_asi->update();
-    }
+	inline void
+	update()
+	{
+		m_asi->update();
+	}
 
-    inline void setAirspeed( float airspeed )
-    {
-        m_asi->setAirspeed( airspeed );
-    }
+	inline void
+	setAirspeed(float airspeed)
+	{
+		m_asi->setAirspeed(airspeed);
+	}
 
 private:
 
-    Ui::WidgetASI * m_ui;
-    qfi_ASI       * m_asi;
-    LayoutSquare  * m_layoutSq;
+	Ui::WidgetASI * m_ui;
+	qfi_ASI * m_asi;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

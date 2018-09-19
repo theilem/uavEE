@@ -16,112 +16,263 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-#include <radio_comm/send_control_override.h>
+
+#include <vector>
+#include <string>
+#include <QJsonArray>
+
 #include "ground_station/IWidgetInterface.h"
 #include "ground_station/Widgets/WidgetManeuverPlanner.h"
 #include "ui_WidgetManeuverPlanner.h"
-#include <QJsonArray>
 
 WidgetManeuverPlanner::WidgetManeuverPlanner(QWidget* parent) :
-    QWidget(parent), ui(new Ui::WidgetManeuverPlanner)
+		QWidget(parent), ui(new Ui::WidgetManeuverPlanner)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 }
 
 WidgetManeuverPlanner::~WidgetManeuverPlanner()
 {
-    delete ui;
+	delete ui;
 }
 
 void
 WidgetManeuverPlanner::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {
-    if(!interface)
-    {
-        APLOG_ERROR << "WidgetManeuverPlanner cannot connect to interface";
-        return;
-    }
-    if(!interface->getConfigManager().isSet())
-    {
-        APLOG_ERROR << "WidgetManeuverPlanner cannot get ConfigManager";
-        return;
-    }
-    configManager_.set(interface->getConfigManager().get());
-    ui->missionOptions->addItem("default");
-    if(configManager_.isSet())
-    {
-        auto cm = configManager_.get();
-        PropertyMapper pm(cm->getMissionConfig());
-        boost::property_tree::ptree planner;
-        if (pm.add("planner", planner, true))
-        {
-            PropertyMapper plannerPm(planner);
-            boost::property_tree::ptree maneuvers;
-            if (plannerPm.add("maneuvers", maneuvers, true))
-            {
-                for (const auto& it : maneuvers)
-                {
-                    ui->maneuverOptions->addItem(QString::fromStdString(it.first));
-                }
-            }
-            boost::property_tree::ptree missions;
-            if (plannerPm.add("missions", missions, true))
-            {
-                for (const auto& it : missions)
-                {
-                    ui->missionOptions->addItem(QString::fromStdString(it.first));
-                }
-            }
-        }
-    }
+	if (!interface)
+	{
+		APLOG_ERROR << "WidgetManeuverPlanner cannot connect to interface";
+		return;
+	}
+	if (!interface->getConfigManager().isSet())
+	{
+		APLOG_ERROR << "WidgetManeuverPlanner cannot get ConfigManager";
+		return;
+	}
+	configManager_.set(interface->getConfigManager().get());
+	ui->missionOptions->addItem("default");
+	if (configManager_.isSet())
+	{
+		auto cm = configManager_.get();
+		PropertyMapper pm(cm->getMissionConfig());
+		boost::property_tree::ptree planner;
+		boost::property_tree::ptree maneuver;
+		if (pm.add("mission_planner", planner, true))
+		{
+			PropertyMapper plannerPm(planner);
+			boost::property_tree::ptree missions;
+			if (plannerPm.add("missions", missions, true))
+			{
+				for (const auto& it : missions)
+				{
+					ui->missionOptions->addItem(QString::fromStdString(it.first));
+				}
+			}
+		}
+		if (pm.add("maneuver_planner", maneuver, true))
+		{
+			PropertyMapper plannerPm(maneuver);
+			boost::property_tree::ptree maneuvers;
+			if (plannerPm.add("maneuvers", maneuvers, true))
+			{
+				for (const auto& it : maneuvers)
+				{
+					ui->maneuverOptions->addItem(QString::fromStdString(it.first));
+				}
+			}
+		}
+
+		auto config = cm->getWidgetConfigByName(widgetName);
+		configure(config);
+	}
 }
 
 void
 WidgetManeuverPlanner::on_apply_clicked()
 {
-    radio_comm::send_control_override::Request co;
-    co.overridemaneuverplanner = ui->overridePlanner->isChecked();
+	Override override;
 
-    co.rolltargetvalue = ui->rollTargetValue->text().toDouble() * M_PI / 180;
-    co.pitchtargetvalue = ui->pitchTargetValue->text().toDouble() * M_PI / 180;
-    co.velocitytargetvalue = ui->velocityTargetValue->text().toDouble();
-    co.climbratetargetvalue = ui->climbRateTargetValue->text().toDouble();
-    co.yawratetargetvalue = ui->yawRateTargetValue->text().toDouble() * M_PI / 180;
+	for (const auto& it : localPlannerTargets_)
+	{
+		if (!it.second->isEmpty())
+			override.localPlanner.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
 
-    co.rolloutputvalue = ui->rollOutputValue->text().toDouble();
-    co.pitchoutputvalue = ui->pitchOutputValue->text().toDouble();
-    co.yawoutputvalue = ui->yawOutputValue->text().toDouble();
-    co.throttleoutputvalue = ui->throttleOutputValue->text().toDouble();
-    co.flapoutputvalue = ui->flapOutputValue->text().toDouble();
+	for (const auto& it : controllerTargets_)
+	{
+		if (!it.second->isEmpty())
+			override.controllerTarget.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
 
-    co.rolltargetoverride = ui->rollTargetOverride->isChecked();
-    co.pitchtargetoverride = ui->pitchTargetOverride->isChecked();
-    co.velocitytargetoverride = ui->velocityTargetOverride->isChecked();
-    co.climbratetargetoverride = ui->climbRateTargetOverride->isChecked();
-    co.yawratetargetoverride = ui->yawRateTargetOverride->isChecked();
+	for (const auto& it : pids_)
+	{
+		if (!it.second->isEmpty())
+			override.pid.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
 
-    co.rolloutputoverride = ui->rollOutputOverride->isChecked();
-    co.pitchoutputoverride = ui->pitchOutputOverride->isChecked();
-    co.yawoutputoverride = ui->yawOutputOverride->isChecked();
-    co.throttleoutputoverride = ui->throttleOutputOverride->isChecked();
-    co.flapoutputoverride = ui->flapOutputOverride->isChecked();
+	for (const auto& it : controllerOutputs_)
+	{
+		if (!it.second->isEmpty())
+			override.output.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
 
-    co.activate = ui->activate->isChecked();
+	for (const auto& it : custom_)
+	{
+		if (!it.second->isEmpty())
+			override.custom.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
 
-    configManager_.get()->sendManeuverOverride(co);
+	degreeToRadian(override);
+
+	configManager_.get()->sendOverride(override);
+}
+
+void
+WidgetManeuverPlanner::on_abort_clicked()
+{
+	Override override; //Send an empty override
+
+	configManager_.get()->sendOverride(override);
 }
 
 void
 WidgetManeuverPlanner::on_sendManeuver_clicked()
 {
-    if (!ui->maneuverOptions->currentText().isEmpty())
-    {
-        configManager_.get()->sendManeuverSequence(ui->maneuverOptions->currentText().toStdString());
-    }
+	if (!ui->maneuverOptions->currentText().isEmpty())
+	{
+		configManager_.get()->sendManeuverSet(ui->maneuverOptions->currentText().toStdString());
+	}
+}
+
+bool
+WidgetManeuverPlanner::configure(const boost::property_tree::ptree& config)
+{
+	PropertyMapper pm(config);
+
+	std::vector<LocalPlannerTargets> lp;
+	std::vector<ControllerTargets> ct;
+	std::vector<PIDs> pids;
+	std::vector<ControllerOutputs> out;
+	std::vector<CustomOverrideIDs> custom;
+
+	std::string overrideGroup;
+
+	for (const auto& it : config)
+	{
+		overrideGroup = it.first;
+		auto overrideGroupEnum = EnumMap<OverrideGroup>::convert(overrideGroup);
+
+		switch (overrideGroupEnum)
+		{
+		case OverrideGroup::LOCAL_PLANNER:
+		{
+			pm.addEnumVector(overrideGroup, lp, false);
+			break;
+		}
+		case OverrideGroup::CONTROLLER_TARGETS:
+		{
+			pm.addEnumVector(overrideGroup, ct, false);
+			break;
+		}
+		case OverrideGroup::PIDS:
+		{
+			pm.addEnumVector(overrideGroup, pids, false);
+			break;
+		}
+		case OverrideGroup::CONTROLLER_OUTPUTS:
+		{
+			pm.addEnumVector(overrideGroup, out, false);
+			break;
+		}
+		case OverrideGroup::CUSTOM:
+		{
+			pm.addEnumVector(overrideGroup, custom, false);
+			break;
+		}
+		case OverrideGroup::INVALID:
+		{
+			APLOG_WARN << "WidgetManeuverPlanner: Invalid Override Group: " << overrideGroup;
+			break;
+		}
+		default:
+		{
+			APLOG_WARN << "WidgetManeuverPlanner: Unknown Override Group: " << overrideGroup;
+		}
+		}
+	}
+
+	QVBoxLayout* layoutLP = new QVBoxLayout;
+	layoutLP->setMargin(2);
+	layoutLP->setSpacing(0);
+	for (const auto& it : lp)
+	{
+		if (it == LocalPlannerTargets::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<LocalPlannerTargets>::convert(it),
+				ui->localPlannerGroup);
+		localPlannerTargets_.insert(std::make_pair(it, edit));
+		layoutLP->addWidget(edit);
+	}
+	ui->localPlannerGroup->setLayout(layoutLP);
+
+	QVBoxLayout* layoutCT = new QVBoxLayout;
+	layoutCT->setMargin(2);
+	layoutCT->setSpacing(0);
+	for (const auto& it : ct)
+	{
+		if (it == ControllerTargets::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<ControllerTargets>::convert(it),
+				ui->controllerTargetsGroup);
+		controllerTargets_.insert(std::make_pair(it, edit));
+		layoutCT->addWidget(edit);
+	}
+	ui->controllerTargetsGroup->setLayout(layoutCT);
+
+	QVBoxLayout* layoutPid = new QVBoxLayout;
+	layoutPid->setMargin(2);
+	layoutPid->setSpacing(0);
+	for (const auto& it : pids)
+	{
+		if (it == PIDs::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<PIDs>::convert(it), ui->pidsGroup);
+		pids_.insert(std::make_pair(it, edit));
+		layoutPid->addWidget(edit);
+	}
+	ui->pidsGroup->setLayout(layoutPid);
+
+	QVBoxLayout* layoutOut = new QVBoxLayout;
+	layoutOut->setMargin(2);
+	layoutOut->setSpacing(0);
+	for (const auto& it : out)
+	{
+		if (it == ControllerOutputs::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<ControllerOutputs>::convert(it), ui->outputsGroup);
+		controllerOutputs_.insert(std::make_pair(it, edit));
+		layoutOut->addWidget(edit);
+	}
+	ui->outputsGroup->setLayout(layoutOut);
+
+	QVBoxLayout* layoutCustom = new QVBoxLayout;
+	layoutCustom->setMargin(2);
+	layoutCustom->setSpacing(0);
+	for (const auto& it : custom)
+	{
+		if (it == CustomOverrideIDs::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<CustomOverrideIDs>::convert(it), ui->customGroup);
+		custom_.insert(std::make_pair(it, edit));
+		layoutCustom->addWidget(edit);
+	}
+	ui->customGroup->setLayout(layoutCustom);
+
+	return pm.map();
 }
 
 void
 WidgetManeuverPlanner::on_sendMission_clicked()
 {
-    configManager_.get()->sendMission(ui->missionOptions->currentText().toStdString());
+	configManager_.get()->sendMission(ui->missionOptions->currentText().toStdString());
 }

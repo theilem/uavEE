@@ -57,42 +57,42 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-WidgetASI::WidgetASI( QWidget * parent ) :
-    QWidget( parent ),
-    m_ui( new Ui::WidgetASI ),
-    m_asi ( 0 ),
-    m_layoutSq ( 0 )
+WidgetASI::WidgetASI(QWidget * parent) :
+		QWidget(parent), m_ui(new Ui::WidgetASI), m_asi(0), m_layoutSq(0)
 {
-    m_ui->setupUi( this );
+	m_ui->setupUi(this);
 
-    setupUi();
+	setupUi();
 
-    m_asi = m_ui->graphicsASI;
+	m_asi = m_ui->graphicsASI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 WidgetASI::~WidgetASI()
 {
-    if ( m_layoutSq ) {
-        delete m_layoutSq;
-        m_layoutSq = 0;
-    }
+	if (m_layoutSq)
+	{
+		delete m_layoutSq;
+		m_layoutSq = 0;
+	}
 
-    if ( m_ui ) {
-        delete m_ui;
-        m_ui = 0;
-    }
+	if (m_ui)
+	{
+		delete m_ui;
+		m_ui = 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void WidgetASI::setupUi()
+void
+WidgetASI::setupUi()
 {
-    m_layoutSq = new LayoutSquare( this );
+	m_layoutSq = new LayoutSquare(this);
 
-    m_layoutSq->setContentsMargins( 0, 0, 0, 0 );
-    m_layoutSq->addWidget( m_ui->graphicsASI );
+	m_layoutSq->setContentsMargins(0, 0, 0, 0);
+	m_layoutSq->addWidget(m_ui->graphicsASI);
 
-    setLayout( m_layoutSq );
+	setLayout(m_layoutSq);
 }

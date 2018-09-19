@@ -1,0 +1,14 @@
+{
+	"autopilot_interface":
+	{
+		"type":"direct"
+	},
+	"ros_interface":
+	{
+	},
+	"autopilot_launcher":
+	{
+		"watchdog_binary":"/usr/local/bin/uavAP/Watchdog",
+		"watchdog_config":"/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar-geo/watchdog.json"
+	}
+}

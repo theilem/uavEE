@@ -19,6 +19,7 @@
 #ifndef GRAPHICSMAPVIEW_H
 #define GRAPHICSMAPVIEW_H
 
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <QGraphicsView>
 #include <QImage>
 #include <QPair>
@@ -49,22 +50,34 @@ public:
 	mapPointToUTM(QPointF position, double down) const;
 	QPointF
 	UTMToMapPoint(double e, double n) const;
+
+	QPointF
+	LocalFrameToMapPoint(double e, double n) const;
 	void
 	connect(std::shared_ptr<IDataSignals> dataSignals, std::shared_ptr<MapLogic> mapLogic);
 
 protected:
 
-    /**
-     * @brief drawBackground
-     * @param painter
-     * @param rect
-     */
+	/**
+	 * @brief drawBackground
+	 * @param painter
+	 * @param rect
+	 */
 	void
 	drawBackground(QPainter * painter, const QRectF &rect) override;
 	void
 	drawForeground(QPainter * painter, const QRectF &) override;
+
+public slots:
+
+	void
+	mouseMoveEvent(QMouseEvent* move) override;
+
 	void
 	mouseReleaseEvent(QMouseEvent *event) override;
+
+	void
+	mousePressEvent(QMouseEvent* event) override;
 
 private slots:
 
@@ -76,33 +89,50 @@ private slots:
 	on_hasNewTrajectory(const Trajectory&);
 	void
 	on_hasNewActivePath(int);
+	void
+	on_localFrame(const VehicleOneFrame& );
 
 private:
 
 	void
 	drawMap(QPainter *painter, const QRectF &rect);
+
 	void
 	drawTrajectory(QPainter *painter);
-	Vector3
-	drawLine(QPainter *painter, Line &line, Vector3 *startPoint);
-	Vector3
-	drawCurve(QPainter *painter, Curve &curve, Vector3 *startPoint);
-	Vector3
-	drawCubicSpline(QPainter *painter, CubicSpline& spline, Vector3 *startPoint);
+
 	void
-	drawOrbit(QPainter *painter, const Orbit &orbit);
+	drawPathSection(QPainter *painter, std::shared_ptr<IPathSection>, Vector3& lastPoint);
+
+	void
+	drawLine(QPainter *painter, std::shared_ptr<Line> line, Vector3& lastPoint);
+
+	void
+	drawCurve(QPainter *painter, std::shared_ptr<Curve> curve, Vector3& lastPoint);
+
+	void
+	drawCubicSpline(QPainter *painter, std::shared_ptr<CubicSpline> spline, Vector3& lastPoint);
+
+	void
+	drawOrbit(QPainter *painter, std::shared_ptr<Orbit> orbit, Vector3& lastPoint);
+
 	void
 	drawMission(QPainter *painter);
+
 	void
 	drawPathHistory(QPainter *painter);
+
 	void
 	drawControllerTarget(QPainter* painter);
+
 	void
 	highlightActivePath(QPainter *painter);
+
 	void
 	drawAircraft(QPainter *painter);
+
 //	void
 //	drawAntenna(QPainter *painter);
+
 	void
 	drawSafetyNet(QPainter *painter);
 
@@ -110,7 +140,7 @@ private:
 	MapLocation seCorner;
 	MapLocation center;
 	MapLocation focus;
-	int zoom;
+	int zoom_;
 	float aircraftScale;
 	QPixmap mapImage;
 	QPixmap aircraftImage;
@@ -125,6 +155,12 @@ private:
 	QPixmap savedScaledMapImage;
 	MapLocation aircraftLocation;
 	IPathSection * currentSection;
+
+	QPointF moveStart_;
+	MapLocation lastCenter_;
+	QPointF lastCenterTileCoords_;
+
+	VehicleOneFrame localFrame_;
 };
 
 #endif // GRAPHICSMAPVIEW_H

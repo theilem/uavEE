@@ -20,6 +20,7 @@
 #define WIDGETSENSORDATA_H
 
 #include <simulation_interface/sensor_data.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <memory>
 #include <QWidget>
 
@@ -32,34 +33,39 @@ class WidgetSensorData;
 
 class WidgetSensorData: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "sensor_data";
+	static constexpr auto widgetName = "sensor_data";
 
-    explicit
-    WidgetSensorData(QWidget* parent = 0);
+	explicit
+	WidgetSensorData(QWidget* parent = 0);
 
-    ~WidgetSensorData();
+	~WidgetSensorData();
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetSensorData(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetSensorData(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
 
 public slots:
 
-    void
-    onSensorData(const simulation_interface::sensor_data& sd);
+	void
+	onSensorData(const simulation_interface::sensor_data& sd);
+
+	void
+	onLocalFrame(const VehicleOneFrame&);
 
 private:
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
-    Ui::WidgetSensorData* ui;
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	Ui::WidgetSensorData* ui;
+
+	VehicleOneFrame localFrame_;
 };
 
 #endif // WIDGETSENSORDATA_H

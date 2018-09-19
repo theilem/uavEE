@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPWidgetUtils_h_
 #define _XPWidgetUtils_h_
 
@@ -36,7 +54,8 @@
 #include "XPWidgetDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -46,8 +65,6 @@ extern "C" {
  *                                                                             
  *
  */
-
-
 
 /*
  * Convenience accessors
@@ -87,18 +104,19 @@ extern "C" {
  * XPUCreateWidgets is used.                                                   
  *
  */
-typedef struct {
-     int                       left;
-     int                       top;
-     int                       right;
-     int                       bottom;
-     int                       visible;
-     const char *              descriptor;
-     /* Whether ethis widget is a root wiget                                        */
-     int                       isRoot;
-     /* The index of the widget to contain within, or a constant                    */
-     int                       containerIndex;
-     XPWidgetClass             widgetClass;
+typedef struct
+{
+	int left;
+	int top;
+	int right;
+	int bottom;
+	int visible;
+	const char * descriptor;
+	/* Whether ethis widget is a root wiget                                        */
+	int isRoot;
+	/* The index of the widget to contain within, or a constant                    */
+	int containerIndex;
+	XPWidgetClass widgetClass;
 } XPWidgetCreate_t;
 
 #define NO_PARENT            -1
@@ -106,7 +124,7 @@ typedef struct {
 #define PARAM_PARENT         -2
 
 #define WIDGET_COUNT(x) ((sizeof(x) / sizeof(XPWidgetCreate_t)))
-        
+
 /*
  * XPUCreateWidgets
  * 
@@ -124,11 +142,9 @@ typedef struct {
  * XPUCreateWidgets in a widget created previously.                            
  *
  */
-WIDGET_API void                 XPUCreateWidgets(
-                                   const XPWidgetCreate_t * inWidgetDefs,    
-                                   int                  inCount,    
-                                   XPWidgetID           inParamParent,    
-                                   XPWidgetID *         ioWidgets);    
+WIDGET_API void
+XPUCreateWidgets(const XPWidgetCreate_t * inWidgetDefs, int inCount, XPWidgetID inParamParent,
+		XPWidgetID * ioWidgets);
 
 /*
  * XPUMoveWidgetBy
@@ -137,10 +153,8 @@ WIDGET_API void                 XPUCreateWidgets(
  * widget.                                                                     
  *
  */
-WIDGET_API void                 XPUMoveWidgetBy(
-                                   XPWidgetID           inWidget,    
-                                   int                  inDeltaX,    
-                                   int                  inDeltaY);    
+WIDGET_API void
+XPUMoveWidgetBy(XPWidgetID inWidget, int inDeltaX, int inDeltaY);
 
 /***************************************************************************
  * LAYOUT MANAGERS
@@ -152,7 +166,6 @@ WIDGET_API void                 XPUMoveWidgetBy(
  *
  */
 
-
 /*
  * XPUFixedLayout
  * 
@@ -161,11 +174,9 @@ WIDGET_API void                 XPUMoveWidgetBy(
  * widget for your window.                                                     
  *
  */
-WIDGET_API int                  XPUFixedLayout(
-                                   XPWidgetMessage      inMessage,    
-                                   XPWidgetID           inWidget,    
-                                   intptr_t             inParam1,    
-                                   intptr_t             inParam2);    
+WIDGET_API int
+XPUFixedLayout(XPWidgetMessage inMessage, XPWidgetID inWidget, intptr_t inParam1,
+		intptr_t inParam2);
 
 /***************************************************************************
  * WIDGET PROC BEHAVIORS
@@ -177,7 +188,6 @@ WIDGET_API int                  XPUFixedLayout(
  *
  */
 
-
 /*
  * XPUSelectIfNeeded
  * 
@@ -186,12 +196,9 @@ WIDGET_API int                  XPUFixedLayout(
  * consumed by bringin the window to the foreground.                           
  *
  */
-WIDGET_API int                  XPUSelectIfNeeded(
-                                   XPWidgetMessage      inMessage,    
-                                   XPWidgetID           inWidget,    
-                                   intptr_t             inParam1,    
-                                   intptr_t             inParam2,    
-                                   int                  inEatClick);    
+WIDGET_API int
+XPUSelectIfNeeded(XPWidgetMessage inMessage, XPWidgetID inWidget, intptr_t inParam1,
+		intptr_t inParam2, int inEatClick);
 
 /*
  * XPUDefocusKeyboard
@@ -200,12 +207,9 @@ WIDGET_API int                  XPUSelectIfNeeded(
  * This stops editing of any text fields, etc.                                 
  *
  */
-WIDGET_API int                  XPUDefocusKeyboard(
-                                   XPWidgetMessage      inMessage,    
-                                   XPWidgetID           inWidget,    
-                                   intptr_t             inParam1,    
-                                   intptr_t             inParam2,    
-                                   int                  inEatClick);    
+WIDGET_API int
+XPUDefocusKeyboard(XPWidgetMessage inMessage, XPWidgetID inWidget, intptr_t inParam1,
+		intptr_t inParam2, int inEatClick);
 
 /*
  * XPUDragWidget
@@ -215,15 +219,9 @@ WIDGET_API int                  XPUDefocusKeyboard(
  * be a sub-region of your widget (for example, a title bar).                  
  *
  */
-WIDGET_API int                  XPUDragWidget(
-                                   XPWidgetMessage      inMessage,    
-                                   XPWidgetID           inWidget,    
-                                   intptr_t             inParam1,    
-                                   intptr_t             inParam2,    
-                                   int                  inLeft,    
-                                   int                  inTop,    
-                                   int                  inRight,    
-                                   int                  inBottom);    
+WIDGET_API int
+XPUDragWidget(XPWidgetMessage inMessage, XPWidgetID inWidget, intptr_t inParam1, intptr_t inParam2,
+		int inLeft, int inTop, int inRight, int inBottom);
 
 #ifdef __cplusplus
 }

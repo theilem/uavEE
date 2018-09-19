@@ -33,42 +33,40 @@ class IWidgetInterface;
 
 class WidgetCPGrid: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "cp_grid";
+	static constexpr auto widgetName = "cp_grid";
 
-    explicit
-    WidgetCPGrid(QWidget* parent = 0);
-    ~WidgetCPGrid();
+	explicit
+	WidgetCPGrid(QWidget* parent = 0);
+	~WidgetCPGrid();
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetCPGrid(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
-
-
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetCPGrid(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
 
 public slots:
-    void
-    on_sendAllParams_clicked();
-    void
-    onPIDStati(const radio_comm::pidstati& data);
-    void
-    on_saveGains_clicked();
-    void
-    on_loadGains_clicked();
+	void
+	on_sendAllParams_clicked();
+	void
+	onPIDStati(const radio_comm::pidstati& data);
+	void
+	on_saveGains_clicked();
+	void
+	on_loadGains_clicked();
 
 private:
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
-    QString title;
-    Ui::WidgetCPGrid* ui;
-    std::map<int, std::shared_ptr<PIDConfigPlot>> plots;
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	QString title;
+	Ui::WidgetCPGrid* ui;
+	std::map<int, std::shared_ptr<PIDConfigPlot>> plots;
 };
 
 #endif // WIDGETCPGRID_H

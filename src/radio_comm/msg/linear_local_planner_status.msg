@@ -1,4 +1,0 @@
-airplane_linear_local_planner_status airplane_status 
-uint32 current_path_section 
-velocity_body velocity_target 
-float64 yaw_rate_target 

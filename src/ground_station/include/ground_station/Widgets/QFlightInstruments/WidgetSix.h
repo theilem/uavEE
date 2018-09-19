@@ -69,101 +69,101 @@ class WidgetSix;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetSix : public QWidget
+class WidgetSix: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "six";
+	static constexpr auto widgetName = "six";
 
-    explicit
-    WidgetSix( QWidget* parent = 0 );
+	explicit
+	WidgetSix(QWidget* parent = 0);
 
-    ~WidgetSix();
+	~WidgetSix();
 
-    void
-    update();
+	void
+	update();
 
-    inline void
-    setRoll( float roll )
-    {
-        m_widgetADI->setRoll( roll );
-    }
+	inline void
+	setRoll(float roll)
+	{
+		m_widgetADI->setRoll(roll);
+	}
 
-    inline void
-    setPitch( float pitch )
-    {
-        m_widgetADI->setPitch( pitch );
-    }
+	inline void
+	setPitch(float pitch)
+	{
+		m_widgetADI->setPitch(pitch);
+	}
 
-    inline void
-    setAltitude( float altitude )
-    {
-        m_widgetALT->setAltitude( altitude );
-    }
+	inline void
+	setAltitude(float altitude)
+	{
+		m_widgetALT->setAltitude(altitude);
+	}
 
-    inline void
-    setPressure( float pressure )
-    {
-        m_widgetALT->setPressure( pressure );
-    }
+	inline void
+	setPressure(float pressure)
+	{
+		m_widgetALT->setPressure(pressure);
+	}
 
-    inline void
-    setAirspeed( float airspeed )
-    {
-        m_widgetASI->setAirspeed( airspeed );
-    }
+	inline void
+	setAirspeed(float airspeed)
+	{
+		m_widgetASI->setAirspeed(airspeed);
+	}
 
-    inline void
-    setHeading( float heading )
-    {
-        m_widgetHSI->setHeading( heading );
-    }
+	inline void
+	setHeading(float heading)
+	{
+		m_widgetHSI->setHeading(heading);
+	}
 
-    inline void
-    setTurnRate( float turnRate )
-    {
-        m_widgetTC->setTurnRate( turnRate );
-    }
+	inline void
+	setTurnRate(float turnRate)
+	{
+		m_widgetTC->setTurnRate(turnRate);
+	}
 
-    inline void
-    setSlipSkid( float slipSkid )
-    {
-        m_widgetTC->setSlipSkid( slipSkid );
-    }
+	inline void
+	setSlipSkid(float slipSkid)
+	{
+		m_widgetTC->setSlipSkid(slipSkid);
+	}
 
-    inline void
-    setClimbRate( float climbRate )
-    {
-        m_widgetVSI->setClimbRate( climbRate );
-    }
+	inline void
+	setClimbRate(float climbRate)
+	{
+		m_widgetVSI->setClimbRate(climbRate);
+	}
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetSix(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetSix(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
 
 private slots:
-    void
-    on_hasNewSample(const simulation_interface::sensor_data& s);
+	void
+	on_hasNewSample(const simulation_interface::sensor_data& s);
 
 private:
 
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 
-    Ui::WidgetSix* m_ui;
+	Ui::WidgetSix* m_ui;
 
-    WidgetADI* m_widgetADI;
-    WidgetALT* m_widgetALT;
-    WidgetASI* m_widgetASI;
-    WidgetHSI* m_widgetHSI;
-    WidgetTC*   m_widgetTC;
-    WidgetVSI* m_widgetVSI;
+	WidgetADI* m_widgetADI;
+	WidgetALT* m_widgetALT;
+	WidgetASI* m_widgetASI;
+	WidgetHSI* m_widgetHSI;
+	WidgetTC* m_widgetTC;
+	WidgetVSI* m_widgetVSI;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

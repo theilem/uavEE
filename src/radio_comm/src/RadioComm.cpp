@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -22,20 +22,27 @@
  *  Created on: Dec 10, 2017
  *      Author: mircot
  */
+
+#include <std_msgs/String.h>
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/IDataPresentation.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
+#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
+#include <autopilot_interface/detail/uavAPConversions.h>
+#include <simulation_interface/sensor_data.h>
+
+#include "radio_comm/serialized_proto.h"
 #include "radio_comm/RadioComm.h"
 #include "radio_comm/pidstati.h"
 #include "radio_comm/serialized_object.h"
-#include "radio_comm/local_planner_status.h"
-
-#include <autopilot_interface/uavAPConversions.h>
-#include <simulation_interface/sensor_data.h>
-#include <uavAP/Core/IDC/IInterDeviceComm.h>
-#include <uavAP/Core/IDC/Serial/SerialIDCParams.h>
-#include <uavAP/Core/Logging/APLogger.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
-#include <uavAP/MissionControl/MissionPlanner/ControlOverride.h>
 
 std::shared_ptr<RadioComm>
 RadioComm::create(const boost::property_tree::ptree& config)
@@ -50,16 +57,13 @@ bool
 RadioComm::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
-	pm.add("serial_port", radioSerialPort_, true);
-
 	return pm.map();
 }
 
 void
-RadioComm::notifyAggregationOnUpdate(Aggregator& agg)
+RadioComm::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	idc_.setFromAggregationIfNotSet(agg);
-//	scheduler_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);
 }
 
@@ -75,38 +79,45 @@ RadioComm::run(RunStage stage)
 			APLOG_ERROR << "RadioComm: InterDeviceCommunication missing";
 			return true;
 		}
-//		if (!scheduler_.isSet())
-//		{
-//			APLOG_ERROR << "RadioComm: Scheduler missing";
-//			return true;
-//		}
+
 		if (!dataPresentation_.isSet())
 		{
 			APLOG_ERROR << "RadioComm: DataPresentation missing";
 			return true;
 		}
-//		if (!timeProvider_.isSet())
-//		{
-//			APLOG_ERROR << "RadioComm: TimeProvider missing";
-//			return true;
-//		}
 
 		ros::NodeHandle nh;
 		sensorDataPublisher_ = nh.advertise<simulation_interface::sensor_data>(
 				"/radio_comm/sensor_data", 20);
 		pidStatiPublisher_ = nh.advertise<radio_comm::pidstati>("/radio_comm/pid_stati", 20);
-		trajectoryPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/trajectory", 20);
+		inspectingMetricsPublisher_ = nh.advertise<radio_comm::serialized_object>(
+				"/radio_comm/inspecting_metrics", 20);
+		trajectoryPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/trajectory",
+				20);
 		missionPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/mission", 20);
-		localPlannerStatusPublisher_ = nh.advertise<radio_comm::local_planner_status>(
+		overridePublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/override", 20);
+		localFramePublisher_ = nh.advertise<radio_comm::serialized_object>(
+				"/radio_comm/local_frame", 20);
+		localPlannerStatusPublisher_ = nh.advertise<radio_comm::serialized_proto>(
 				"/radio_comm/local_planner_status", 20);
+		safetyBoundsPublisher_ = nh.advertise<std_msgs::String>("/radio_comm/safety_bounds", 20);
 
 		selectMissionService_ = nh.advertiseService("/radio_comm/select_mission",
 				&RadioComm::selectMission, this);
+		selectManeuverService_ = nh.advertiseService("/radio_comm/select_maneuver",
+				&RadioComm::selectManeuver, this);
+		selectInspectingMetricsService_ = nh.advertiseService(
+				"/radio_comm/select_inspecting_metrics", &RadioComm::selectInspectingMetrics, this);
 		requestDataService_ = nh.advertiseService("/radio_comm/request_data",
 				&RadioComm::requestData, this);
-		tunePIDService_ = nh.advertiseService("/radio_comm/tune_pid",
-				&RadioComm::tunePID, this);
-		sendControlOverrideService_ = nh.advertiseService("/radio_comm/send_control_override", &RadioComm::sendControlOverride, this);
+		genericTuningService_ = nh.advertiseService("/radio_comm/tune_generic",
+				&RadioComm::tuneGeneric, this);
+		tunePIDService_ = nh.advertiseService("/radio_comm/tune_pid", &RadioComm::tunePID, this);
+		sendOverrideService_ = nh.advertiseService("/radio_comm/send_override",
+				&RadioComm::sendOverride, this);
+		sendAdvancedControlService_ = nh.advertiseService("/radio_comm/send_advanced_control",
+				&RadioComm::sendAdvancedControl, this);
+
 		break;
 	}
 	case RunStage::NORMAL:
@@ -117,11 +128,10 @@ RadioComm::run(RunStage stage)
 			APLOG_ERROR << "Radio Comm IDC missing.";
 			return true;
 		}
-		SerialIDCParams params(radioSerialPort_, 115200, "*-*\n");
-		idc->subscribeOnPacket(params,
+		radioReceiver_ = idc->subscribeOnPacket("autopilot",
 				std::bind(&RadioComm::onAutopilotPacket, this, std::placeholders::_1));
 
-		radioSender_ = idc->createSender(params);
+		radioSender_ = idc->createSender("autopilot");
 		break;
 	}
 	case RunStage::FINAL:
@@ -145,33 +155,77 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 	std::string packetString = packet.getBuffer();
 
 	Content content(Content::INVALID);
-	boost::any any = dp->deserialize(packet, content);
+
+	boost::any any;
+	try
+	{
+		any = dp->deserialize(packet, content);
+	} catch (std::runtime_error& err)
+	{
+		APLOG_ERROR << "runtime error: " << err.what();
+		return;
+	}
 
 	try
 	{
 		switch (content)
 		{
 		case Content::SENSOR_DATA:
+		{
 			sensorDataPublisher_.publish(apToRos(boost::any_cast<SensorData>(any)));
 			break;
+		}
 		case Content::PID_STATUS:
 			pidStatiPublisher_.publish(apToRos(boost::any_cast<PIDStati>(any)));
 			break;
-		case Content::LOCAL_PLANNER_STATUS:
-			localPlannerStatusPublisher_.publish(apToRos(boost::any_cast<LocalPlannerStatus>(any)));
+		case Content::INSPECTING_METRICS:
+		{
+			radio_comm::serialized_object inspectingMetrics;
+			inspectingMetrics.serialized =
+					dp::serialize(boost::any_cast<SteadyStateMetrics>(any)).getBuffer();
+			inspectingMetricsPublisher_.publish(inspectingMetrics);
 			break;
+		}
+		case Content::LOCAL_PLANNER_STATUS:
+		{
+			radio_comm::serialized_proto msg;
+			msg.proto_message = boost::any_cast<LocalPlannerStatus>(any).SerializeAsString();
+			localPlannerStatusPublisher_.publish(msg);
+			break;
+		}
+		case Content::SAFETY_BOUNDS:
+		{
+			std_msgs::String msg;
+			msg.data = boost::any_cast<Rectanguloid>(any).SerializeAsString();
+			safetyBoundsPublisher_.publish(msg);
+			break;
+		}
 		case Content::TRAJECTORY:
 		{
 			radio_comm::serialized_object traj;
-			traj.serialized = packetString;
+			traj.serialized = dp::serialize(boost::any_cast<Trajectory>(any)).getBuffer();
 			trajectoryPublisher_.publish(traj);
 			break;
 		}
 		case Content::MISSION:
 		{
 			radio_comm::serialized_object mission;
-			mission.serialized = packetString;
+			mission.serialized = dp::serialize(boost::any_cast<Mission>(any)).getBuffer();
 			missionPublisher_.publish(mission);
+			break;
+		}
+		case Content::LOCAL_FRAME:
+		{
+			radio_comm::serialized_object local;
+			local.serialized = dp::serialize(boost::any_cast<VehicleOneFrame>(any)).getBuffer();
+			localFramePublisher_.publish(local);
+			break;
+		}
+		case Content::OVERRIDE:
+		{
+			radio_comm::serialized_object override;
+			override.serialized = dp::serialize(boost::any_cast<Override>(any)).getBuffer();
+			overridePublisher_.publish(override);
 			break;
 		}
 		default:
@@ -181,6 +235,9 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 	} catch (boost::bad_any_cast& err)
 	{
 		APLOG_ERROR << "Bad any cast for Content " << (int) content << ": " << any.empty();
+	} catch (std::runtime_error& err)
+	{
+		APLOG_ERROR << "runtime error in conversion: " << err.what();
 	}
 
 }
@@ -197,6 +254,43 @@ RadioComm::selectMission(radio_comm::select_mission::Request& req,
 	}
 	auto packet = dp->serialize(req.mission, Content::SELECT_MISSION);
 	dp->setTarget(packet, Target::MISSION_CONTROL);
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::selectManeuver(radio_comm::select_maneuver::Request& req,
+		radio_comm::select_maneuver::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+	auto packet = dp->serialize(req.maneuver, Content::SELECT_MANEUVER_SET);
+	dp->setTarget(packet, Target::MISSION_CONTROL);
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::selectInspectingMetrics(radio_comm::serialized_service::Request& req,
+		radio_comm::serialized_service::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+
+	if (!dp)
+	{
+		APLOG_ERROR << "Data Presentation Missing.";
+		return false;
+	}
+
+	InspectingMetricsPair pair = dp::deserialize<InspectingMetricsPair>(req.serialized);
+
+	auto packet = dp->serialize(pair, Content::SELECT_INSPECTING_METRICS);
+	dp->setTarget(packet, Target::FLIGHT_ANALYSIS);
+
+	resp.valid = true;
+
 	return sendPacket(packet);
 }
 
@@ -222,6 +316,9 @@ RadioComm::requestData(radio_comm::request_data::Request& req,
 		break;
 	case DataRequest::TRAJECTORY:
 		target = Target::FLIGHT_CONTROL;
+		break;
+	case DataRequest::LOCAL_FRAME:
+		target = Target::MISSION_CONTROL;
 		break;
 	default:
 		break;
@@ -265,7 +362,8 @@ RadioComm::tunePID(radio_comm::tune_pid::Request& req, radio_comm::tune_pid::Res
 }
 
 bool
-RadioComm::sendControlOverride(radio_comm::send_control_override::Request& req, radio_comm::send_control_override::Response& resp)
+RadioComm::tuneGeneric(radio_comm::tune_generic::Request& req,
+		radio_comm::tune_generic::Response& resp)
 {
 	auto dp = dataPresentation_.get();
 	if (!dp)
@@ -273,51 +371,89 @@ RadioComm::sendControlOverride(radio_comm::send_control_override::Request& req, 
 		APLOG_ERROR << "DataPresentation missing.";
 		return false;
 	}
-	ControlOverride co;
-	co.overrideManeuverPlanner = req.overridemaneuverplanner;
-	co.activation.activate = req.activate;
-	co.activation.overrideClimbRateTarget = req.climbratetargetoverride;
-	co.activation.overrideFlapOutput = req.flapoutputoverride;
-	co.activation.overridePitchOutput = req.pitchoutputoverride;
-	co.activation.overridePitchTarget = req.pitchtargetoverride;
-	co.activation.overrideRollOutput = req.rolloutputoverride;
-	co.activation.overrideRollTarget = req.rolltargetoverride;
-	co.activation.overrideThrottleOutput = req.throttleoutputoverride;
-	co.activation.overrideVelocityTarget = req.velocitytargetoverride;
-	co.activation.overrideYawOutput = req.yawoutputoverride;
-	co.activation.overrideYawRateTarget = req.yawratetargetoverride;
-	co.activation.overrideClimbRateTarget = req.climbratetargetoverride;
-	co.activation.overrideFlapOutput = req.flapoutputoverride;
-	co.activation.overridePitchOutput = req.pitchoutputoverride;
-	co.activation.overridePitchTarget = req.pitchtargetoverride;
-	co.activation.overrideRollOutput = req.rolloutputoverride;
-	co.activation.overrideRollTarget = req.rolltargetoverride;
-	co.activation.overrideThrottleOutput = req.throttleoutputoverride;
-	co.activation.overrideVelocityTarget = req.velocitytargetoverride;
-	co.activation.overrideYawOutput = req.yawoutputoverride;
-	co.activation.overrideYawRateTarget = req.yawratetargetoverride;
-	co.target.climbRateTarget = req.climbratetargetvalue;
-	co.target.flapOutput = req.flapoutputvalue;
-	co.target.pitchOutput = req.pitchoutputvalue;
-	co.target.pitchTarget = req.pitchtargetvalue;
-	co.target.rollOutput = req.rolloutputvalue;
-	co.target.rollTarget = req.rolltargetvalue;
-	co.target.throttleOutput = req.throttleoutputvalue;
-	co.target.velocityTarget = req.velocitytargetvalue;
-	co.target.yawOutput = req.yawoutputvalue;
-	co.target.yawRateTarget = req.yawratetargetvalue;
-	co.target.climbRateTarget = req.climbratetargetvalue;
-	co.target.flapOutput = req.flapoutputvalue;
-	co.target.pitchOutput = req.pitchoutputvalue;
-	co.target.pitchTarget = req.pitchtargetvalue;
-	co.target.rollOutput = req.rolloutputvalue;
-	co.target.rollTarget = req.rolltargetvalue;
-	co.target.throttleOutput = req.throttleoutputvalue;
-	co.target.velocityTarget = req.velocitytargetvalue;
-	co.target.yawOutput = req.yawoutputvalue;
-	co.target.yawRateTarget = req.yawratetargetvalue;
-	auto packet = dp->serialize(co, Content::OVERRIDE_CONTROL);
+
+	Packet packet;
+	switch (req.id)
+	{
+	case static_cast<int>(Tuning::LOCAL_PLANNER):
+	{
+		LocalPlannerParams params;
+		params.ParseFromString(req.proto_message);
+		resp.valid = true;
+		packet = dp->serialize(params, Content::TUNE_LOCAL_PLANNER);
+		dp->setTarget(packet, Target::FLIGHT_CONTROL);
+		break;
+	}
+	default:
+	{
+		APLOG_ERROR << "Tuning not implemented for: "
+				<< EnumMap<Tuning>::convert(static_cast<Tuning>(req.id));
+
+		resp.valid = false;
+		return false;
+	}
+	}
+
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::sendOverride(radio_comm::serialized_service::Request& req,
+		radio_comm::serialized_service::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+
+	Override override = dp::deserialize<Override>(req.serialized);
+
+	auto packet = dp->serialize(override, Content::OVERRIDE);
 	dp->setTarget(packet, Target::MISSION_CONTROL);
+
+	resp.valid = true;
+
+	return sendPacket(packet);
+
+}
+
+bool
+RadioComm::sendAdvancedControl(radio_comm::send_advanced_control::Request& req,
+		radio_comm::send_advanced_control::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+	AdvancedControl ac;
+	auto it = SpecialControlBimapRight.find(req.special_sel);
+	if (it == SpecialControlBimapRight.end())
+		APLOG_ERROR << "Special control " << req.special_sel << " invalid";
+	else
+		ac.specialSelection = it->second;
+
+	auto it2 = ThrowsBimapRight.find(req.throws_sel);
+	if (it2 == ThrowsBimapRight.end())
+		APLOG_ERROR << "Throws control " << req.throws_sel << " invalid";
+	else
+		ac.throwsSelection = it2->second;
+
+	auto it3 = CamberBimapRight.find(req.camber_sel);
+	if (it3 == CamberBimapRight.end())
+		APLOG_ERROR << "Camber selection " << req.camber_sel << " invalid";
+	else
+		ac.camberSelection = it3->second;
+
+	ac.camberValue = req.camber_val;
+	ac.specialValue = req.special_val;
+
+	auto packet = dp->serialize(ac, Content::ADVANCED_CONTROL);
+	dp->setTarget(packet, Target::FLIGHT_CONTROL);
 
 	resp.valid_request = true;
 

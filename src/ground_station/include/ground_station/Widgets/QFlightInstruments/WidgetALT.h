@@ -60,43 +60,48 @@
 
 namespace Ui
 {
-    class WidgetALT;
+class WidgetALT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetALT : public QWidget
+class WidgetALT: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    explicit WidgetALT( QWidget * parent = 0 );
+	explicit
+	WidgetALT(QWidget * parent = 0);
 
-    ~WidgetALT();
+	~WidgetALT();
 
-    inline void update()
-    {
-        m_alt->update();
-    }
+	inline void
+	update()
+	{
+		m_alt->update();
+	}
 
-    inline void setAltitude( float altitude )
-    {
-        m_alt->setAltitude( altitude );
-    }
+	inline void
+	setAltitude(float altitude)
+	{
+		m_alt->setAltitude(altitude);
+	}
 
-    inline void setPressure( float pressure )
-    {
-        m_alt->setPressure( pressure );
-    }
+	inline void
+	setPressure(float pressure)
+	{
+		m_alt->setPressure(pressure);
+	}
 
 private:
 
-    Ui::WidgetALT * m_ui;
-    qfi_ALT       * m_alt;
-    LayoutSquare  * m_layoutSq;
+	Ui::WidgetALT * m_ui;
+	qfi_ALT * m_alt;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

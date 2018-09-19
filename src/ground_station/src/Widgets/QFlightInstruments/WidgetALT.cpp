@@ -56,42 +56,42 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-WidgetALT::WidgetALT( QWidget * parent ) :
-    QWidget( parent ),
-    m_ui( new Ui::WidgetALT ),
-    m_alt ( 0 ),
-    m_layoutSq ( 0 )
+WidgetALT::WidgetALT(QWidget * parent) :
+		QWidget(parent), m_ui(new Ui::WidgetALT), m_alt(0), m_layoutSq(0)
 {
-    m_ui->setupUi( this );
+	m_ui->setupUi(this);
 
-    setupUi();
+	setupUi();
 
-    m_alt = m_ui->graphicsALT;
+	m_alt = m_ui->graphicsALT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 WidgetALT::~WidgetALT()
 {
-    if ( m_layoutSq ) {
-        delete m_layoutSq;
-        m_layoutSq = 0;
-    }
+	if (m_layoutSq)
+	{
+		delete m_layoutSq;
+		m_layoutSq = 0;
+	}
 
-    if ( m_ui ) {
-        delete m_ui;
-        m_ui = 0;
-    }
+	if (m_ui)
+	{
+		delete m_ui;
+		m_ui = 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void WidgetALT::setupUi()
+void
+WidgetALT::setupUi()
 {
-    m_layoutSq = new LayoutSquare( this );
+	m_layoutSq = new LayoutSquare(this);
 
-    m_layoutSq->setContentsMargins( 0, 0, 0, 0 );
-    m_layoutSq->addWidget( m_ui->graphicsALT );
+	m_layoutSq->setContentsMargins(0, 0, 0, 0);
+	m_layoutSq->addWidget(m_ui->graphicsALT);
 
-    setLayout( m_layoutSq );
+	setLayout(m_layoutSq);
 }

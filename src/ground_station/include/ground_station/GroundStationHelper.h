@@ -26,10 +26,8 @@
 #ifndef GROUND_STATION_GROUNDSTATIONHELPER_H_
 #define GROUND_STATION_GROUNDSTATIONHELPER_H_
 
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
 #include <uavAP/Core/Framework/Helper.h>
-#include <uavAP/Core/IDC/IDCFactory.h>
+#include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
 
@@ -38,22 +36,20 @@
 #include "ground_station/LayoutGenerator.h"
 #include "ground_station/MapLogic.h"
 
-
 class GroundStationHelper: public Helper
 {
 public:
 	GroundStationHelper()
 	{
-        addCreator<ConfigManager>("config_manager");
+		addCreator<ConfigManager>();
 
-        addDefault<DataPresentationFactory<Content, Target>>("data_presentation");
-        addDefault<IDCFactory>("idc");
-        addDefault<SchedulerFactory>("scheduler");
-        addDefault<TimeProviderFactory>("time_provider");
+		addDefault<SchedulerFactory>();
+		addDefault<TimeProviderFactory>();
+		addDefaultCreator<IDC>();
 
-        addDefaultCreator<DataManager>("data_manager");
-        addDefaultCreator<LayoutGenerator>("layout_generator");
-        addDefaultCreator<MapLogic>("map_logic");
+		addDefaultCreator<DataManager>();
+		addDefaultCreator<LayoutGenerator>();
+		addDefaultCreator<MapLogic>();
 	}
 };
 

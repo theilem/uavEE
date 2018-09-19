@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 #ifndef _XPLMGraphics_h_
 #define _XPLMGraphics_h_
 
@@ -46,7 +64,8 @@
 #include "XPLMDefs.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /***************************************************************************
@@ -57,7 +76,6 @@ extern "C" {
  *
  */
 
-
 /*
  * XPLMTextureID
  * 
@@ -65,16 +83,16 @@ extern "C" {
  * allows you to recycle textures from X-Plane, saving VRAM.                   
  *
  */
-enum {
-     /* The bitmap that contains window outlines, button outlines, fonts, etc.      */
-     xplm_Tex_GeneralInterface                = 0
+enum
+{
+	/* The bitmap that contains window outlines, button outlines, fonts, etc.      */
+	xplm_Tex_GeneralInterface = 0
 
-     /* The exterior paint for the user's aircraft (daytime).                       */
-    ,xplm_Tex_AircraftPaint                   = 1
+	/* The exterior paint for the user's aircraft (daytime).                       */
+	, xplm_Tex_AircraftPaint = 1
 
-     /* The exterior light map for the user's aircraft.                             */
-    ,xplm_Tex_AircraftLiteMap                 = 2
-
+	/* The exterior light map for the user's aircraft.                             */
+	, xplm_Tex_AircraftLiteMap = 2
 
 };
 typedef int XPLMTextureID;
@@ -123,14 +141,10 @@ typedef int XPLMTextureID;
  * unknown code has executed.                                                  
  *
  */
-XPLM_API void                 XPLMSetGraphicsState(
-                                   int                  inEnableFog,    
-                                   int                  inNumberTexUnits,    
-                                   int                  inEnableLighting,    
-                                   int                  inEnableAlphaTesting,    
-                                   int                  inEnableAlphaBlending,    
-                                   int                  inEnableDepthTesting,    
-                                   int                  inEnableDepthWriting);    
+XPLM_API void
+XPLMSetGraphicsState(int inEnableFog, int inNumberTexUnits, int inEnableLighting,
+		int inEnableAlphaTesting, int inEnableAlphaBlending, int inEnableDepthTesting,
+		int inEnableDepthWriting);
 
 /*
  * XPLMBindTexture2d
@@ -150,9 +164,8 @@ XPLM_API void                 XPLMSetGraphicsState(
  * Use this routine instead of glBindTexture(GL_TEXTURE_2D, ....);             
  *
  */
-XPLM_API void                 XPLMBindTexture2d(
-                                   int                  inTextureNum,    
-                                   int                  inTextureUnit);    
+XPLM_API void
+XPLMBindTexture2d(int inTextureNum, int inTextureUnit);
 
 /*
  * XPLMGenerateTextureNumbers
@@ -167,9 +180,8 @@ XPLM_API void                 XPLMBindTexture2d(
  * texture IDs that are out of X-Plane's usage range.                          
  *
  */
-XPLM_API void                 XPLMGenerateTextureNumbers(
-                                   int *                outTextureIDs,    
-                                   int                  inCount);    
+XPLM_API void
+XPLMGenerateTextureNumbers(int * outTextureIDs, int inCount);
 
 /*
  * XPLMGetTexture
@@ -185,8 +197,8 @@ XPLM_API void                 XPLMGenerateTextureNumbers(
  * it isn't around, or at least a way to find out whether it is loaded or not. 
  *
  */
-XPLM_API int                  XPLMGetTexture(
-                                   XPLMTextureID        inTexture);    
+XPLM_API int
+XPLMGetTexture(XPLMTextureID inTexture);
 
 /*
  * XPLMWorldToLocal
@@ -197,13 +209,9 @@ XPLM_API int                  XPLMGetTexture(
  * meters in the local OpenGL coordinate system.                               
  *
  */
-XPLM_API void                 XPLMWorldToLocal(
-                                   double               inLatitude,    
-                                   double               inLongitude,    
-                                   double               inAltitude,    
-                                   double *             outX,    
-                                   double *             outY,    
-                                   double *             outZ);    
+XPLM_API void
+XPLMWorldToLocal(double inLatitude, double inLongitude, double inAltitude, double * outX,
+		double * outY, double * outZ);
 
 /*
  * XPLMLocalToWorld
@@ -217,13 +225,9 @@ XPLM_API void                 XPLMWorldToLocal(
  * try to avoid round tripping from local to world and back.                   
  *
  */
-XPLM_API void                 XPLMLocalToWorld(
-                                   double               inX,    
-                                   double               inY,    
-                                   double               inZ,    
-                                   double *             outLatitude,    
-                                   double *             outLongitude,    
-                                   double *             outAltitude);    
+XPLM_API void
+XPLMLocalToWorld(double inX, double inY, double inZ, double * outLatitude, double * outLongitude,
+		double * outAltitude);
 
 /*
  * XPLMDrawTranslucentDarkBox
@@ -233,11 +237,8 @@ XPLM_API void                 XPLMLocalToWorld(
  * used by X-Plane to show text files and ATC info.                            
  *
  */
-XPLM_API void                 XPLMDrawTranslucentDarkBox(
-                                   int                  inLeft,    
-                                   int                  inTop,    
-                                   int                  inRight,    
-                                   int                  inBottom);    
+XPLM_API void
+XPLMDrawTranslucentDarkBox(int inLeft, int inTop, int inRight, int inBottom);
 
 /***************************************************************************
  * X-PLANE TEXT
@@ -262,140 +263,141 @@ XPLM_API void                 XPLMDrawTranslucentDarkBox(
  * you want to.                                                                
  *
  */
-enum {
-     /* Mono-spaced font for user interface.  Available in all versions of the SDK. */
-     xplmFont_Basic                           = 0
+enum
+{
+	/* Mono-spaced font for user interface.  Available in all versions of the SDK. */
+	xplmFont_Basic = 0
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_Menus                           = 1
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_Menus = 1
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_Metal                           = 2
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_Metal = 2
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_Led                             = 3
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_Led = 3
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_LedWide                         = 4
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_LedWide = 4
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_PanelHUD                        = 5
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_PanelHUD = 5
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_PanelEFIS                       = 6
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_PanelEFIS = 6
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_PanelGPS                        = 7
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_PanelGPS = 7
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosGA                        = 8
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosGA = 8
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosBC                        = 9
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosBC = 9
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosHM                        = 10
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosHM = 10
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosGANarrow                  = 11
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosGANarrow = 11
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosBCNarrow                  = 12
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosBCNarrow = 12
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_RadiosHMNarrow                  = 13
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_RadiosHMNarrow = 13
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_Timer                           = 14
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_Timer = 14
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_FullRound                       = 15
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_FullRound = 15
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_SmallRound                      = 16
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_SmallRound = 16
 
-     /* Deprecated, do not use.                                                     */
-    ,xplmFont_Menus_Localized                 = 17
+	/* Deprecated, do not use.                                                     */
+	, xplmFont_Menus_Localized = 17
 
 #if defined(XPLM200)
-     /* Proportional UI font.                                                       */
-    ,xplmFont_Proportional                    = 18
+	/* Proportional UI font.                                                       */
+	,xplmFont_Proportional = 18
 
 #endif /* XPLM200 */
 
-};
-typedef int XPLMFontID;
+}	;
+	typedef int XPLMFontID;
 
-/*
- * XPLMDrawString
- * 
- * This routine draws a NULL termianted string in a given font.  Pass in the 
- * lower left pixel that the character is to be drawn onto.  Also pass the 
- * character and font ID. This function returns the x offset plus the width of 
- * all drawn characters. The color to draw in is specified as a pointer to an 
- * array of three floating point colors, representing RGB intensities from 0.0 
- * to 1.0.                                                                     
- *
- */
-XPLM_API void                 XPLMDrawString(
-                                   float *              inColorRGB,    
-                                   int                  inXOffset,    
-                                   int                  inYOffset,    
-                                   char *               inChar,    
-                                   int *                inWordWrapWidth,    /* Can be NULL */
-                                   XPLMFontID           inFontID);    
+	/*
+	 * XPLMDrawString
+	 * 
+	 * This routine draws a NULL termianted string in a given font.  Pass in the 
+	 * lower left pixel that the character is to be drawn onto.  Also pass the 
+	 * character and font ID. This function returns the x offset plus the width of 
+	 * all drawn characters. The color to draw in is specified as a pointer to an 
+	 * array of three floating point colors, representing RGB intensities from 0.0 
+	 * to 1.0.                                                                     
+	 *
+	 */
+	XPLM_API void XPLMDrawString(
+			float * inColorRGB,
+			int inXOffset,
+			int inYOffset,
+			char * inChar,
+			int * inWordWrapWidth, /* Can be NULL */
+			XPLMFontID inFontID);
 
-/*
- * XPLMDrawNumber
- * 
- * This routine draws a number similar to the digit editing fields in 
- * PlaneMaker and data output display in X-Plane.  Pass in a color, a 
- * position, a floating point value, and formatting info.  Specify how many 
- * integer and how many decimal digits to show and  whether to show a sign, as 
- * well as a character set. This routine returns the xOffset plus width of the 
- * string drawn.                                                               
- *
- */
-XPLM_API void                 XPLMDrawNumber(
-                                   float *              inColorRGB,    
-                                   int                  inXOffset,    
-                                   int                  inYOffset,    
-                                   double               inValue,    
-                                   int                  inDigits,    
-                                   int                  inDecimals,    
-                                   int                  inShowSign,    
-                                   XPLMFontID           inFontID);    
+	/*
+	 * XPLMDrawNumber
+	 * 
+	 * This routine draws a number similar to the digit editing fields in 
+	 * PlaneMaker and data output display in X-Plane.  Pass in a color, a 
+	 * position, a floating point value, and formatting info.  Specify how many 
+	 * integer and how many decimal digits to show and  whether to show a sign, as 
+	 * well as a character set. This routine returns the xOffset plus width of the 
+	 * string drawn.                                                               
+	 *
+	 */
+	XPLM_API void XPLMDrawNumber(
+			float * inColorRGB,
+			int inXOffset,
+			int inYOffset,
+			double inValue,
+			int inDigits,
+			int inDecimals,
+			int inShowSign,
+			XPLMFontID inFontID);
 
-/*
- * XPLMGetFontDimensions
- * 
- * This routine returns the width and height of a character in a given font. 
- * It also tells you if the font only supports numeric digits.  Pass NULL if 
- * you don't need a given field.  Note that for a proportional font the width 
- * will be an arbitrary, hopefully average width.                              
- *
- */
-XPLM_API void                 XPLMGetFontDimensions(
-                                   XPLMFontID           inFontID,    
-                                   int *                outCharWidth,    /* Can be NULL */
-                                   int *                outCharHeight,    /* Can be NULL */
-                                   int *                outDigitsOnly);    /* Can be NULL */
+	/*
+	 * XPLMGetFontDimensions
+	 * 
+	 * This routine returns the width and height of a character in a given font. 
+	 * It also tells you if the font only supports numeric digits.  Pass NULL if 
+	 * you don't need a given field.  Note that for a proportional font the width 
+	 * will be an arbitrary, hopefully average width.                              
+	 *
+	 */
+	XPLM_API void XPLMGetFontDimensions(
+			XPLMFontID inFontID,
+			int * outCharWidth, /* Can be NULL */
+			int * outCharHeight, /* Can be NULL */
+			int * outDigitsOnly); /* Can be NULL */
 
 #if defined(XPLM200)
-/*
- * XPLMMeasureString
- * 
- * This routine returns the width in pixels of a string using a given font.  
- * The string is passed as a pointer plus length (and does not need to be null 
- * terminated); this is used to allow for measuring substrings. The return 
- * value is floating point; it is possible that future font drawing may allow 
- * for fractional pixels.                                                      
- *
- */
-XPLM_API float                XPLMMeasureString(
-                                   XPLMFontID           inFontID,    
-                                   const char *         inChar,    
-                                   int                  inNumChars);    
+	/*
+	 * XPLMMeasureString
+	 * 
+	 * This routine returns the width in pixels of a string using a given font.  
+	 * The string is passed as a pointer plus length (and does not need to be null 
+	 * terminated); this is used to allow for measuring substrings. The return 
+	 * value is floating point; it is possible that future font drawing may allow 
+	 * for fractional pixels.                                                      
+	 *
+	 */
+	XPLM_API float XPLMMeasureString(
+			XPLMFontID inFontID,
+			const char * inChar,
+			int inNumChars);
 #endif /* XPLM200 */
 
 #ifdef __cplusplus

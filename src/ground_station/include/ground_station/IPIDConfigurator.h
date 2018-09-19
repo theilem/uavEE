@@ -23,23 +23,22 @@
  *   @brief UAV Ground Station PID Configuration Interface
  */
 
-
 #ifndef IPIDCONFIGURATOR_H
 #define IPIDCONFIGURATOR_H
 
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 
 /**
  * @brief The PIDInfo struct contains PID Params and a human readable name
  */
 struct PIDInfo
 {
-    std::string name;
-    Control::PID::Parameters params;
-    PIDInfo(std::string n, Control::PID::Parameters p) :
-        name(n), params(p)
-    {
-    }
+	std::string name;
+	Control::PID::Parameters params;
+	PIDInfo(std::string n, Control::PID::Parameters p) :
+			name(n), params(p)
+	{
+	}
 };
 
 using PIDParametersMap = std::map<int, PIDInfo>;
@@ -51,26 +50,26 @@ using PIDParametersMap = std::map<int, PIDInfo>;
 class IPIDConfigurator
 {
 public:
-    virtual
-    ~IPIDConfigurator()
-    {
-    }
+	virtual
+	~IPIDConfigurator()
+	{
+	}
 
-    /**
-     * @brief   tunePID tunes a certain PID with Kp, kI, kD, Imax, and ff gains
-     * @param   tunePID PIDTuning struct containing integer PID controller ID and gains
-     * @return  true if request was recieved
-     */
-    virtual bool
-    tunePID(const PIDTuning& tunePID) = 0;
+	/**
+	 * @brief   tunePID tunes a certain PID with Kp, kI, kD, Imax, and ff gains
+	 * @param   tunePID PIDTuning struct containing integer PID controller ID and gains
+	 * @return  true if request was recieved
+	 */
+	virtual bool
+	tunePID(const PIDTuning& tunePID) = 0;
 
-    /**
-     * @brief   getPIDMap gets PID map of flying aircraft's cascade
-     * @return  map from integer PID representation to PIDInfo struct containing
-     *          human readable name and PID parameters
-     */
-    virtual const PIDParametersMap&
-    getPIDMap() const = 0;
+	/**
+	 * @brief   getPIDMap gets PID map of flying aircraft's cascade
+	 * @return  map from integer PID representation to PIDInfo struct containing
+	 *          human readable name and PID parameters
+	 */
+	virtual const PIDParametersMap&
+	getPIDMap() const = 0;
 };
 
 #endif // IPIDCONFIGURATOR_H

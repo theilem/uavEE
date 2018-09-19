@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -25,14 +25,14 @@
 #include <simulation_interface/codec/Codec.h>
 #include <simulation_interface/SimulationConnector.h>
 #include <uavAP/Core/DataPresentation/IDataPresentation.h>
-#include <uavAP/Core/IDC/Serial/SerialIDC.h>
-#include <uavAP/Core/IDC/Serial/SerialIDCParams.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/TimeProvider/ITimeProvider.h>
-#include <uavAP/API/ChannelMixing.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/Core/LinearAlgebra.h>
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/IDC/IDCSender.h>
+#include <uavAP/Core/Scheduler/IScheduler.h>
 
 #include <std_msgs/Int32.h>
 
@@ -41,8 +41,7 @@
 #include <Eigen/Geometry>
 
 SimulationConnector::SimulationConnector() :
-		serialPort_("/dev/ttyUSB0"), lastSequenceNr_(0), correctSimDelay_(true), correctionCounter_(
-				0)
+		lastSequenceNr_(0), correctSimDelay_(false), correctionCounter_(0)
 {
 }
 
@@ -67,26 +66,18 @@ SimulationConnector::run(RunStage stage)
 			APLOG_ERROR << "SimulationConnector: Scheduler missing.";
 			return true;
 		}
-		if (!nodeHandle_)
-		{
-			APLOG_ERROR << "Node Handle not set. ";
-			return true;
-		}
-		sensorPublisher_ = nodeHandle_->advertise<simulation_interface::sensor_data>("sensor_data",
-				20);
-		delayPublisher_ = nodeHandle_->advertise<std_msgs::Int32>("roundtrip_delay_micros", 20);
-		actuationSubscriber_ = nodeHandle_->subscribe("actuation", 20,
-				&SimulationConnector::actuate, this);
+		ros::NodeHandle nh;
+		sensorPublisher_ = nh.advertise<simulation_interface::sensor_data>("sensor_data", 20);
+		delayPublisher_ = nh.advertise<std_msgs::Int32>("roundtrip_delay_micros", 20);
+		actuationSubscriber_ = nh.subscribe("actuation", 20, &SimulationConnector::actuate, this);
 		break;
 	}
 	case RunStage::NORMAL:
 	{
 		auto idc = idc_.get();
-		SerialIDCParams params(serialPort_, 115200, "\0");
-		idc->subscribeOnPacket(params,
+		sensorReceiver_ = idc->subscribeOnPacket("sim_sense",
 				std::bind(&SimulationConnector::sense, this, std::placeholders::_1));
-		SerialIDCParams actuationParams(serialPort_, 115200, "\n");
-		actuationSender_ = idc->createSender(actuationParams);
+		actuationSender_ = idc->createSender("sim_act");
 		break;
 	}
 	case RunStage::FINAL:
@@ -100,13 +91,12 @@ SimulationConnector::run(RunStage stage)
 }
 
 void
-SimulationConnector::notifyAggregationOnUpdate(Aggregator& agg)
+SimulationConnector::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	scheduler_.setFromAggregationIfNotSet(agg);
 	timeProvider_.setFromAggregationIfNotSet(agg);
 	idc_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);
-	channelMixing_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -140,6 +130,28 @@ SimulationConnector::sense(const Packet& packet)
 	sd.velocity.linear.x = velocityLinear.y();
 	sd.velocity.linear.y = velocityLinear.x();
 	sd.velocity.linear.z = -1 * velocityLinear.z();
+	sd.attitude.z = boundAngleRad(-(sd.attitude.z - M_PI/2));
+
+	//Convert p-q-r to rates
+	double sRoll = sin(sd.attitude.x);
+	double cRoll = cos(sd.attitude.x);
+	double sPitch = sin(sd.attitude.y);
+	double cPitch = cos(sd.attitude.y);
+	Eigen::Matrix3d rotL1B;
+	rotL1B << 1, 0, -sPitch,
+			0, cRoll, sRoll*cPitch,
+			0, -sRoll, cRoll*cPitch;
+
+	Vector3 rates(sd.velocity.angular.x, sd.velocity.angular.y, sd.velocity.angular.z);
+
+	rates = rotL1B.inverse() * rates;
+
+	sd.velocity.angular.x = rates.x();
+	sd.velocity.angular.y = rates.y();
+	sd.velocity.angular.z = rates.z();
+
+	sd.ground_speed = velocityLinear.norm();
+	sd.air_speed = sd.ground_speed;
 
 	lastSequenceNr_++;
 	sd.sequenceNr = lastSequenceNr_;
@@ -157,14 +169,7 @@ SimulationConnector::sense(const Packet& packet)
 void
 SimulationConnector::actuate(const simulation_interface::actuation& out)
 {
-	auto channelMix = channelMixing_.get();
-	if (!channelMix)
-	{
-		APLOG_ERROR << "Channel Mixing is missing. Cannot send actuation command.";
-		return;
-	}
-
-	std::unique_lock<std::mutex> lock(timePointsMutex_);
+	std::unique_lock < std::mutex > lock(timePointsMutex_);
 	auto it = timepoints_.find(out.sequenceNr);
 	if (it == timepoints_.end())
 	{
@@ -188,23 +193,18 @@ SimulationConnector::actuate(const simulation_interface::actuation& out)
 	}
 	lock.unlock();
 
-	ControllerOutput control;
-	control.collectiveOutput = out.collectiveOutput;
-	control.flapOutput = out.flapOutput;
-	control.pitchOutput = out.pitchOutput;
-	control.rollOutput = out.rollOutput;
-	control.throttleOutput = out.throttleOutput;
-	control.yawOutput = out.yawOutput;
-
-	auto channels = channelMix->mixChannels(control);
+	ControllerOutput c;
+	c.pitchOutput = out.pitchOutput;
+	c.rollOutput = out.rollOutput;
+	c.throttleOutput = out.throttleOutput;
+	c.yawOutput = out.yawOutput;
 
 	std::stringstream ss;
-	for (auto it : channels)
-	{
-		ss << it << ",";
-	}
 
-	ss << "1\r";
+	ss << c.throttleOutput << "," << c.yawOutput << "," << c.pitchOutput << "," << c.rollOutput
+			<< "," << -c.rollOutput << "," << -1.0 << ",";
+
+	ss << "1";
 
 	actuationSender_.sendPacket(Packet(ss.str()));
 }
@@ -214,8 +214,7 @@ SimulationConnector::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
 
-	pm.add("serial_port", serialPort_, true);
-    pm.add("correct_sim_delay", correctSimDelay_, false);
+	pm.add<bool>("correct_sim_delay", correctSimDelay_, false);
 
 	return pm.map();
 }
@@ -229,18 +228,12 @@ SimulationConnector::create(const boost::property_tree::ptree& config)
 }
 
 void
-SimulationConnector::setNodeHandle(std::shared_ptr<ros::NodeHandle> nodeHandle)
-{
-	nodeHandle_ = nodeHandle;
-}
-
-void
 SimulationConnector::sendSensorData(simulation_interface::sensor_data data)
 {
 	TimePoint timepoint = boost::get_system_time();
 
 	data.header.stamp = ros::Time::fromBoost(timepoint);
-	std::unique_lock<std::mutex> lock(timePointsMutex_);
+	std::unique_lock < std::mutex > lock(timePointsMutex_);
 
 	timepoints_.insert(std::make_pair(data.sequenceNr, timepoint));
 	while (timepoints_.size() > 100)
@@ -271,8 +264,7 @@ SimulationConnector::handleSimDelay(const simulation_interface::sensor_data& dat
 	}
 
 	TimePoint now = boost::get_system_time();
-	Duration timediff = (correctionInit_ + Milliseconds(10) * correctionCounter_)
-			- now;
+	Duration timediff = (correctionInit_ + Milliseconds(10) * correctionCounter_) - now;
 
 	if (timediff.is_negative())
 	{
@@ -287,4 +279,3 @@ SimulationConnector::handleSimDelay(const simulation_interface::sensor_data& dat
 
 	++correctionCounter_;
 }
-

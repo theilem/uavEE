@@ -1,6 +1,7 @@
 build/
 devel/
 install/
+src/ground_station/resources/map_tiles/
 
 .catkin_workspace
 

@@ -22,16 +22,20 @@
  *  Created on: Jan 9, 2018
  *      Author: mircot
  */
+
+#include <ground_station/Widgets/WidgetLocalPlanner.h>
+#include "uavAP/Core/Logging/APLogger.h"
+#include "ground_station/Widgets/WidgetSteadyStateAnalysis.h"
 #include "ground_station/Widgets/QFlightInstruments/WidgetSix.h"
 #include "ground_station/Widgets/WidgetSensorData.h"
 #include "ground_station/Widgets/PID/WidgetPIDPlots.h"
 #include "ground_station/Widgets/WidgetOverheadMap.h"
 #include "ground_station/Widgets/PID/WidgetCPGrid.h"
 #include "ground_station/Widgets/WidgetManeuverPlanner.h"
+#include "ground_station/Widgets/WidgetAdvancedControl.h"
 #include "ground_station/Widgets/QFlightInstruments/WidgetPFD.h"
 #include "ground_station/GSWidgetFactory.h"
 #include "ground_station/IWidgetInterface.h"
-#include <uavAP/Core/Logging/APLogger.h>
 
 GSWidgetFactory::GSWidgetFactory()
 {
@@ -39,15 +43,19 @@ GSWidgetFactory::GSWidgetFactory()
 	//static const char widgetName[] = "enter_widget_name_here"
 	addWidget<WidgetCPGrid>();
 	addWidget<WidgetManeuverPlanner>();
+	addWidget<WidgetSteadyStateAnalysis>();
 	addWidget<WidgetOverheadMap>();
 	addWidget<WidgetPFD>();
 	addWidget<WidgetPIDPlots>();
 	addWidget<WidgetSensorData>();
 	addWidget<WidgetSix>();
+	addWidget<WidgetAdvancedControl>();
+	addWidget<WidgetLocalPlanner>();
 }
 
 QWidget*
-GSWidgetFactory::createWidget(const std::string& type, std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+GSWidgetFactory::createWidget(const std::string& type, std::shared_ptr<IWidgetInterface> interface,
+		QWidget* parent)
 {
 	auto it = creators_.find(type);
 	if (it == creators_.end())

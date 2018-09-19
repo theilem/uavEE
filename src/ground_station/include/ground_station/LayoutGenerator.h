@@ -40,143 +40,145 @@ class MapLogic;
  *          ground station
  */
 class LayoutGenerator: public QObject,
-    public IAggregatableObject,
-    public IRunnableObject,
-    public IWidgetInterface,
-    public std::enable_shared_from_this<LayoutGenerator>
+		public IAggregatableObject,
+		public IRunnableObject,
+		public IWidgetInterface,
+		public std::enable_shared_from_this<LayoutGenerator>
 {
-    Q_OBJECT
+Q_OBJECT
 public:
 
-    LayoutGenerator() = default;
+	static constexpr TypeId typeId = "layout_generator";
 
-    ~LayoutGenerator();
+	LayoutGenerator() = default;
 
-    /**
-     * @brief   create creates a LayoutGenerator. It ignores the passed in json
-     *          as it does not need a config
-     * @return  a shared pointer to the newly created layout generator
-     */
-    static std::shared_ptr<LayoutGenerator>
-    create(const boost::property_tree::ptree&);
+	~LayoutGenerator();
 
-    void
-    notifyAggregationOnUpdate(Aggregator& agg) override;
+	/**
+	 * @brief   create creates a LayoutGenerator. It ignores the passed in json
+	 *          as it does not need a config
+	 * @return  a shared pointer to the newly created layout generator
+	 */
+	static std::shared_ptr<LayoutGenerator>
+	create(const boost::property_tree::ptree&);
 
-    bool
-    run(RunStage stage) override;
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
-    ObjectHandle<IDataSignals>
-    getIDataSignals() const override;
+	bool
+	run(RunStage stage) override;
 
-    ObjectHandle<MapLogic>
-    getMapLogic() const override;
+	ObjectHandle<IDataSignals>
+	getIDataSignals() const override;
 
-    ObjectHandle<IConfigManager>
-    getConfigManager() const override;
+	ObjectHandle<MapLogic>
+	getMapLogic() const override;
 
-    ObjectHandle<IPIDConfigurator>
-    getPIDConfigurator() const override;
+	ObjectHandle<IConfigManager>
+	getConfigManager() const override;
+
+	ObjectHandle<IPIDConfigurator>
+	getPIDConfigurator() const override;
 
 private:
 
-    /**
-     * @brief   addMenus adds top menu to the specified window
-     * @param   win pointer to menu to add menu too
-     */
-    void
-    addMenus(QMainWindow* win);
+	/**
+	 * @brief   addMenus adds top menu to the specified window
+	 * @param   win pointer to menu to add menu too
+	 */
+	void
+	addMenus(QMainWindow* win);
 
-    /**
-     * @brief changeLayout replaces a WidgetLoader with specified layout
-     * @param wid pointer to WidgetLoader
-     * @param widget layout name to load
-     * @param rows number of rows or tabs
-     * @param cols number of columns
-     */
-    void
-    changeLayout(WidgetLoader* wid, const QString& type, int rows, int cols);
+	/**
+	 * @brief changeLayout replaces a WidgetLoader with specified layout
+	 * @param wid pointer to WidgetLoader
+	 * @param widget layout name to load
+	 * @param rows number of rows or tabs
+	 * @param cols number of columns
+	 */
+	void
+	changeLayout(WidgetLoader* wid, const QString& type, int rows, int cols);
 
-    /**
-     * @brief   changeWidget replaces a WidgetLoader with specified widget
-     * @param   wid pointer to WidgetLoader
-     * @param   widget name of widget to load
-     */
-    void
-    changeWidget(WidgetLoader* wid, const QString& widget);
+	/**
+	 * @brief   changeWidget replaces a WidgetLoader with specified widget
+	 * @param   wid pointer to WidgetLoader
+	 * @param   widget name of widget to load
+	 */
+	void
+	changeWidget(WidgetLoader* wid, const QString& widget);
 
-    /**
-     * @brief   createLayout recursively parses a json defining the format of the
-     *          ground station. Returns a widget or format at each recursive call
-     * @param   json is the boost property representation of the json configuration
-     *          for the ground station
-     * @param   parent is the parent widget for the returned widget to be associated
-     *          with
-     * @return  QWidget pointer that represents the entire passed in json
-     */
-    QWidget*
-    createLayout(const boost::property_tree::ptree& json, QWidget* parent);
+	/**
+	 * @brief   createLayout recursively parses a json defining the format of the
+	 *          ground station. Returns a widget or format at each recursive call
+	 * @param   json is the boost property representation of the json configuration
+	 *          for the ground station
+	 * @param   parent is the parent widget for the returned widget to be associated
+	 *          with
+	 * @return  QWidget pointer that represents the entire passed in json
+	 */
+	QWidget*
+	createLayout(const boost::property_tree::ptree& json, QWidget* parent);
 
-    /**
-     * @brief   createWidget is a wrapper function for the GSWidgetFactory
-     * @param   type name of the widget to create
-     * @param   parent parent for the widget to be associated to
-     * @return  pointer to created widget or blank widget if type invalid
-     */
-    QWidget*
-    createWidget(const std::string& type, QWidget* parent);
+	/**
+	 * @brief   createWidget is a wrapper function for the GSWidgetFactory
+	 * @param   type name of the widget to create
+	 * @param   parent parent for the widget to be associated to
+	 * @return  pointer to created widget or blank widget if type invalid
+	 */
+	QWidget*
+	createWidget(const std::string& type, QWidget* parent);
 
-    /**
-     * @brief makeScrollableWin creates a QMainWindow and makes it scrollable
-     * @param win pointer to QWidget to make center of window
-     */
-    void
-    makeScrollableWin(QWidget* win);
+	/**
+	 * @brief makeScrollableWin creates a QMainWindow and makes it scrollable
+	 * @param win pointer to QWidget to make center of window
+	 */
+	void
+	makeScrollableWin(QWidget* win);
 
-    ///! vector of all windows currently displaying widgets
-    std::vector<QMainWindow*> windows_;
+	///! vector of all windows currently displaying widgets
+	std::vector<QMainWindow*> windows_;
 
-    ///! factory used to create new widgets
-    GSWidgetFactory widgetFactory_;
+	///! factory used to create new widgets
+	GSWidgetFactory widgetFactory_;
 
-    ///! reference to ConfigManager
-    ObjectHandle<IConfigManager> configManager_;
+	///! reference to ConfigManager
+	ObjectHandle<IConfigManager> configManager_;
 
-    ///! reference to ConfigManager
-    ObjectHandle<IPIDConfigurator> pidConfigurator_;
+	///! reference to ConfigManager
+	ObjectHandle<IPIDConfigurator> pidConfigurator_;
 
-    ///! reference to mapLogic
-    ObjectHandle<MapLogic> mapLogic_;
+	///! reference to mapLogic
+	ObjectHandle<MapLogic> mapLogic_;
 
-    ///!reference to data signals
-    ObjectHandle<IDataSignals> dataSignals_;
+	///!reference to data signals
+	ObjectHandle<IDataSignals> dataSignals_;
 
 private slots:
-    /**
-     * @brief   handleQuit is called when user clicks Quit from drop down menu
-     */
-    void
-    handleQuit();
+	/**
+	 * @brief   handleQuit is called when user clicks Quit from drop down menu
+	 */
+	void
+	handleQuit();
 
-    /**
-     * @brief   addWin is called when user clicks Add Window from Config from drop
-     *          down menu
-     */
-    void
-    addWin();
+	/**
+	 * @brief   addWin is called when user clicks Add Window from Config from drop
+	 *          down menu
+	 */
+	void
+	addWin();
 
-    /**
-     * @brief   addWidget is called when user clicks Add Widget from drop down menu
-     */
-    void
-    addWidget();
+	/**
+	 * @brief   addWidget is called when user clicks Add Widget from drop down menu
+	 */
+	void
+	addWidget();
 
-    /**
-     * @brief   addCustomWin is called when user clicks Create Custom Window from
-     *          drop down menu
-     */
-    void
-    addCustomWin();
+	/**
+	 * @brief   addCustomWin is called when user clicks Create Custom Window from
+	 *          drop down menu
+	 */
+	void
+	addCustomWin();
 };
 
 #endif // LAYOUTGENERATOR_H

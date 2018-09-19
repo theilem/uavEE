@@ -141,7 +141,12 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/autopilot_interface_node.cpp
-                                    src/AutopilotInterface.cpp)
+									src/AutopilotInterface/ApExtInterface.cpp
+                                    src/AutopilotInterface/DeviceBridge.cpp
+                                    src/AutopilotInterface/DirectInterface.cpp
+                                    src/APRosInterface.cpp
+                                    src/AutopilotLauncher.cpp
+                                    src/LogParser.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -157,9 +162,12 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   uavap_core
+  uavap_flight_analysis
   protobuf
   ap_ext
+  uavap_api
   dl
+  rt
 )
 
 #############

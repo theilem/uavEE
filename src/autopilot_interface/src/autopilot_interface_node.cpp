@@ -1,14 +1,14 @@
-﻿////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -23,85 +23,49 @@
  *      Author: mircot
  */
 
-#include "autopilot_interface/AutopilotInterface.h"
+#include "autopilot_interface/AutopilotInterfaceHelper.h"
 #include <ros/ros.h>
 #include <string>
 #include <boost/process.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/Runner/SimpleRunner.h>
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::TRACE);
+	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("AutopilotInterface");
 
 	ros::init(argc, argv, "autopilot_interface_node");
 	ros::NodeHandle node;
 
-	std::string serialPort;
-	bool deviceBridge = false;
-	if (node.getParam("/autopilot_interface_node/serial_port", serialPort))
+	std::string config;
+	if (!node.getParam("/autopilot_interface_node/config_path", config))
 	{
-		deviceBridge = true;
+		APLOG_ERROR << "Config path missing.";
+		return 1;
 	}
 
-	AutopilotInterface apInterface;
+	AutopilotInterfaceHelper helper;
+
+	APRosInterface apInterface;
 	ros::Rate loopRate(10000);
 
-	if (deviceBridge)
+	Aggregator agg = helper.createAggregation(config);
+	SimpleRunner runner(agg);
+
+	if (runner.runAllStages())
 	{
-		apInterface.setDeviceBridge(serialPort);
-		APLOG_DEBUG << "Device bridge set up.";
-
-
-		while (ros::ok())
-		{
-			ros::spinOnce();
-			loopRate.sleep();
-		}
+		APLOG_ERROR << "Run stages failed";
+		return 2;
 	}
-	else
+
+	while (ros::ok())
 	{
-		std::string watchdogConfig, watchdogBinary, apExtPath;
-		if (!node.getParam("/autopilot_interface_node/watchdog_config", watchdogConfig)
-				|| !node.getParam("/autopilot_interface_node/watchdog_binary", watchdogBinary))
-		{
-			APLOG_ERROR << "Watchdog config and binary missing";
-			return 1;
-		}
-
-		std::string alvoloConfigPath;
-		if (!node.getParam("/autopilot_interface_node/alvolo_config", alvoloConfigPath))
-		{
-			APLOG_ERROR << "Alvolo config path missing";
-			return 1;
-		}
-		boost::property_tree::ptree alvoloConfig;
-		boost::property_tree::read_json(alvoloConfigPath, alvoloConfig);
-		if (!apInterface.configure(alvoloConfig))
-		{
-			APLOG_ERROR << "ApExternal configuration failed.";
-			return 1;
-		}
-
-		if (!apInterface.startApExt())
-		{
-			APLOG_ERROR << "ApExternal did not start successfully.";
-			return 1;
-		}
-		APLOG_DEBUG << "Launching watchdog: " << watchdogBinary << "With config: " << watchdogConfig;
-		boost::process::child watchdog(watchdogBinary, watchdogConfig);
-
-		while (ros::ok())
-		{
-			ros::spinOnce();
-			loopRate.sleep();
-		}
-
-		kill(watchdog.id(), SIGINT);
-		watchdog.join();
+		ros::spinOnce();
+		loopRate.sleep();
 	}
 
 	return 0;
 }
-

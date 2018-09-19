@@ -34,90 +34,90 @@ class IWidgetInterface;
 
 class WidgetOverheadMap: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "overhead_map";
+	static constexpr auto widgetName = "overhead_map";
 
-    explicit
-    WidgetOverheadMap(QWidget* parent = 0);
-    ~WidgetOverheadMap();
+	explicit
+	WidgetOverheadMap(QWidget* parent = 0);
+	~WidgetOverheadMap();
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetOverheadMap(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetOverheadMap(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
 
-    void
-    setMode(GraphicsMapView::ViewMode mode);
+	void
+	setMode(GraphicsMapView::ViewMode mode);
 
-    void
-    setMapImage(const QPixmap& map);
+	void
+	setMapImage(const QPixmap& map);
 
-    void
-    setNWMapCorner(const MapLocation& loc);
+	void
+	setNWMapCorner(const MapLocation& loc);
 
-    void
-    setSEMapCorner(const MapLocation& loc);
+	void
+	setSEMapCorner(const MapLocation& loc);
 
-    void
-    setMapCenter(const MapLocation& loc);
+	void
+	setMapCenter(const MapLocation& loc);
 
-    void
-    setAirplaneLocation(const MapLocation& loc);
+	void
+	setAirplaneLocation(const MapLocation& loc);
 
-    void
-    setAirplaneHeading(double heading);
+	void
+	setAirplaneHeading(double heading);
 
-    void
-    requestGraphicsUpdate();
+	void
+	requestGraphicsUpdate();
 
 private slots:
 
-    void
-    on_fixedModeButton_toggled(bool checked);
+	void
+	on_fixedModeButton_toggled(bool checked);
 
-    void
-    on_displayWaypoints_toggled(bool checked);
+	void
+	on_displayWaypoints_toggled(bool checked);
 
-    void
-    on_displayTrajectory_toggled(bool checked);
+	void
+	on_displayTrajectory_toggled(bool checked);
 
-    void
-    on_displaySafetyNet_toggled(bool checked);
+	void
+	on_displaySafetyRectangle_toggled(bool checked);
 
-    void
-    on_requestMission_clicked();
+	void
+	on_requestMission_clicked();
 
-    void
-    on_requestTrajectory_clicked();
+	void
+	on_requestTrajectory_clicked();
 
-    void
-    on_airplaneScaleBox_valueChanged(double arg1);
+	void
+	on_airplaneScaleBox_valueChanged(double arg1);
 
-    void
-    on_zoomBox_valueChanged(double arg1);
+	void
+	on_zoomBox_valueChanged(double arg1);
 
-    void
-    on_updateCenter_clicked();
+	void
+	on_updateCenter_clicked();
 
-    void
-    on_requestSafetyNet_clicked();
+	void
+	on_requestSafetyNet_clicked();
 
 private:
 
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 
-    void
-    configure(const boost::property_tree::ptree& json);
+	void
+	configure(const boost::property_tree::ptree& json);
 
-    ObjectHandle<MapLogic> mapLogic_;
-    Ui::WidgetOverheadMap* ui;
+	ObjectHandle<MapLogic> mapLogic_;
+	Ui::WidgetOverheadMap* ui;
 };
 
 #endif // WIDGETOVERHEADMAP_H

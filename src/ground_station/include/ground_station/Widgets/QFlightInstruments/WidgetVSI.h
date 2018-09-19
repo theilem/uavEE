@@ -60,38 +60,42 @@
 
 namespace Ui
 {
-    class WidgetVSI;
+class WidgetVSI;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class WidgetVSI : public QWidget
+class WidgetVSI: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    explicit WidgetVSI( QWidget * parent = 0 );
+	explicit
+	WidgetVSI(QWidget * parent = 0);
 
-    ~WidgetVSI();
+	~WidgetVSI();
 
-    inline void update()
-    {
-        m_vsi->update();
-    }
+	inline void
+	update()
+	{
+		m_vsi->update();
+	}
 
-    inline void setClimbRate( float climbRate )
-    {
-        m_vsi->setClimbRate( climbRate );
-    }
+	inline void
+	setClimbRate(float climbRate)
+	{
+		m_vsi->setClimbRate(climbRate);
+	}
 
 private:
 
-    Ui::WidgetVSI * m_ui;
-    qfi_VSI       * m_vsi;
-    LayoutSquare  * m_layoutSq;
+	Ui::WidgetVSI * m_ui;
+	qfi_VSI * m_vsi;
+	LayoutSquare * m_layoutSq;
 
-    void setupUi();
+	void
+	setupUi();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

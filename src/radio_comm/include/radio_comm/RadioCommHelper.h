@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
-// uavEE is free software: you can redistribute it and/or modify
+// uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavEE is distributed in the hope that it will be useful,
+// uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -26,10 +26,11 @@
 #ifndef RADIO_COMM_INCLUDE_RADIO_COMM_RADIOCOMMHELPER_H_
 #define RADIO_COMM_INCLUDE_RADIO_COMM_RADIOCOMMHELPER_H_
 
-#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
 #include <uavAP/Core/Framework/Helper.h>
-#include <uavAP/Core/IDC/IDCFactory.h>
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/IDC/NetworkLayer/NetworkFactory.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
@@ -41,13 +42,14 @@ public:
 
 	RadioCommHelper()
 	{
-		addCreator<RadioComm>("radio_comm");
+		addDefaultCreator<RadioComm>();
 
-		addDefault<SchedulerFactory>("scheduler");
-		addDefault<IDCFactory>("idc");
-		addDefault<TimeProviderFactory>("time_provider");
-		addDefault<DataPresentationFactory<Content, Target>>("data_presentation");
-		addDefaultCreator<IPC>("ipc");
+		addDefault<SchedulerFactory>();
+		addDefaultCreator<IDC>();
+		addDefault<TimeProviderFactory>();
+		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<IPC>();
+		addFactory<NetworkFactory>();
 	}
 };
 

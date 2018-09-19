@@ -10,6 +10,8 @@ add_compile_options(-std=c++11 -fPIC)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   simulation_interface
+  autopilot_interface
+  radio_comm
 )
 
 #commented out because not all lab machines have qt5.6
@@ -26,7 +28,7 @@ find_package(Qt5 #5.6
         Svg
         PrintSupport
     REQUIRED)
-
+ 
 message(Qt5_VERSION ${Qt5_VERSION})
 message(Qt5Core_VERSION ${Qt5Core_VERSION})
 message(Qt5Gui_VERSION: ${Qt5Gui_VERSION})
@@ -152,23 +154,27 @@ include_directories(
 
 link_directories(${UAVAP_LIB_DIR})
 
-file(GLOB UI_FORMS 	src/Widgets/forms/*.ui
+file(GLOB UI_FORMS 	src/Widgets/forms/*.ui   
                     src/Widgets/forms/PID/*.ui
 					src/Widgets/forms/QFlightInstruments/*.ui
 					)
+					
+message(STATUS ${UI_FORMS})
 				
 file(GLOB WIDGET_HEADERS include/ground_station/Widgets/*.h
                     #include/ground_station/Widgets/FlightView/*.h
                     #include/ground_station/Widgets/FlightView/SubWidgets/*.h
                     include/ground_station/Widgets/PID/*.h
                     include/ground_station/Widgets/QFlightInstruments/*.h
+                    include/ground_station/Widgets/GenericProto/*.h
 					)
 					
 file(GLOB WIDGET_SRCS src/Widgets/*.cpp
                     #src/Widgets/FlightView/*.cpp
                     #src/Widgets/FlightView/SubWidgets/*.cpp
                     src/Widgets/PID/*.cpp
-                    src/Widgets/QFlightInstruments/*.cpp
+                    src/Widgets/QFlightInstruments/*.cpp 
+                    src/Widgets/GenericProto/*.cpp
 					)
 
 file(GLOB HEADERS_FOR_MOCS include/ground_station/*.h
@@ -231,6 +237,8 @@ target_link_libraries(${PROJECT_NAME}_node
    Qt5::OpenGL
    Qt5::PrintSupport
    uavap_core
+   uavap_flight_analysis
+   uavap_mission_control
    protobuf
 )
 

@@ -1,0 +1,15 @@
+{
+	"network": {
+		"type": "serial",
+		"ports": {
+			"autopilot": {
+				"serial_port": "/dev/tnt1",
+				"delimiter_string": "*\n",
+				"use_crc": true
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

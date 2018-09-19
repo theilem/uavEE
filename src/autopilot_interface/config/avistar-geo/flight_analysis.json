@@ -1,0 +1,14 @@
+﻿{
+	"steady_state_analysis": {
+		"steady_state_duration": 5000,
+		"max_roll_deviation": 2.0,
+		"max_pitch_deviation": 2.0,
+		"max_velocity_deviation": 0.5,
+		"max_climbrate_deviation": 0.1,
+		"max_yawrate_deviation": 1.0,
+		"max_rudder_deviation": 0.1
+	},
+	"maneuver_analysis": {
+		"log_path": "/home/mircot/Downloads/"
+	}
+}

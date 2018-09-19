@@ -25,11 +25,13 @@
 
 #ifndef GROUND_STATION_INCLUDE_GROUND_STATION_GSWIDGETFACTORY_H_
 #define GROUND_STATION_INCLUDE_GROUND_STATION_GSWIDGETFACTORY_H_
-#include <uavAP/Core/Logging/APLogger.h>
+
 #include <map>
 #include <memory>
 #include <QWidget>
 #include <type_traits>
+
+#include "uavAP/Core/Logging/APLogger.h"
 
 class IWidgetInterface;
 
@@ -40,7 +42,8 @@ public:
 	GSWidgetFactory();
 
 	QWidget*
-	createWidget(const std::string& type, std::shared_ptr<IWidgetInterface> interface = nullptr, QWidget* parent = nullptr);
+	createWidget(const std::string& type, std::shared_ptr<IWidgetInterface> interface = nullptr,
+			QWidget* parent = nullptr);
 
 	std::vector<std::string>
 	getWidgetTypes();
@@ -49,7 +52,7 @@ private:
 
 	using WidgetCreator = std::function<QWidget*(std::shared_ptr<IWidgetInterface>, QWidget*)>;
 
-	template <typename TYPE>
+	template<typename TYPE>
 	typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::type
 	addWidget();
 
@@ -61,13 +64,15 @@ template<typename TYPE>
 inline typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::type
 GSWidgetFactory::addWidget()
 {
-	APLOG_DEBUG << "Added widget " << std::string(TYPE::widgetName);
-	if (creators_.find(std::string(TYPE::widgetName)) != creators_.end())
+
+	const std::string type(TYPE::widgetName);
+	APLOG_DEBUG << "Added widget " << type;
+	if (creators_.find(type) != creators_.end())
 	{
 		APLOG_ERROR << "Widget of that type already exists. Ignore new insertion.";
 		return;
 	}
-	creators_.insert(std::make_pair(std::string(TYPE::widgetName), &TYPE::createGSWidget));
+	creators_.insert(std::make_pair(type, &TYPE::createGSWidget));
 }
 
 #endif /* GROUND_STATION_INCLUDE_GROUND_STATION_GSWIDGETFACTORY_H_ */

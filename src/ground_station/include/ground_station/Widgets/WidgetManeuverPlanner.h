@@ -19,6 +19,9 @@
 #ifndef WIDGETMANEUVERPLANNER_H
 #define WIDGETMANEUVERPLANNER_H
 
+#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
+
+#include "ground_station/Widgets/GenericProto/NamedLineEdit.h"
 #include "ground_station/ConfigManager.h"
 #include <QWidget>
 
@@ -31,37 +34,51 @@ class IWidgetInterface;
 
 class WidgetManeuverPlanner: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
-    static constexpr char* widgetName = "maneuver_planner";
+	static constexpr auto widgetName = "maneuver_planner";
 
-    explicit
-    WidgetManeuverPlanner(QWidget* parent = 0);
-    ~WidgetManeuverPlanner();
+	explicit
+	WidgetManeuverPlanner(QWidget* parent = 0);
+	~WidgetManeuverPlanner();
 
-    static inline QWidget*
-    createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-    {
-        auto widget(new WidgetManeuverPlanner(parent));
-        widget->connectInterface(interface);
-        return widget;
-    }
+	static inline QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
+	{
+		auto widget(new WidgetManeuverPlanner(parent));
+		widget->connectInterface(interface);
+		return widget;
+	}
+
+	bool
+	configure(const boost::property_tree::ptree& config);
 
 private slots:
-    void
-    on_apply_clicked();
-    void
-    on_sendManeuver_clicked();
-    void
-    on_sendMission_clicked();
+	void
+	on_apply_clicked();
+
+	void
+	on_abort_clicked();
+
+	void
+	on_sendManeuver_clicked();
+
+	void
+	on_sendMission_clicked();
 
 private:
-    void
-    connectInterface(std::shared_ptr<IWidgetInterface> interface);
-    ObjectHandle<IConfigManager> configManager_;
-    Ui::WidgetManeuverPlanner* ui;
+	void
+	connectInterface(std::shared_ptr<IWidgetInterface> interface);
+	ObjectHandle<IConfigManager> configManager_;
+	Ui::WidgetManeuverPlanner* ui;
+
+	std::map<LocalPlannerTargets, NamedLineEdit*> localPlannerTargets_;
+	std::map<ControllerTargets, NamedLineEdit*> controllerTargets_;
+	std::map<PIDs, NamedLineEdit*> pids_;
+	std::map<ControllerOutputs, NamedLineEdit*> controllerOutputs_;
+	std::map<CustomOverrideIDs, NamedLineEdit*> custom_;
 };
 
 #endif // WIDGETMANEUVERPLANNER_H

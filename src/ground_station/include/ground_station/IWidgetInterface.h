@@ -1,5 +1,4 @@
-﻿
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
 // This file is part of uavEE.
@@ -44,24 +43,23 @@ class IWidgetInterface
 {
 public:
 
-    virtual
-    ~IWidgetInterface()
-    {
-    }
+	virtual
+	~IWidgetInterface()
+	{
+	}
 
-    virtual ObjectHandle<IDataSignals>
-    getIDataSignals() const = 0;
+	virtual ObjectHandle<IDataSignals>
+	getIDataSignals() const = 0;
 
-    virtual ObjectHandle<MapLogic>
-    getMapLogic() const = 0;
+	virtual ObjectHandle<MapLogic>
+	getMapLogic() const = 0;
 
-    virtual ObjectHandle<IConfigManager>
-    getConfigManager() const = 0;
+	virtual ObjectHandle<IConfigManager>
+	getConfigManager() const = 0;
 
-    virtual ObjectHandle<IPIDConfigurator>
-    getPIDConfigurator() const = 0;
+	virtual ObjectHandle<IPIDConfigurator>
+	getPIDConfigurator() const = 0;
 
 };
-
 
 #endif /* GROUND_STATION_INCLUDE_GROUND_STATION_IWIDGETINTERFACE_H_ */
