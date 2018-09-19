@@ -1,4 +1,4 @@
-<launch>
+﻿<launch>
 	<node name="simulation_interface_node" pkg="simulation_interface" type="simulation_interface_node" output="screen">
 		<param name="simulation_config" value="/usr/local/config/simulation.json" />
 	</node>
@@ -24,5 +24,8 @@
     >
         <param name="config_path" value="$(find ground_station)/config/layoutFDAQ.json" />
         <param name="resource_path" value="$(find ground_station)/resources/" />
+    </node>
+    <node name="maneuver_override_node" pkg="maneuver_override" type="maneuver_override_node" output="screen">
+        <param name="config_path" value="$(find maneuver_override)/config/config.json" />
     </node>
 </launch>
