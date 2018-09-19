@@ -133,8 +133,8 @@ catkin_package(
 include_directories(
 	include
   	${catkin_INCLUDE_DIRS}
-  	${UAVAP_INCLUDE_DIR}
   	${EIGEN_INCLUDE_DIR}
+  	${UAVAP_INCLUDE_DIR}
   	${BOOST_INCLUDE_DIR}
   	${PROTOBUF_INLCUDE_DIR}
 )

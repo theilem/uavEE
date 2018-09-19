@@ -178,9 +178,7 @@ XPlaneRosNode::getSensorData()
 
 	double yaw = static_cast<double>(XPLMGetDataf(attitudeRefs_[2])) * deg2rad;
 
-	if (yaw > M_PI)
-		yaw -= 2 * M_PI;
-	sd.attitude.z = yaw;
+	sd.attitude.z = boundAngleRad(-(yaw - M_PI/2));;
 
 	sd.velocity.linear.x = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
 	sd.velocity.linear.y = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));

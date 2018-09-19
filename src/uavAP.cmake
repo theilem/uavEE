@@ -11,7 +11,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
     if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 5.9.9)
         message(WARNING "gcc version too new, setting gcc-5 as C compiler")
         set(CMAKE_C_COMPILER /usr/bin/gcc-5)
-    endif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.9.9)
+    endif(CMAKE_C_COMPILER_VERSION VERSION_GREATER 5.9.9)
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.9.9)
         message(WARNING "g++ version too new, setting g++-5 as CXX compiler")
