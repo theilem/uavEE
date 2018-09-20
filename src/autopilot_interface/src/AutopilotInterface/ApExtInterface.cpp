@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
 #include <boost/property_tree/json_parser.hpp>
 
 ApExtInterface::ApExtInterface() :
-		lastSequenceNr_(0), numChannels_(0), traceSeqNr_(false), useAirspeed_(false), externalGps_(
-				false), internalImu_(false)
+		lastSequenceNr_(0), numChannels_(0), traceSeqNr_(false), useAirspeed_(false), useEuler_(
+				false), externalGps_(false), internalImu_(false)
 {
 
 }
@@ -78,6 +78,7 @@ ApExtInterface::configure(const boost::property_tree::ptree& config)
 	pmInterface.add<bool>("internal_imu", internalImu_, false);
 	pmInterface.add<bool>("external_gps", externalGps_, false);
 	pmInterface.add<bool>("use_airspeed", useAirspeed_, false);
+	pmInterface.add<bool>("use_euler", useEuler_, false);
 	pmInterface.add<bool>("trace_seq_nr", traceSeqNr_, false);
 	return pm.map() && pmAlvolo.map();
 }
@@ -165,6 +166,20 @@ ApExtInterface::sendSensorData(const SensorData& sensorData)
 		// Sequence number
 		imu->imu_pkt = static_cast<unsigned long>(sensorData.sequenceNr);
 
+		if (useEuler_)
+		{
+			imu->imu_euler_roll = roll;
+			imu->imu_euler_pitch = pitch;
+			imu->imu_euler_yaw = yaw;
+		}
+		else
+		{
+			imu->imu_quat_w = attitude.w();
+			imu->imu_quat_x = attitude.x();
+			imu->imu_quat_y = attitude.y();
+			imu->imu_quat_z = attitude.z();
+		}
+
 		/* Rotation rate */
 		imu->imu_rot_x = sensorData.angularRate[0];
 		imu->imu_rot_y = sensorData.angularRate[1];
@@ -173,12 +188,6 @@ ApExtInterface::sendSensorData(const SensorData& sensorData)
 		imu->imu_accel_x = sensorData.acceleration[0] - gravityBody[0];
 		imu->imu_accel_y = sensorData.acceleration[1] - gravityBody[1];
 		imu->imu_accel_z = sensorData.acceleration[2] - gravityBody[2];
-
-		imu->imu_quat_w = attitude.w();
-		imu->imu_quat_x = attitude.x();
-		imu->imu_quat_y = attitude.y();
-		imu->imu_quat_z = attitude.z();
-
 	}
 	else
 	{
@@ -187,6 +196,20 @@ ApExtInterface::sendSensorData(const SensorData& sensorData)
 		// Sequence number
 		imu->imu_pkt = static_cast<unsigned long>(sensorData.sequenceNr);
 
+		if (useEuler_)
+		{
+			imu->imu_euler_roll = roll;
+			imu->imu_euler_pitch = pitch;
+			imu->imu_euler_yaw = yaw;
+		}
+		else
+		{
+			imu->imu_quat_w = attitude.w();
+			imu->imu_quat_x = attitude.x();
+			imu->imu_quat_y = attitude.y();
+			imu->imu_quat_z = attitude.z();
+		}
+
 		/* Rotation rate */
 		imu->imu_rot_x = sensorData.angularRate[0];
 		imu->imu_rot_y = sensorData.angularRate[1];
@@ -195,11 +218,6 @@ ApExtInterface::sendSensorData(const SensorData& sensorData)
 		imu->imu_accel_x = sensorData.acceleration[0] - gravityBody[0];
 		imu->imu_accel_y = sensorData.acceleration[1] - gravityBody[1];
 		imu->imu_accel_z = sensorData.acceleration[2] - gravityBody[2];
-
-		imu->imu_quat_w = attitude.w();
-		imu->imu_quat_x = attitude.x();
-		imu->imu_quat_y = attitude.y();
-		imu->imu_quat_z = attitude.z();
 
 		if (!externalGps_)
 		{

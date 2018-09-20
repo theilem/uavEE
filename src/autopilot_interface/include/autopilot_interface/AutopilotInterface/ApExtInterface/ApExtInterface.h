@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ private:
 	bool internalImu_;
 	bool externalGps_;
 	bool useAirspeed_;
+	bool useEuler_;
 	bool traceSeqNr_;
 
 	data_sample_t dataSample_;

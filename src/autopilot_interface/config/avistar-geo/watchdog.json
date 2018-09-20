@@ -1,6 +1,6 @@
 {
 	"binary_path": "/usr/local/bin/uavAP/",
-    "config_path": "/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar-geo/",
+    "config_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-geo/",
 	"processes":
 	{
 		"flight_control":

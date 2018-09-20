@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ public:
 
 	enum class DataID
 	{
+		IMU_PKT,
 		EULER_ROLL,
 		EULER_PITCH,
 		EULER_YAW,
@@ -69,11 +70,21 @@ public:
 		LATITUDE,
 		LONGITUDE,
 		ALTITUDE,
+		VELOCITY_X,
+		VELOCITY_Y,
+		VELOCITY_Z,
 		COURSE_OVER_GROUND,
 		SPEED_OVER_GROUND,
 		VERTICAL_VEL,
 		AIRSPEED,
 		GPS_FIX,
+		TIME_DAY,
+		TIME_HOUR,
+		TIME_MINUTE,
+		TIME_MONTH,
+		TIME_NANOSEC,
+		TIME_SEC,
+		TIME_YEAR,
 		NUM_OF_IDX
 	};
 
@@ -117,6 +128,9 @@ private:
 	ObjectHandle<IAutopilotInterface> autopilotInterface_;
 	ObjectHandle<IScheduler> scheduler_;
 
+	bool internalImu_;
+	bool externalGps_;
+	bool useEuler_;
 	std::string logFilePath_;
 	std::string logHeaderPath_;
 	Duration period_;

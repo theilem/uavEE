@@ -2,17 +2,18 @@
 	"autopilot_interface":
 	{
 		"type":"ap_ext",
-		"alvolo_config":"/home/mircot/Documents/flights/pulsar/may_7_2018/alvolo.json"
+		"alvolo_config":"/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/log_parsing/alvolo.json"
 	},
 	"log_parser":
 	{
-		"log_file_path":"/home/mircot/Documents/flights/pulsar/may_7_2018/DAQ_363.log",
-		"log_header_path":"/home/mircot/Documents/flights/pulsar/may_7_2018/351header.txt",
+		"alvolo_config":"/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/log_parsing/alvolo.json",
+		"log_file_path":"/home/simonyu/Documents/Repositories/Git/ECE 496/src/python/alvolo/log/396_avistar.log",
+		"log_header_path":"/home/simonyu/Documents/Repositories/Git/ECE 496/src/python/alvolo/log/avistar.header",
 		"period":10
 	},
 	"autopilot_launcher":
 	{
 		"watchdog_binary":"/usr/local/bin/uavAP/Watchdog",
-		"watchdog_config":"/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar/watchdog.json"
+		"watchdog_config":"/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-geo/watchdog.json"
 	}
 }

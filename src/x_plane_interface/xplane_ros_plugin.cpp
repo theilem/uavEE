@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@
  * @brief
  */
 
+#include <cstring>
+#include <csignal>
+#include <ros/ros.h>
+#include <uavAP/Core/Runner/SimpleRunner.h>
+
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
 #include "xPlane/CHeaders/XPLM/XPLMPlugin.h"
 #include "xPlane/CHeaders/XPLM/XPLMDisplay.h"
@@ -31,14 +36,8 @@
 #include "xPlane/CHeaders/Widgets/XPStandardWidgets.h"
 #include "xPlane/CHeaders/XPLM/XPLMMenus.h"
 #include "xPlane/CHeaders/XPLM/XPLMUtilities.h"
-#include <cstring>
-
-#include <ros/ros.h>
-
 #include "x_plane_interface/XPlaneRosNode.h"
 #include "x_plane_interface/XPlaneHelper.h"
-
-#include <uavAP/Core/Runner/SimpleRunner.h>
 
 static Aggregator* aggregator = nullptr;
 
@@ -48,20 +47,30 @@ rosInterfaceHandler(void* mRef, void* iRef);
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
 {
-	// Plugin details
-	strcpy(outName, "ROS Plugin");
-	strcpy(outSig, "uavee.ros.plugin");
-	strcpy(outDesc, "More information not available");
+	strcpy(outName, "uavEE");
+	strcpy(outSig, "uavee");
+	strcpy(outDesc, "uavEE X-Plane Simulation Interface");
 
 	XPLMMenuID id;
 	int item;
 
-	item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "Ros interface", NULL, 1);
+	item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "uavEE", NULL, 1);
 
-	id = XPLMCreateMenu("ROS", XPLMFindPluginsMenu(), item, rosInterfaceHandler, NULL);
+	id = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, rosInterfaceHandler, NULL);
 
-	XPLMAppendMenuItem(id, "Enable/Disable ROS", (void*) "ROS", 1);
-	XPLMAppendMenuItem(id, "Enable/Disable Autopilot", (void*) "AP", 1);
+	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
+	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
+
+	if (!aggregator)
+	{
+		XPlaneHelper helper;
+		boost::property_tree::ptree config;
+		aggregator = new Aggregator;
+		*aggregator = helper.createAggregation(config);
+
+		SimpleRunner run(*aggregator);
+		run.runAllStages();
+	}
 
 	return 1;
 }
@@ -90,34 +99,32 @@ XPluginReceiveMessage(XPLMPluginID, intptr_t, void*)
 void
 rosInterfaceHandler(void* mRef, void* iRef)
 {
-	if (!strcmp((char*) iRef, "ROS"))
+	if (!strcmp((char*) iRef, "ENABLEAP"))
 	{
 		if (aggregator)
 		{
-			delete aggregator;
-			aggregator = nullptr;
-			return;
+			auto node = aggregator->getOne<XPlaneRosNode>();
+
+			if (!node)
+			{
+				return;
+			}
+
+			node->enableAutopilot();
 		}
-		XPlaneHelper helper;
-		boost::property_tree::ptree config;
-		aggregator = new Aggregator;
-		*aggregator = helper.createAggregation(config);
-
-		SimpleRunner run(*aggregator);
-		run.runAllStages();
-
 	}
-	else if (!strcmp((char*) iRef, "AP"))
+	if (!strcmp((char*) iRef, "DISABLEAP"))
 	{
-		if (!aggregator)
+		if (aggregator)
 		{
-			return;
+			auto node = aggregator->getOne<XPlaneRosNode>();
+
+			if (!node)
+			{
+				return;
+			}
+
+			node->disableAutopilot();
 		}
-		auto node = aggregator->getOne<XPlaneRosNode>();
-		if (!node)
-			return;
-
-		node->toggleAutopilot();
-
 	}
 }

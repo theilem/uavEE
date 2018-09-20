@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,20 +23,17 @@
  * @brief
  */
 
-#include "x_plane_interface/XPlaneRosNode.h"
+#include <cmath>
+#include <simulation_interface/sensor_data.h>
+#include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/Core/Logging/APLogger.h>
-
-#include <simulation_interface/sensor_data.h>
+#include <uavAP/API/ap_ext/latLongToUTM.h>
 
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
 #include "xPlane/CHeaders/XPLM/XPLMDataAccess.h"
 #include "xPlane/CHeaders/XPLM/XPLMGraphics.h"
-
-#include <uavAP/API/ap_ext/latLongToUTM.h>
-#include <uavAP/Core/LinearAlgebra.h>
-
-#include <cmath>
+#include "x_plane_interface/XPlaneRosNode.h"
 
 XPlaneRosNode::XPlaneRosNode() :
 		sensorFrequency_(100), sequenceNr_(0), autopilotActive_(false)
@@ -53,6 +50,8 @@ XPlaneRosNode::XPlaneRosNode() :
 	velocityRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/local_vx");
 	velocityRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_vy");
 	velocityRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/local_vz");
+
+	trueAirSpeedRef_ = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
 
 	accelerationRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/local_ax");
 	accelerationRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_ay");
@@ -135,17 +134,22 @@ XPlaneRosNode::run(RunStage stage)
 }
 
 void
-XPlaneRosNode::toggleAutopilot()
+XPlaneRosNode::enableAutopilot()
 {
-	autopilotActive_ = autopilotActive_ ? false : true;
-
-	if (autopilotActive_)
+	if (!autopilotActive_)
 	{
+		autopilotActive_ = true;
 		XPLMSetDatai(overridesRef_[0], 1);
 		XPLMSetDatai(overridesRef_[1], 1);
 	}
-	else
+}
+
+void
+XPlaneRosNode::disableAutopilot()
+{
+	if (autopilotActive_)
 	{
+		autopilotActive_ = false;
 		XPLMSetDatai(overridesRef_[0], 0);
 		XPLMSetDatai(overridesRef_[1], 0);
 	}
@@ -185,6 +189,7 @@ XPlaneRosNode::getSensorData()
 	sd.velocity.linear.z = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
 
 	sd.ground_speed = sqrt(pow(sd.velocity.linear.x,2) + pow(sd.velocity.linear.y,2) + pow(sd.velocity.linear.z,2));
+	sd.air_speed = static_cast<double>(XPLMGetDataf(trueAirSpeedRef_));
 
 	sd.velocity.angular.x = static_cast<double>(XPLMGetDataf(angularRateRefs_[0])) * deg2rad;
 	sd.velocity.angular.y = -static_cast<double>(XPLMGetDataf(angularRateRefs_[1])) * deg2rad;

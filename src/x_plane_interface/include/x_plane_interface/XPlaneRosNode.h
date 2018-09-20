@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,10 @@ public:
 	run(RunStage stage) override;
 
 	void
-	toggleAutopilot();
+	enableAutopilot();
+
+	void
+	disableAutopilot();
 
 private:
 
@@ -78,6 +81,7 @@ private:
 
 	XPLMDataRef positionRefs_[3];
 	XPLMDataRef velocityRefs_[3];
+	XPLMDataRef trueAirSpeedRef_;
 	XPLMDataRef accelerationRefs_[3];
 	XPLMDataRef attitudeRefs_[3];
 	XPLMDataRef angularRateRefs_[3];

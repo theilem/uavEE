@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavEE.
+// This file is part of uavAP.
 //
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 LogParser::LogParser() :
 		dataIdxToString_(
 		{
+		{ DataID::IMU_PKT, "IMU Packet Number" },
 		{ DataID::EULER_ROLL, "Euler Angles phi (deg) " },
 		{ DataID::EULER_PITCH, "Euler Angles theta (deg) " },
 		{ DataID::EULER_YAW, "Euler Angles psi (deg) " },
@@ -54,11 +55,22 @@ LogParser::LogParser() :
 		{ DataID::LONGITUDE, "Longitude (deg)" },
 		{ DataID::LATITUDE, "Latitude (deg)" },
 		{ DataID::ALTITUDE, "Altitude (m)" },
+		{ DataID::VELOCITY_X, "Velocity x (m/s) " },
+		{ DataID::VELOCITY_Y, "Velocity y (m/s) " },
+		{ DataID::VELOCITY_Z, "Velocity z (m/s) " },
 		{ DataID::COURSE_OVER_GROUND, "Course over Ground (deg)" },
 		{ DataID::SPEED_OVER_GROUND, "Speed over Ground (m/s)" },
 		{ DataID::VERTICAL_VEL, "Vertical Velocity (m/s)" },
+		{ DataID::TIME_DAY, "UTC Time - Day" },
+		{ DataID::TIME_HOUR, "UTC Time - Hour" },
+		{ DataID::TIME_MINUTE, "UTC Time - Minute" },
+		{ DataID::TIME_MONTH, "UTC Time - Month" },
+		{ DataID::TIME_NANOSEC, "UTC Time - Nanoseconds" },
+		{ DataID::TIME_SEC, "UTC Time - Second" },
+		{ DataID::TIME_YEAR, "UTC Time - Year" },
 		{ DataID::GPS_FIX, "GPS Fix" },
-		{ DataID::AIRSPEED, "Air Speed (m/s)" } })
+		{ DataID::AIRSPEED, "Air Speed (m/s)" } }), internalImu_(false), externalGps_(false), useEuler_(
+				false)
 {
 }
 
@@ -128,10 +140,25 @@ bool
 LogParser::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
+
+	boost::property_tree::ptree alvoloConfig;
+	pm.add("alvolo_config", alvoloConfig, true);
 	pm.add("log_file_path", logFilePath_, true);
 	pm.add("log_header_path", logHeaderPath_, true);
 	pm.add("period", period_, true);
-	return pm.map();
+
+	PropertyMapper pmAlvolo(alvoloConfig);
+
+	boost::property_tree::ptree interfaceConfig;
+	pmAlvolo.add("interface", interfaceConfig, true);
+
+	PropertyMapper pmInterface(interfaceConfig);
+
+	pmInterface.add<bool>("internal_imu", internalImu_, false);
+	pmInterface.add<bool>("external_gps", externalGps_, false);
+	pmInterface.add<bool>("use_euler", useEuler_, false);
+
+	return pm.map() && pmAlvolo.map();
 }
 
 void
@@ -192,47 +219,116 @@ LogParser::createAndSendSample()
 
 	std::string line;
 	std::getline(logFile_, line);
-	std::vector < std::string > items;
+	std::vector<std::string> items;
 
 	boost::split(items, line, boost::is_any_of(";"), boost::token_compress_off);
 
-	auto intimu = dataSample_.int_imu_sample;
-	if (intimu)
+	if (internalImu_)
 	{
-		intimu->imu_accel_x = getValue<double>(items, DataID::ACC_X);
-		intimu->imu_accel_y = getValue<double>(items, DataID::ACC_Y);
-		intimu->imu_accel_z = getValue<double>(items, DataID::ACC_Z);
+		auto intimu = dataSample_.int_imu_sample;
 
-		intimu->imu_quat_w = getValue<double>(items, DataID::QUAT_W);
-		intimu->imu_quat_x = getValue<double>(items, DataID::QUAT_X);
-		intimu->imu_quat_y = getValue<double>(items, DataID::QUAT_Y);
-		intimu->imu_quat_z = getValue<double>(items, DataID::QUAT_Z);
-
-		intimu->imu_rot_x = getValue<double>(items, DataID::ROLL_RATE);
-		intimu->imu_rot_y = getValue<double>(items, DataID::PITCH_RATE);
-		intimu->imu_rot_z = getValue<double>(items, DataID::YAW_RATE);
-
-		intimu->imu_euler_roll = getValue<double>(items, DataID::EULER_ROLL);
-		intimu->imu_euler_pitch = getValue<double>(items, DataID::EULER_PITCH);
-		intimu->imu_euler_yaw = getValue<double>(items, DataID::EULER_YAW);
-	}
-
-	auto pic = dataSample_.pic_sample;
-	if (pic)
-	{
-		//only update if gps is valid:
-		if (getValue<int>(items, DataID::GPS_FIX) == 7)
+		if (intimu)
 		{
-			APLOG_ERROR << "Test";
-			auto& pos = pic->gps_sample.position;
-			pos.flags = 7;
-			pos.longitude = getValue<double>(items, DataID::LONGITUDE);
-			pos.latitude = getValue<double>(items, DataID::LATITUDE);
-			pos.msl_altitude = getValue<double>(items, DataID::ALTITUDE);
+			intimu->imu_pkt = getValue<unsigned long>(items, DataID::IMU_PKT);
 
-			pos.course_gnd = getValue<double>(items, DataID::COURSE_OVER_GROUND);
-			pos.speed_gnd_kh = getValue<double>(items, DataID::SPEED_OVER_GROUND);
-			pos.vert_velocity = getValue<double>(items, DataID::VERTICAL_VEL);
+			if (useEuler_)
+			{
+				intimu->imu_euler_roll = getValue<double>(items, DataID::EULER_ROLL);
+				intimu->imu_euler_pitch = getValue<double>(items, DataID::EULER_PITCH);
+				intimu->imu_euler_yaw = getValue<double>(items, DataID::EULER_YAW);
+			}
+			else
+			{
+				intimu->imu_quat_w = getValue<double>(items, DataID::QUAT_W);
+				intimu->imu_quat_x = getValue<double>(items, DataID::QUAT_X);
+				intimu->imu_quat_y = getValue<double>(items, DataID::QUAT_Y);
+				intimu->imu_quat_z = getValue<double>(items, DataID::QUAT_Z);
+			}
+
+			intimu->imu_accel_x = getValue<double>(items, DataID::ACC_X);
+			intimu->imu_accel_y = getValue<double>(items, DataID::ACC_Y);
+			intimu->imu_accel_z = getValue<double>(items, DataID::ACC_Z);
+
+			intimu->imu_rot_x = getValue<double>(items, DataID::ROLL_RATE);
+			intimu->imu_rot_y = getValue<double>(items, DataID::PITCH_RATE);
+			intimu->imu_rot_z = getValue<double>(items, DataID::YAW_RATE);
+		}
+	}
+	else
+	{
+		auto imu = dataSample_.imu_sample;
+
+		if (imu)
+		{
+			imu->imu_pkt = getValue<unsigned long>(items, DataID::IMU_PKT);
+
+			if (useEuler_)
+			{
+				imu->imu_euler_roll = getValue<double>(items, DataID::EULER_ROLL);
+				imu->imu_euler_pitch = getValue<double>(items, DataID::EULER_PITCH);
+				imu->imu_euler_yaw = getValue<double>(items, DataID::EULER_YAW);
+			}
+			else
+			{
+				imu->imu_quat_w = getValue<double>(items, DataID::QUAT_W);
+				imu->imu_quat_x = getValue<double>(items, DataID::QUAT_X);
+				imu->imu_quat_y = getValue<double>(items, DataID::QUAT_Y);
+				imu->imu_quat_z = getValue<double>(items, DataID::QUAT_Z);
+			}
+
+			imu->imu_accel_x = getValue<double>(items, DataID::ACC_X);
+			imu->imu_accel_y = getValue<double>(items, DataID::ACC_Y);
+			imu->imu_accel_z = getValue<double>(items, DataID::ACC_Z);
+
+			imu->imu_rot_x = getValue<double>(items, DataID::ROLL_RATE);
+			imu->imu_rot_y = getValue<double>(items, DataID::PITCH_RATE);
+			imu->imu_rot_z = getValue<double>(items, DataID::YAW_RATE);
+
+			if (!externalGps_)
+			{
+				imu->imu_lon = getValue<double>(items, DataID::LONGITUDE);
+				imu->imu_lat = getValue<double>(items, DataID::LATITUDE);
+				imu->imu_alt = getValue<double>(items, DataID::ALTITUDE);
+
+				// Velocity
+				imu->imu_vel_x = getValue<double>(items, DataID::VELOCITY_X);
+				imu->imu_vel_y = getValue<double>(items, DataID::VELOCITY_Y);
+				imu->imu_vel_z = getValue<double>(items, DataID::VELOCITY_Z);
+
+				//Valid flag for GPS fix
+				imu->valid_flags = static_cast<unsigned long>(0x80);
+
+				imu->imu_time_year = getValue<double>(items, DataID::TIME_YEAR);
+				imu->imu_time_month = getValue<double>(items, DataID::TIME_MONTH);
+				imu->imu_time_day = getValue<double>(items, DataID::TIME_DAY);
+				imu->imu_time_hour = getValue<double>(items, DataID::TIME_HOUR);
+				imu->imu_time_minute = getValue<double>(items, DataID::TIME_MINUTE);
+				imu->imu_time_second = getValue<double>(items, DataID::TIME_SEC);
+				imu->imu_time_nano = getValue<double>(items, DataID::TIME_NANOSEC);
+			}
+		}
+
+		if (externalGps_)
+		{
+			auto pic = dataSample_.pic_sample;
+
+			if (pic)
+			{
+				//only update if gps is valid:
+				if (getValue<int>(items, DataID::GPS_FIX) == 7)
+				{
+					auto& pos = pic->gps_sample.position;
+
+					pos.flags = 7;
+					pos.longitude = getValue<double>(items, DataID::LONGITUDE);
+					pos.latitude = getValue<double>(items, DataID::LATITUDE);
+					pos.msl_altitude = getValue<double>(items, DataID::ALTITUDE);
+
+					pos.course_gnd = getValue<double>(items, DataID::COURSE_OVER_GROUND);
+					pos.speed_gnd_kh = getValue<double>(items, DataID::SPEED_OVER_GROUND);
+					pos.vert_velocity = getValue<double>(items, DataID::VERTICAL_VEL);
+				}
+			}
 		}
 	}
 

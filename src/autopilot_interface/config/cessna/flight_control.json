@@ -1,8 +1,10 @@
 {
 	"controller": {
-		"type": "maneuver",
+		"type": "rate",
 		"hard_roll_constraint": 45.0,
+		"hard_roll_rate_constraint": 30.0,
 		"hard_pitch_constraint": 30.0,
+		"hard_pitch_rate_constraint": 30.0,
 		"pids": {
 			"climb_angle": {
 				"ff": 0,
@@ -18,12 +20,26 @@
 				"ki": 0.4,
 				"kp": 2.4
 			},
+			"pitch_rate": {
+				"ff": 1,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 0
+			},
 			"roll": {
 				"ff": 0,
-				"imax": 5,
+				"imax": 1,
 				"kd": 0.6,
-				"ki": 0.1,
+				"ki": 0.2,
 				"kp": 3.2
+			},
+			"roll_rate": {
+				"ff": 0.3,
+				"imax": 1,
+				"kd": 0,
+				"ki": 0.5,
+				"kp": 2
 			},
 			"rudder": {
 				"ff": 0,
@@ -46,8 +62,12 @@
 		"period": 0,
 		"safety_velocity": 15,
 		"k_altitude": 1.0,
-		"k_convergence": 0.02,
+		"k_convergence": 0.002,
 		"k_yaw_rate": 1.0
+	},
+	"fc_data_handling": {
+		"compress_sensor_data": true,
+		"period": 100
 	},
 	"data_presentation": {
 		"compress_double": true
