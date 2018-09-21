@@ -113,6 +113,7 @@ WidgetPFD::on_hasNewSample(const simulation_interface::sensor_data& s)
 	setAltitude(s.position.z);
 	setGroundspeed(s.ground_speed);
 	setAirspeed(s.air_speed);
+	setClimbRate(s.velocity.linear.z);
 	setRoll(s.attitude.x * 180. / M_PI);
 	setPitch(s.attitude.y * 180. / M_PI);
 	setHeading(s.attitude.z * 180. / M_PI);
