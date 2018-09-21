@@ -110,8 +110,9 @@ WidgetPFD::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 void
 WidgetPFD::on_hasNewSample(const simulation_interface::sensor_data& s)
 {
-	//setGroundspeed(s.velocityGround); //TODO fix
-	//setAirspeed(s.velocityAir);
+	setAltitude(s.position.z);
+	setGroundspeed(s.ground_speed);
+	setAirspeed(s.air_speed);
 	setRoll(s.attitude.x * 180. / M_PI);
 	setPitch(s.attitude.y * 180. / M_PI);
 	setHeading(s.attitude.z * 180. / M_PI);
