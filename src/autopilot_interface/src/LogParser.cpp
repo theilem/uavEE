@@ -211,11 +211,6 @@ LogParser::run(RunStage stage)
 void
 LogParser::createAndSendSample()
 {
-	/* For ICRA Start */
-	double lastLongitude = 0;
-	double lastLatitude = 0;
-	/* For ICRA End */
-
 	if (!logFile_.is_open())
 	{
 		APLOG_ERROR << "Log file not open. Cannot populate data sample.";
@@ -291,27 +286,8 @@ LogParser::createAndSendSample()
 
 			if (!externalGps_)
 			{
-				//imu->imu_lon = getValue<double>(items, DataID::LONGITUDE);
-				//imu->imu_lat = getValue<double>(items, DataID::LATITUDE);
-				/* For ICRA Start */
-				double longitude = getValue<double>(items, DataID::LONGITUDE);
-				double latitude = getValue<double>(items, DataID::LATITUDE);
-
-				if (fabs(longitude) > 1 && fabs(latitude) > 1)
-				{
-					imu->imu_lon = longitude;
-					imu->imu_lat = latitude;
-					lastLongitude = longitude;
-					lastLatitude = latitude;
-				}
-				else
-				{
-					APLOG_ERROR << "Implausible Position Data. Using Last.";
-					imu->imu_lon = lastLongitude;
-					imu->imu_lat = lastLatitude;
-				}
-				/* For ICRA End */
-
+				imu->imu_lon = getValue<double>(items, DataID::LONGITUDE);
+				imu->imu_lat = getValue<double>(items, DataID::LATITUDE);
 				imu->imu_alt = getValue<double>(items, DataID::ALTITUDE);
 
 				// Velocity
