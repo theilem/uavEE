@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>249</height>
+    <width>248</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,119 +20,113 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_5">
-     <property name="spacing">
-      <number>0</number>
+    <spacer name="verticalSpacerTop">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="throwsVal">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>53</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="verticalSpacing">
+        <number>15</number>
        </property>
-      </widget>
+       <item row="0" column="0">
+        <widget class="QLabel" name="camberControlLabel">
+         <property name="text">
+          <string>Camber Control</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="camberControl"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="specialControlLabel">
+         <property name="text">
+          <string>Special Control</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="specialControl"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="throwsControlLabel">
+         <property name="text">
+          <string>Throws Control</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="throwsControl"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="camberValueLabel">
+         <property name="text">
+          <string>Camber Value</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="camberValue">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="specialValueLabel">
+         <property name="text">
+          <string>Special Value</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="specialValue">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="specialVal">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="throwsLabel">
+     <item>
+      <widget class="QPushButton" name="send">
        <property name="text">
-        <string>Throws Selection</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="camberSelVal">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="specialLabel">
-       <property name="text">
-        <string>Special Value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="specialSelLabel">
-       <property name="text">
-        <string>Special Selection</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="specialSelVal">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="camberLabel">
-       <property name="text">
-        <string>Camber Value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="camberVal">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="camberSelLabel">
-       <property name="text">
-        <string>Camber Selection</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QPushButton" name="apply">
-       <property name="text">
-        <string>Send Advanced Control</string>
+        <string>Send</string>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0">
+    <spacer name="verticalSpacerBottom">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>52</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

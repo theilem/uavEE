@@ -100,6 +100,9 @@ public:
 	const boost::property_tree::ptree&
 	getGSConfig() const override;
 
+	const boost::property_tree::ptree&
+	getAlvoloConfig() const override;
+
 	void
 	notifyAggregationOnUpdate(const Aggregator&) override;
 
@@ -181,6 +184,9 @@ private:
 
 	///! propery tree representing json configuration for aircraft mission config
 	boost::property_tree::ptree missionConfig_;
+
+	///! propery tree representing json configuration for aircraft alvolo config
+	boost::property_tree::ptree alvoloConfig_;
 
 	///! string representation of path to resource folder
 	std::string resourcePath_;

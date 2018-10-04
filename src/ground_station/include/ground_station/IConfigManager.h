@@ -80,6 +80,15 @@ public:
 	getGSConfig() const = 0;
 
 	/**
+	 * @brief   getAlvoloConfig returns Alvolo json that the aircraft
+	 *          is using - contains data like channel mixing and advanced control
+	 * @return  Alvolo json specified in ground station config json
+	 *          that should be set to same json aircraft is using
+	 */
+	virtual const boost::property_tree::ptree&
+	getAlvoloConfig() const = 0;
+
+	/**
 	 * @brief   getResourcePath gets the path to folder of resource files
 	 * @return  string path of resource directory
 	 */

@@ -117,6 +117,12 @@ ConfigManager::getGSConfig() const
 	return gsConfig_;
 }
 
+const boost::property_tree::ptree&
+ConfigManager::getAlvoloConfig() const
+{
+	return alvoloConfig_;
+}
+
 void
 ConfigManager::notifyAggregationOnUpdate(const Aggregator&)
 {
@@ -137,14 +143,28 @@ ConfigManager::run(RunStage stage)
 	{
 		auto mainConfig = getMainConfig();
 		PropertyMapper pm(mainConfig);
+
 		std::string flightConfPath;
 		pm.add("flight_control_path", flightConfPath, true);
 		boost::property_tree::read_json(flightConfPath, flightConfig_);		//TODO error checking
 		APLOG_TRACE << "ConfigManager: Flight config set";
+
 		std::string missionConfPath;
 		pm.add("mission_control_path", missionConfPath, true);
 		boost::property_tree::read_json(missionConfPath, missionConfig_);
 		APLOG_TRACE << "ConfigManager: Mission config set";
+
+		std::string alvoloConfPath;
+
+		if (pm.add("alvolo_path", alvoloConfPath, false))
+		{
+			boost::property_tree::read_json(alvoloConfPath, alvoloConfig_);
+			APLOG_TRACE << "ConfigManager: Alvolo Configuration Set.";
+		}
+		else
+		{
+			APLOG_WARN << "ConfigManager: Alvolo Configuration Not Set.";
+		}
 
 		std::string mode;
 		pm.add("mode", mode, true);

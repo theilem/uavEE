@@ -16,11 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+
 #ifndef WIDGETADVANCEDCONTROL_H
 #define WIDGETADVANCEDCONTROL_H
 
-#include "ground_station/ConfigManager.h"
 #include <QWidget>
+#include "ground_station/ConfigManager.h"
 
 namespace Ui
 {
@@ -51,12 +52,15 @@ public:
 	}
 
 private slots:
+
 	void
-	on_apply_clicked();
+	on_send_clicked();
 
 private:
+
 	void
 	connectInterface(std::shared_ptr<IWidgetInterface> interface);
+
 	ObjectHandle<IConfigManager> configManager_;
 	Ui::WidgetAdvancedControl* ui;
 };

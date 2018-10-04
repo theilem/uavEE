@@ -1,0 +1,80 @@
+{
+	"main_config": {
+		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/flight_control.json",
+		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/mission_control.json",
+		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar/alvolo.json",
+		"mode": "airplane",
+		"widget_configs": {
+			"overhead_map": {
+				"aircraft_image": "airplane.png",
+				"map_center": {
+					"lat": 40.059375,
+					"lon": -88.551382
+				},
+				"map_nw_corner": {
+					"lat": 40.041283557243602,
+					"lon": -88.389129638671903
+				},
+				"map_se_corner": {
+					"lat": 39.981329382870399,
+					"lon": -88.292999267578097
+				}
+			},
+			"maneuver_planner": {
+				"local_planner": [
+					"position_x",
+					"position_y",
+					"position_z",
+					"heading",
+					"velocity"
+				],
+				"controller_targets": [
+					"velocity",
+					"yaw_rate",
+					"climb_angle"
+				],
+				"pids": [
+					"roll",
+					"pitch"
+				]
+			}
+		}
+	},
+	"type": "vertical_layout",
+	"config": {
+		"items": [
+			{
+				"type": "horizontal_layout",
+				"config": {
+					"items": [
+						{
+							"type": "maneuver_planner"
+						},
+						{
+							"type": "advanced_control"
+						},
+						{
+							"type": "overhead_map"
+						}
+					]
+				}
+			},
+			{
+				"type": "horizontal_layout",
+				"config": {
+					"items": [
+						{
+							"type": "cp_grid"
+						},
+						{
+							"type": "pfd"
+						},
+						{
+							"type": "sensor_data"
+						}
+					]
+				}
+			}
+		]
+	}
+}
