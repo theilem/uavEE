@@ -63,7 +63,6 @@ apToRos(const SensorData& sd)
 	data.velocity.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.velocity);
 	data.velocity.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularRate);
 	data.acceleration.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.acceleration);
-	data.acceleration.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularAcc);
 
 	data.air_speed = sd.airSpeed;
 	data.ground_speed = sd.groundSpeed;
@@ -85,7 +84,6 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	data.velocity = xyzTypeToVector3(sd.velocity.linear);
 	data.angularRate = xyzTypeToVector3(sd.velocity.angular);
 	data.acceleration = xyzTypeToVector3(sd.acceleration.linear);
-	data.angularAcc = xyzTypeToVector3(sd.acceleration.angular);
 
 	data.groundSpeed = sd.ground_speed;
 	data.airSpeed = sd.air_speed;

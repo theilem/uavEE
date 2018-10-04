@@ -425,34 +425,51 @@ RadioComm::sendAdvancedControl(radio_comm::send_advanced_control::Request& req,
 		radio_comm::send_advanced_control::Response& resp)
 {
 	auto dp = dataPresentation_.get();
+
 	if (!dp)
 	{
-		APLOG_ERROR << "DataPresentation missing.";
+		APLOG_ERROR << "DataPresentation Missing.";
 		return false;
 	}
-	AdvancedControl ac;
-	auto it = SpecialControlBimapRight.find(req.special_sel);
-	if (it == SpecialControlBimapRight.end())
-		APLOG_ERROR << "Special control " << req.special_sel << " invalid";
+
+	AdvancedControl advanced;
+
+	auto specialEnum = EnumMap<SpecialControl>::convert(req.special_sel);
+
+	if (specialEnum == SpecialControl::INVALID)
+	{
+		APLOG_ERROR << "Invalid Special Control " << req.special_sel;
+	}
 	else
-		ac.specialSelection = it->second;
+	{
+		advanced.specialSelection = specialEnum;
+		advanced.specialValue = req.special_val;
+	}
 
-	auto it2 = ThrowsBimapRight.find(req.throws_sel);
-	if (it2 == ThrowsBimapRight.end())
-		APLOG_ERROR << "Throws control " << req.throws_sel << " invalid";
+	auto throwsEnum = EnumMap<ThrowsControl>::convert(req.throws_sel);
+
+	if (throwsEnum == ThrowsControl::INVALID)
+	{
+		APLOG_ERROR << "Invalid Throws Control " << req.throws_sel;
+	}
 	else
-		ac.throwsSelection = it2->second;
+	{
+		advanced.throwsSelection = throwsEnum;
+	}
 
-	auto it3 = CamberBimapRight.find(req.camber_sel);
-	if (it3 == CamberBimapRight.end())
-		APLOG_ERROR << "Camber selection " << req.camber_sel << " invalid";
+	auto camberEnum = EnumMap<CamberControl>::convert(req.camber_sel);
+
+	if (camberEnum == CamberControl::INVALID)
+	{
+		APLOG_ERROR << "Invalid Camber Control " << req.camber_sel;
+	}
 	else
-		ac.camberSelection = it3->second;
+	{
+		advanced.camberSelection = camberEnum;
+		advanced.camberValue = req.camber_val;
+	}
 
-	ac.camberValue = req.camber_val;
-	ac.specialValue = req.special_val;
-
-	auto packet = dp->serialize(ac, Content::ADVANCED_CONTROL);
+	auto packet = dp->serialize(advanced, Content::ADVANCED_CONTROL);
 	dp->setTarget(packet, Target::FLIGHT_CONTROL);
 
 	resp.valid_request = true;
