@@ -40,37 +40,37 @@ WidgetLocalFrame::on_copy_clicked()
 void
 WidgetLocalFrame::on_send_clicked()
 {
-	double originX;
-	double originY;
-	double originZ;
+	double originE;
+	double originN;
+	double originU;
 	double orientation;
 
 	std::unique_lock<std::mutex> lock(frameMutex_);
-	if (ui->originXValue->text().isEmpty())
+	if (ui->originEValue->text().isEmpty())
 	{
-		originX = frame_.getOrigin().x();
+		originE = frame_.getOrigin().x();
 	}
 	else
 	{
-		originX = ui->originXValue->text().toDouble();
+		originE = ui->originEValue->text().toDouble();
 	}
 
-	if (ui->originYValue->text().isEmpty())
+	if (ui->originNValue->text().isEmpty())
 	{
-		originY = frame_.getOrigin().y();
+		originN = frame_.getOrigin().y();
 	}
 	else
 	{
-		originY = ui->originYValue->text().toDouble();
+		originN = ui->originNValue->text().toDouble();
 	}
 
-	if (ui->originZValue->text().isEmpty())
+	if (ui->originUValue->text().isEmpty())
 	{
-		originZ = frame_.getOrigin().z();
+		originU = frame_.getOrigin().z();
 	}
 	else
 	{
-		originZ = ui->originZValue->text().toDouble();
+		originU = ui->originUValue->text().toDouble();
 	}
 
 	if (ui->orientationValue->text().isEmpty())
@@ -82,7 +82,7 @@ WidgetLocalFrame::on_send_clicked()
 		orientation = ui->orientationValue->text().toDouble() * M_PI / 180;
 	}
 
-	VehicleOneFrame frame(orientation, Vector3(originX, originY, originZ));
+	VehicleOneFrame frame(orientation, Vector3(originE, originN, originU));
 
 	configManager_.get()->sendLocalFrame(frame);
 	frame_ = frame;
@@ -100,17 +100,17 @@ WidgetLocalFrame::onLocalFrame(const VehicleOneFrame& frame)
 	string.sprintf("%10.5f", frame.getOrigin().x());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originXDisplay->setText(string);
+	ui->originEDisplay->setText(string);
 
 	string.sprintf("%10.5f", frame.getOrigin().y());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originYDisplay->setText(string);
+	ui->originNDisplay->setText(string);
 
 	string.sprintf("%10.5f", frame.getOrigin().z());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originZDisplay->setText(string);
+	ui->originUDisplay->setText(string);
 
 	string.sprintf("%10.5f", frame.getYaw() * 180 / M_PI);
 	string = string.simplified();
@@ -135,17 +135,17 @@ WidgetLocalFrame::copyLocalFrame(const VehicleOneFrame& frame)
 	string.sprintf("%10.5f", frame.getOrigin().x());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originXValue->setText(string);
+	ui->originEValue->setText(string);
 
 	string.sprintf("%10.5f", frame.getOrigin().y());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originYValue->setText(string);
+	ui->originNValue->setText(string);
 
 	string.sprintf("%10.5f", frame.getOrigin().z());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->originZValue->setText(string);
+	ui->originUValue->setText(string);
 
 	string.sprintf("%10.5f", frame.getYaw() * 180 / M_PI);
 	string = string.simplified();
