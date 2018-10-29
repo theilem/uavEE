@@ -111,6 +111,10 @@ private:
 			radio_comm::send_advanced_control::Response& resp);
 
 	bool
+	sendLocalFrame(radio_comm::serialized_service::Request& req,
+			radio_comm::serialized_service::Response& resp);
+
+	bool
 	sendPacket(const Packet& packet);
 
 	ObjectHandle<IDC> idc_;
@@ -137,6 +141,7 @@ private:
 	ros::ServiceServer tunePIDService_;
 	ros::ServiceServer sendOverrideService_;
 	ros::ServiceServer sendAdvancedControlService_;
+	ros::ServiceServer sendLocalFrameService_;
 };
 
 #endif /* RADIO_COMM_INCLUDE_RADIO_COMM_RADIOCOMM_H_ */

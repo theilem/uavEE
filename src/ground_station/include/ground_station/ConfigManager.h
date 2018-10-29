@@ -29,6 +29,7 @@
 #include <QJsonObject>
 #include <ros/ros.h>
 
+#include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
@@ -129,6 +130,9 @@ public:
 			override;
 
 	bool
+	sendLocalFrame(const VehicleOneFrame& frame) override;
+
+	bool
 	sendManeuverSet(const std::string& maneuver) override;
 
 	bool
@@ -216,8 +220,11 @@ private:
 	///! ROS service called to request an override
 	ros::ServiceClient overrideService_;
 
-	///! ROS service called to request an override
+	///! ROS service called to request an advanced control
 	ros::ServiceClient advancedControlService_;
+
+	///! ROS service called to request a local frame
+	ros::ServiceClient localFrameService_;
 };
 
 #endif // CONFIGMANAGER_H

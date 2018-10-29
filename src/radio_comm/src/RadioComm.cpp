@@ -117,6 +117,8 @@ RadioComm::run(RunStage stage)
 				&RadioComm::sendOverride, this);
 		sendAdvancedControlService_ = nh.advertiseService("/radio_comm/send_advanced_control",
 				&RadioComm::sendAdvancedControl, this);
+		sendLocalFrameService_ = nh.advertiseService("/radio_comm/send_local_frame",
+						&RadioComm::sendLocalFrame, this);
 
 		break;
 	}
@@ -417,7 +419,6 @@ RadioComm::sendOverride(radio_comm::serialized_service::Request& req,
 	resp.valid = true;
 
 	return sendPacket(packet);
-
 }
 
 bool
@@ -473,6 +474,28 @@ RadioComm::sendAdvancedControl(radio_comm::send_advanced_control::Request& req,
 	dp->setTarget(packet, Target::FLIGHT_CONTROL);
 
 	resp.valid_request = true;
+
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::sendLocalFrame(radio_comm::serialized_service::Request& req,
+		radio_comm::serialized_service::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+
+	VehicleOneFrame frame = dp::deserialize<VehicleOneFrame>(req.serialized);
+
+	auto packet = dp->serialize(frame, Content::LOCAL_FRAME);
+	dp->setTarget(packet, Target::MISSION_CONTROL);
+
+	resp.valid = true;
 
 	return sendPacket(packet);
 }

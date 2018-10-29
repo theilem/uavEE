@@ -23,7 +23,6 @@
  *      Author: mircot
  */
 
-#include <ground_station/Widgets/WidgetLocalPlanner.h>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "ground_station/Widgets/WidgetSteadyStateAnalysis.h"
 #include "ground_station/Widgets/QFlightInstruments/WidgetSix.h"
@@ -34,6 +33,8 @@
 #include "ground_station/Widgets/WidgetManeuverPlanner.h"
 #include "ground_station/Widgets/WidgetAdvancedControl.h"
 #include "ground_station/Widgets/QFlightInstruments/WidgetPFD.h"
+#include "ground_station/Widgets/WidgetLocalFrame.h"
+#include "ground_station/Widgets/WidgetLocalPlanner.h"
 #include "ground_station/GSWidgetFactory.h"
 #include "ground_station/IWidgetInterface.h"
 
@@ -50,6 +51,7 @@ GSWidgetFactory::GSWidgetFactory()
 	addWidget<WidgetSensorData>();
 	addWidget<WidgetSix>();
 	addWidget<WidgetAdvancedControl>();
+	addWidget<WidgetLocalFrame>();
 	addWidget<WidgetLocalPlanner>();
 }
 

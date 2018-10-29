@@ -51,7 +51,17 @@
 							"type": "maneuver_planner"
 						},
 						{
-							"type": "advanced_control"
+							"type": "vertical_layout",
+							"config": {
+								"items": [
+									{
+										"type": "local_frame"
+									},
+									{
+										"type": "advanced_control"
+									}
+								]
+							}
 						},
 						{
 							"type": "overhead_map"

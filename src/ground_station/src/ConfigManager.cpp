@@ -31,6 +31,7 @@
 #include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
 #include <uavAP/Core/protobuf/messages/ManeuverPlanner.pb.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <radio_comm/select_mission.h>
 #include <radio_comm/select_maneuver.h>
@@ -203,6 +204,8 @@ ConfigManager::run(RunStage stage)
 				"/radio_comm/send_override");
 		advancedControlService_ = nh.serviceClient<radio_comm::send_advanced_control>(
 				"/radio_comm/send_advanced_control");
+		localFrameService_ = nh.serviceClient<radio_comm::serialized_service>(
+				"/radio_comm/send_local_frame");
 		break;
 	}
 	case RunStage::FINAL:
@@ -292,6 +295,14 @@ ConfigManager::sendAdvancedControl(
 	radio_comm::send_advanced_control req;
 	req.request = maneuverOverride;
 	return advancedControlService_.call(req); //rc_.get()->write(maneuverOverride); TODO fix
+}
+
+bool
+ConfigManager::sendLocalFrame(const VehicleOneFrame& frame)
+{
+	radio_comm::serialized_service ser;
+	ser.request.serialized = dp::serialize(frame).getBuffer();
+	return localFrameService_.call(ser);
 }
 
 void

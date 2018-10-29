@@ -26,6 +26,7 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <radio_comm/send_advanced_control.h>
 
 #ifndef ICONFIGMANAGER_H
@@ -132,6 +133,9 @@ public:
 
 	virtual bool
 	sendAdvancedControl(const radio_comm::send_advanced_control::Request& advancedControl) = 0;
+
+	virtual bool
+	sendLocalFrame(const VehicleOneFrame& frame) = 0;
 
 	virtual bool
 	tuneLocalPlanner(const LocalPlannerParams& params) = 0;
