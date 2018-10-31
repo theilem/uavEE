@@ -29,13 +29,16 @@
 					"velocity"
 				],
 				"controller_targets": [
-					"velocity",
-					"yaw_rate",
 					"climb_angle"
 				],
 				"pids": [
 					"roll",
 					"pitch"
+				],
+				"controller_outputs": [
+					"roll",
+					"pitch",
+					"throttle"
 				]
 			}
 		}
