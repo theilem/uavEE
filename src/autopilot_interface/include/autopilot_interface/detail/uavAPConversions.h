@@ -70,6 +70,9 @@ apToRos(const SensorData& sd)
 	data.header.stamp = ros::Time::fromBoost(sd.timestamp);
 
 	data.battery_voltage = sd.batteryVoltage;
+	data.battery_current = sd.batteryCurrent;
+	data.throttle = sd.throttle;
+	data.rpm = sd.rpm;
 
 	return data;
 }
@@ -93,6 +96,9 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	data.autopilotActive = true;
 
 	data.batteryVoltage = sd.battery_voltage;
+	data.batteryCurrent = sd.battery_current;
+	data.throttle = sd.throttle;
+	data.rpm = sd.rpm;
 
 	return data;
 }

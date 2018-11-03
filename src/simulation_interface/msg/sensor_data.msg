@@ -7,3 +7,6 @@ float64 air_speed
 float64 ground_speed
 uint32 sequenceNr
 float64 battery_voltage
+float64 battery_current
+float64 throttle
+float64 rpm

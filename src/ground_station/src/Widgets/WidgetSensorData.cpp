@@ -136,7 +136,9 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 	t.sprintf("%10.5f", sd.batteryCurrent);
 	ui->currValue->setText(t);
 
-	t.sprintf("%10.5f", sd.throttle * 100);
+	double throttlePercentage = 100 * (sd.throttle - 1.23) / (2.09 - 1.23);
+
+	t.sprintf("%10.5f", throttlePercentage);
 	ui->throttleValue->setText(t);
 
 	t.sprintf("%10.5f", sd.rpm);

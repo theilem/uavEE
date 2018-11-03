@@ -1,0 +1,10 @@
+<launch>
+	<node name="radio_comm_node" pkg="radio_comm" type="radio_comm_node" output="screen">
+		<param name="config_path" value="$(find radio_comm)/config/tty.json" />
+	</node>
+    <node name="ground_station_node" pkg="ground_station" type="ground_station_node" output="screen">
+        <param name="config_path" value="$(find ground_station)/config/layoutAdvancedAlvolo.json" />
+        <param name="resource_path" value="$(find ground_station)/resources/" />
+    </node>
+</launch>
+
