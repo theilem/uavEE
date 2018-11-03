@@ -26,7 +26,7 @@
 		"return_velocity": 12,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": false,
+		"use_safety_bounds": true,
 		"perform_in_safety_bounds": true,
 		"freeze_controller_outputs": {
 			"enable": true,
