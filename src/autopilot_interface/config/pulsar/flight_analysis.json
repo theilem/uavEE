@@ -13,5 +13,8 @@
 	},
 	"data_presentation": {
 		"compress_double": true
+	},
+	"fa_data_handling": {
+		"period": 200
 	}
 }
