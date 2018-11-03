@@ -133,5 +133,14 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 	t.sprintf("%10.5f", sd.batteryVoltage);
 	ui->voltValue->setText(t);
 
+	t.sprintf("%10.5f", sd.batteryCurrent);
+	ui->currValue->setText(t);
+
+	t.sprintf("%10.5f", sd.throttle * 100);
+	ui->throttleValue->setText(t);
+
+	t.sprintf("%10.5f", sd.rpm);
+	ui->rpmValue->setText(t);
+
 	update();
 }
