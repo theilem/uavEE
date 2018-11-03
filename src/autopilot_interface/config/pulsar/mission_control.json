@@ -50,12 +50,12 @@
 					"analysis": false
 				}
 			],
-			"velocity_10": [
+			"vel10_camT1.0_speF1.0_throC": [
 				{
 					"override": {
 						"local_planner/velocity": 10.0,
 						"pids/roll": 0.0,
-						"pids/pitch": 0.0
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -74,42 +74,26 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"analysis": true
-				}
-			],
-			"velocity_11": [
-				{
-					"override": {
-						"local_planner/velocity": 11.0,
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
 			],
-			"velocity_12": [
+			"vel12_camT1.0_speF1.0_throC": [
 				{
 					"override": {
 						"local_planner/velocity": 12.0,
 						"pids/roll": 0.0,
-						"pids/pitch": 0.0
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -128,69 +112,26 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"analysis": true
-				}
-			],
-			"velocity_13": [
-				{
-					"override": {
-						"local_planner/velocity": 13.0,
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
 			],
-			"velocity_14": [
-				{
-					"override": {
-						"local_planner/velocity": 14.0,
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"velocity_15": [
+			"vel15_camT1.0_speF1.0_throC": [
 				{
 					"override": {
 						"local_planner/velocity": 15.0,
 						"pids/roll": 0.0,
-						"pids/pitch": 0.0
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -208,6 +149,17 @@
 					"condition": {
 						"type": "duration",
 						"duration": 10000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}

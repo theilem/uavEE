@@ -2,7 +2,7 @@
 	"steady_state_analysis": {
 		"tolerance": {
 			"local_planner/velocity": 2,
-			"pids/pitch": 5.0,
+			"pids/climb_angle": 5.0,
 			"pids/roll": 5.0
 		},
 		"in_tolerance_duration": 3000
