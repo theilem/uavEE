@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
 //
-// This file is part of uavAP.
+// This file is part of uavEE.
 //
-// uavAP is free software: you can redistribute it and/or modify
+// uavEE is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uavAP is distributed in the hope that it will be useful,
+// uavEE is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -63,7 +63,6 @@ apToRos(const SensorData& sd)
 	data.velocity.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.velocity);
 	data.velocity.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularRate);
 	data.acceleration.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.acceleration);
-	data.acceleration.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularAcc);
 
 	data.air_speed = sd.airSpeed;
 	data.ground_speed = sd.groundSpeed;
@@ -85,7 +84,6 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	data.velocity = xyzTypeToVector3(sd.velocity.linear);
 	data.angularRate = xyzTypeToVector3(sd.velocity.angular);
 	data.acceleration = xyzTypeToVector3(sd.acceleration.linear);
-	data.angularAcc = xyzTypeToVector3(sd.acceleration.angular);
 
 	data.groundSpeed = sd.ground_speed;
 	data.airSpeed = sd.air_speed;
