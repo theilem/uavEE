@@ -58,6 +58,7 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 
 	id = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, rosInterfaceHandler, NULL);
 
+	XPLMAppendMenuItem(id, "Start ROS Node", (void*) "STARTROS", 1);
 	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
 	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
 
@@ -67,9 +68,6 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 		boost::property_tree::ptree config;
 		aggregator = new Aggregator;
 		*aggregator = helper.createAggregation(config);
-
-		SimpleRunner run(*aggregator);
-		run.runAllStages();
 	}
 
 	return 1;
@@ -99,6 +97,18 @@ XPluginReceiveMessage(XPLMPluginID, intptr_t, void*)
 void
 rosInterfaceHandler(void* mRef, void* iRef)
 {
+	if (!strcmp((char*) iRef, "STARTROS"))
+	{
+		if (aggregator)
+		{
+			SimpleRunner runner(*aggregator);
+			if (runner.runAllStages())
+			{
+				APLOG_ERROR << "Running all stages failed.";
+				return;
+			}
+		}
+	}
 	if (!strcmp((char*) iRef, "ENABLEAP"))
 	{
 		if (aggregator)

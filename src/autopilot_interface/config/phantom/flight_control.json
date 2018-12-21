@@ -2,59 +2,67 @@
 	"controller": 
 	{
 		"type" : "maneuver",
-		"hard_roll_constraint" : 85.0,
+		"hard_roll_constraint" : 75.0,
 		"hard_pitch_constraint" : 45.0,
 		"pids":
 		{
-			"climb_angle": {
-				"ff": 0,
-				"imax": 10,
-				"kd": 0,
-				"ki": 0,
-				"kp": 1
-			},
-			"pitch": {
-				"ff": 0,
-				"imax": 5,
-				"kd": 0,
-				"ki": 0,
-				"kp": 1
-			},
-			"roll": {
-				"ff": 0,
-				"imax": 5,
-				"kd": 0,
-				"ki": 0,
-				"kp": 1
-			},
-			"velocity": {
-				"ff": 0,
-				"imax": 10,
-				"kd": 0,
-				"ki": 0,
-				"kp": 1
-			},
-			"yaw_rate": {
-				"ff": 1,
-				"imax": 0,
-				"kd": 0,
-				"ki": 0,
-				"kp": 0
-			},
-			"rudder": {
-				"ff": 0,
-				"imax": 1,
-				"kd": 0,
-				"ki": 0,
-				"kp": 1
-			}
+		    "climb_angle": {
+			"ff": 0,
+			"imax": 10,
+			"kd": 0,
+			"ki": 0,
+			"kp": 1
+		    },
+		    "pitch": {
+			"ff": 0,
+			"imax": 5,
+			"kd": 0,
+			"ki": 0,
+			"kp": 3
+		    },
+		    "roll": {
+			"ff": 0,
+			"imax": 5,
+			"kd": 0,
+			"ki": 0,
+			"kp": 1
+		    },
+		    "rudder": {
+			"ff": 0,
+			"imax": 1,
+			"kd": 0,
+			"ki": 0,
+			"kp": 1
+		    },
+		    "velocity": {
+			"ff": 0,
+			"imax": 10,
+			"kd": 0,
+			"ki": 0.1,
+			"kp": 0.1
+		    },
+		    "yaw_rate": {
+			"ff": 1,
+			"imax": 0,
+			"kd": 0,
+			"ki": 0,
+			"kp": 0
+		    }
 		}		
 	},
-	"local_planner":
-	{
-		"type":"linear",
-		"k_altitude":0.2,
-		"k_heading":0.002,
-		"k_yaw_rate":1.0	
+	"local_planner": {
+		"type": "maneuver",
+		"period": 0,
+		"safety_velocity": 200,
+		"k_altitude": 0.2,
+		"k_convergence": 0.002,
+		"k_yaw_rate": 1.0
+	},
+	"fc_data_handling": {
+		"compress_sensor_data": true,
+		"period": 100
+	},
+	"data_presentation": {
+		"compress_double": true
 	}
 }
