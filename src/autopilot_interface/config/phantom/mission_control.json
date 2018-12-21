@@ -16,12 +16,12 @@
 			"center": {
 				"north": 0,
 				"east": 0,
-				"up": 250
+				"up": 1000
 			},
-			"major_side_length": 8000,
-			"minor_side_length": 4000,
+			"major_side_length": 25000,
+			"minor_side_length": 12500,
 			"major_side_orientation": 0,
-			"height": 250
+			"height": 1000
 		},
 		"return_velocity": 20,
 		"manual_restart": false,
