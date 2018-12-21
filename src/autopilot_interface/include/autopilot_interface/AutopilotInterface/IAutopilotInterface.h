@@ -35,6 +35,8 @@ class IAutopilotInterface
 {
 public:
 
+	static constexpr const char* const typeId = "autopilot_interface";
+
 	virtual
 	~IAutopilotInterface() = default;
 

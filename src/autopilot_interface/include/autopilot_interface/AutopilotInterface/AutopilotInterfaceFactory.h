@@ -36,8 +36,6 @@ class AutopilotInterfaceFactory : public Factory<IAutopilotInterface>
 {
 public:
 
-	static constexpr TypeId typeId = "autopilot_interface";
-
 	AutopilotInterfaceFactory()
 	{
 		addCreator<ApExtInterface>();
