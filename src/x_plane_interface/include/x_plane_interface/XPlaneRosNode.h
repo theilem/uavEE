@@ -72,8 +72,6 @@ private:
 
 	ObjectHandle<IScheduler> scheduler_;
 
-	ros::NodeHandle* nodeHandle_;
-
 	int sensorFrequency_;
 
 	ros::Publisher sensorDataPublisher_;

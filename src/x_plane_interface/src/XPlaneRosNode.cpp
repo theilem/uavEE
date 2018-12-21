@@ -38,10 +38,7 @@
 XPlaneRosNode::XPlaneRosNode() :
 		sensorFrequency_(100), sequenceNr_(0), autopilotActive_(false)
 {
-	ros::VP_string config;
-	ros::init(config, "xplane_interface");
 
-	nodeHandle_ = new ros::NodeHandle();
 
 	positionRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/latitude");
 	positionRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/longitude");
@@ -83,8 +80,6 @@ XPlaneRosNode::XPlaneRosNode() :
 
 XPlaneRosNode::~XPlaneRosNode()
 {
-	if (nodeHandle_)
-		delete nodeHandle_;
 }
 
 std::shared_ptr<XPlaneRosNode>
@@ -111,14 +106,17 @@ XPlaneRosNode::run(RunStage stage)
 			APLOG_ERROR << "Scheduler not set.";
 			return true;
 		}
+		ros::VP_string config;
+		ros::init(config, "xplane_interface");
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		sensorDataPublisher_ = nodeHandle_->advertise<simulation_interface::sensor_data>(
+		ros::NodeHandle nh;
+		sensorDataPublisher_ = nh.advertise<simulation_interface::sensor_data>(
 				"sensor_data", 20);
 
-		actuationSubscriber_ = nodeHandle_->subscribe("actuation", 20, &XPlaneRosNode::actuate,
+		actuationSubscriber_ = nh.subscribe("actuation", 20, &XPlaneRosNode::actuate,
 				this);
 		auto scheduler = scheduler_.get();
 

@@ -25,7 +25,7 @@
 		"in_tolerance_duration": 5000
 	},
 	"maneuver_analysis": {
-		"log_path": "/home/mirco/Downloads/"
+		"log_path": "/home/simonyu/Downloads/"
 	},
 	"data_presentation": {
 		"compress_double": true

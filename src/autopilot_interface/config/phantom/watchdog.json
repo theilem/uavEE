@@ -1,6 +1,6 @@
 {
 	"binary_path": "/usr/local/bin/uavAP/",
-	"config_path": "/home/mircot/devel/uavEE/src/autopilot_interface/config/phantom/",
+	"config_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/phantom/",
 	"processes":
 	{
 		"flight_control":
@@ -17,6 +17,11 @@
 		{
 			"binary":"Communication",
 			"config":"communication.json"
+		},
+		"flight_analysis":
+		{
+			"binary":"FlightAnalysis",
+			"config":"flight_analysis.json"
 		}
 	}
 }
