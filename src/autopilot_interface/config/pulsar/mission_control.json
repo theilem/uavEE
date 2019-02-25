@@ -5,7 +5,7 @@
             4435383.06,
             200
         ],
-        "yaw": 47
+        "yaw": 0
     },
     "global_planner": {
         "type": "spline",
@@ -26,7 +26,7 @@
         "return_velocity": 12,
         "manual_restart": false,
         "maneuver_restart": false,
-        "use_safety_bounds": true,
+        "use_safety_bounds": false,
         "perform_in_safety_bounds": true,
         "freeze_controller_outputs": {
             "enable": false,
@@ -50,6 +50,194 @@
                     "analysis": false
                 }
             ],
+            "sequence_1": [
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 14.0,
+						"local_planner/heading": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 14.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 12000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 14.0,
+						"pids/roll": -30.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 7000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 14.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 6000
+					},
+					"analysis": true
+				}
+			],
+			"sequence_2": [
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 17.0,
+						"local_planner/heading": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 17.0,
+						"pids/roll": -30.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 6000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 17.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 15000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 17.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 6000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 17.0,
+						"pids/roll": 20.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 4000
+					},
+					"analysis": true
+				}
+			],
+			"sequence_3": [
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 12.0,
+						"local_planner/heading": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 12.0,
+						"pids/roll": -10.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 3000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 12.0,
+						"pids/roll": 40.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 8000
+					},
+					"analysis": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100.0,
+						"local_planner/velocity": 12.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 9000
+					},
+					"analysis": true
+				}
+			],
+			"roll_-45_45_maneuver": [
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 12.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 12.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 19000
+					},
+					"analysis": false
+				}
+			],
             "vel10_camT1.0_speF0.0_thrC": [
                 {
                     "override": {

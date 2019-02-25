@@ -10,7 +10,7 @@
 	"global_planner": {
 		"type": "spline",
 		"tau": 0.6,
-		"orbit_radius":300.0
+		"orbit_radius": 300.0
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
@@ -19,15 +19,15 @@
 				"east": 0,
 				"up": 250
 			},
-			"major_side_length": 80000,
-			"minor_side_length": 40000,
+			"major_side_length": 8000,
+			"minor_side_length": 4000,
 			"major_side_orientation": 0,
 			"height": 250
 		},
 		"return_velocity": 50,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": true,
+		"use_safety_bounds": false,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
@@ -204,6 +204,32 @@
 						"duration": 9000
 					},
 					"analysis": true
+				}
+			],
+			"roll_-45_45_maneuver": [
+				{
+					"override": {
+						"local_planner/position_z": 200,
+						"local_planner/velocity": 50.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 200,
+						"local_planner/velocity": 50.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 19000
+					},
+					"analysis": false
 				}
 			]
 		}
