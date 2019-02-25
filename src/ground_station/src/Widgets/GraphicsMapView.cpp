@@ -25,6 +25,7 @@
 #include <QtGui>
 #include <QMenu>
 #include <autopilot_interface/detail/uavAPConversions.h>
+#include <uavAP/Core/LinearAlgebraProto.h>
 
 #include "ground_station/Widgets/GraphicsMapView.h"
 

@@ -26,6 +26,7 @@
 #ifndef GROUND_STATION_GROUNDSTATIONHELPER_H_
 #define GROUND_STATION_GROUNDSTATIONHELPER_H_
 
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/Framework/Helper.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
@@ -42,6 +43,7 @@ public:
 	GroundStationHelper()
 	{
 		addCreator<ConfigManager>();
+		addCreator<DataHandling>();
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();

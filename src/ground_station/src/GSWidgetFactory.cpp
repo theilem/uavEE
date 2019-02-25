@@ -37,6 +37,7 @@
 #include "ground_station/Widgets/WidgetLocalPlanner.h"
 #include "ground_station/GSWidgetFactory.h"
 #include "ground_station/IWidgetInterface.h"
+#include "ground_station/Widgets/WidgetManualWind.h"
 
 GSWidgetFactory::GSWidgetFactory()
 {
@@ -53,6 +54,7 @@ GSWidgetFactory::GSWidgetFactory()
 	addWidget<WidgetAdvancedControl>();
 	addWidget<WidgetLocalFrame>();
 	addWidget<WidgetLocalPlanner>();
+	addWidget<WidgetManualWind>();
 }
 
 QWidget*

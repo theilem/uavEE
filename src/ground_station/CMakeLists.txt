@@ -24,7 +24,7 @@ find_package(Qt5 #5.6
     COMPONENTS
         Core
         Gui
-        OpenGL
+        OpenGL 
         Svg
         PrintSupport
     REQUIRED)
@@ -151,7 +151,7 @@ include_directories(
   ${UAVAP_INCLUDE_DIR}
   ${EIGEN_INCLUDE_DIR}
 )
-
+ 
 link_directories(${UAVAP_LIB_DIR})
 
 file(GLOB UI_FORMS 	src/Widgets/forms/*.ui   
@@ -237,6 +237,7 @@ target_link_libraries(${PROJECT_NAME}_node
    Qt5::OpenGL
    Qt5::PrintSupport
    uavap_core
+   uavap_core_proto
    uavap_flight_analysis
    uavap_mission_control
    protobuf

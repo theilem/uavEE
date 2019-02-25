@@ -169,6 +169,7 @@ add_executable(${PROJECT_NAME}_node src/radio_comm_node.cpp
 target_link_libraries(${PROJECT_NAME}_node
    	${catkin_LIBRARIES}
    	uavap_core
+   	uavap_core_proto
    	uavap_flight_analysis
    	protobuf   	
    	boost_thread

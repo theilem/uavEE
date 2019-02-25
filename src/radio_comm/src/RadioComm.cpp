@@ -38,6 +38,7 @@
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <autopilot_interface/detail/uavAPConversions.h>
 #include <simulation_interface/sensor_data.h>
+#include <uavAP/Core/IPC/IPC.h>
 
 #include "radio_comm/serialized_proto.h"
 #include "radio_comm/RadioComm.h"
@@ -65,6 +66,7 @@ RadioComm::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	idc_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);
+	ipc_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -84,6 +86,11 @@ RadioComm::run(RunStage stage)
 		{
 			APLOG_ERROR << "RadioComm: DataPresentation missing";
 			return true;
+		}
+
+		if (!ipc_.isSet())
+		{
+			APLOG_WARN  << "IPC not set. Cannot connect to DataHandlings.";
 		}
 
 		ros::NodeHandle nh;
@@ -134,6 +141,18 @@ RadioComm::run(RunStage stage)
 				std::bind(&RadioComm::onAutopilotPacket, this, std::placeholders::_1));
 
 		radioSender_ = idc->createSender("autopilot");
+
+		if (auto ipc = ipc_.get())
+		{
+			groundStationSubscription_ = ipc->subscribeOnPacket("ground_station_to_comm",
+					std::bind(&RadioComm::sendPacket, this, std::placeholders::_1));
+
+			if (!groundStationSubscription_.connected())
+			{
+				APLOG_WARN << "Cannot connect to data_mc_com";
+			}
+		}
+
 		break;
 	}
 	case RunStage::FINAL:

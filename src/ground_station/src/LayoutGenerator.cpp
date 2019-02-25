@@ -18,6 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <boost/property_tree/json_parser.hpp>
 #include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "ground_station/LayoutGenerator.h"
 #include <QApplication>
 #include <QGridLayout>
@@ -59,6 +60,7 @@ LayoutGenerator::notifyAggregationOnUpdate(const Aggregator& agg)
 	pidConfigurator_.setFromAggregationIfNotSet(agg);
 	mapLogic_.setFromAggregationIfNotSet(agg);
 	dataSignals_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -140,6 +142,12 @@ ObjectHandle<IPIDConfigurator>
 LayoutGenerator::getPIDConfigurator() const
 {
 	return pidConfigurator_;
+}
+
+ObjectHandle<DataHandling>
+LayoutGenerator::getDataHandling() const
+{
+	return dataHandling_;
 }
 
 void

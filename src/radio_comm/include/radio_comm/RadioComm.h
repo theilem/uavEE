@@ -32,6 +32,7 @@
 #include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/Core/IDC/IDCSender.h>
 #include <ros/ros.h>
+#include <uavAP/Core/IPC/Subscription.h>
 
 #include "radio_comm/select_mission.h"
 #include "radio_comm/select_maneuver.h"
@@ -42,6 +43,7 @@
 #include "radio_comm/send_advanced_control.h"
 
 class IDC;
+class IPC;
 class IScheduler;
 class Packet;
 class ITimeProvider;
@@ -119,7 +121,9 @@ private:
 
 	ObjectHandle<IDC> idc_;
 	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<IPC> ipc_;
 
+	Subscription groundStationSubscription_;
 	IDCSender radioSender_;
 	boost::signals2::connection radioReceiver_;
 

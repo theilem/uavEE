@@ -33,6 +33,7 @@ class MapLogic;
 class ConfigManager;
 class IPIDConfigurator;
 class IConfigManager;
+class DataHandling;
 
 /**
  * @brief   The IWidgetInterface class is an interface all classes that manage
@@ -59,6 +60,9 @@ public:
 
 	virtual ObjectHandle<IPIDConfigurator>
 	getPIDConfigurator() const = 0;
+
+	virtual ObjectHandle<DataHandling>
+	getDataHandling() const = 0;
 
 };
 

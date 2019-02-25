@@ -80,6 +80,9 @@ public:
 	ObjectHandle<IPIDConfigurator>
 	getPIDConfigurator() const override;
 
+	ObjectHandle<DataHandling>
+	getDataHandling() const override;
+
 private:
 
 	/**
@@ -152,6 +155,7 @@ private:
 
 	///!reference to data signals
 	ObjectHandle<IDataSignals> dataSignals_;
+	ObjectHandle<DataHandling> dataHandling_;
 
 private slots:
 	/**
