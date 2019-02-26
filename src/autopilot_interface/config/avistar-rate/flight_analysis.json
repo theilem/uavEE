@@ -26,6 +26,7 @@
 	},
 	"maneuver_analysis": {
 		"log_path": "/home/simonyu/Downloads/",
+		"logging_period": 10,
 		"maneuver": "sequence"
 	},
 	"data_presentation": {

@@ -76,7 +76,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 7000
+						"duration": 10000
 					},
 					"analysis": true
 				},
@@ -88,7 +88,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 6000
+						"duration": 8000
 					},
 					"analysis": true
 				}
@@ -126,7 +126,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 15000
+						"duration": 14000
 					},
 					"analysis": true
 				},
@@ -176,7 +176,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 3000
+						"duration": 9000
 					},
 					"analysis": true
 				},
@@ -200,7 +200,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 9000
+						"duration": 13000
 					},
 					"analysis": true
 				}
