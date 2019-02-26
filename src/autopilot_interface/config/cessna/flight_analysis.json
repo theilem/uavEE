@@ -25,6 +25,7 @@
 		"in_tolerance_duration": 5000
 	},
 	"maneuver_analysis": {
+		"logging_period": 10,
 		"log_path": "/home/mirco/Downloads/"
 	},
 	"data_presentation": {
