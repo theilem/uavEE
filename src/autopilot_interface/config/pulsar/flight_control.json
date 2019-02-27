@@ -2,7 +2,7 @@
 	"controller": {
 		"type": "rate",
 		"hard_roll_constraint": 45.0,
-		"hard_roll_rate_constraint": 30.0,
+		"hard_roll_rate_constraint": 15.0,
 		"hard_pitch_constraint": 30.0,
 		"hard_pitch_rate_constraint": 30.0,
 		"pids": {
@@ -30,16 +30,16 @@
 			"roll": {
 				"ff": 0,
 				"imax": 0,
-				"kd": 0,
+				"kd": 0.07,
 				"ki": 0,
-				"kp": 5
+				"kp": 1.5
 			},
 			"roll_rate": {
-				"ff": 0.25,
-				"imax": 0.2,
+				"ff": 0.4,
+				"imax": 0,
 				"kd": 0,
-				"ki": 0.2,
-				"kp": 0.1
+				"ki": 0,
+				"kp": 0.15
 			},
 			"rudder": {
 				"ff": 0,
