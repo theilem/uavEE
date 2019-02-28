@@ -73,11 +73,11 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 50.0,
-						"pids/roll": -20.0
+						"pids/roll": -40.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 12000
+						"duration": 10000
 					},
 					"analysis": true
 				},
@@ -85,11 +85,11 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 50.0,
-						"pids/roll": 0.0
+						"pids/roll": 35.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 8000
+						"duration": 10000
 					},
 					"analysis": true
 				}
@@ -123,7 +123,7 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 60.0,
-						"pids/roll": 35.0
+						"pids/roll": 20.0
 					},
 					"condition": {
 						"type": "duration",
@@ -135,7 +135,7 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 60.0,
-						"pids/roll": -40.0
+						"pids/roll": -10.0
 					},
 					"condition": {
 						"type": "duration",
@@ -147,7 +147,7 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 60.0,
-						"pids/roll": 20.0
+						"pids/roll": 5.0
 					},
 					"condition": {
 						"type": "duration",
@@ -173,7 +173,7 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": -10.0
+						"pids/roll": -45.0
 					},
 					"condition": {
 						"type": "duration",
@@ -189,7 +189,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 8000
+						"duration": 13000
 					},
 					"analysis": true
 				},
@@ -197,11 +197,11 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": -45.0
+						"pids/roll": -30.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 13000
+						"duration": 8000
 					},
 					"analysis": true
 				}
