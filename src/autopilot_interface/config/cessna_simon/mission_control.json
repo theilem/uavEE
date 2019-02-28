@@ -98,7 +98,7 @@
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 60.0,
+						"local_planner/velocity": 55.0,
 						"local_planner/heading": 0.0
 					},
 					"condition": {
@@ -110,7 +110,7 @@
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 60.0,
+						"local_planner/velocity": 55.0,
 						"pids/roll": -25.0
 					},
 					"condition": {
@@ -122,7 +122,7 @@
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 60.0,
+						"local_planner/velocity": 55.0,
 						"pids/roll": 25.0
 					},
 					"condition": {
@@ -134,7 +134,7 @@
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 60.0,
+						"local_planner/velocity": 55.0,
 						"pids/roll": -30.0
 					},
 					"condition": {
