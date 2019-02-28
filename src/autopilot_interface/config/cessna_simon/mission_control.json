@@ -115,7 +115,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 9000
+						"duration": 7000
 					},
 					"analysis": true
 				},
@@ -123,11 +123,11 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 60.0,
-						"pids/roll": 20.0
+						"pids/roll": 25.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 10000
+						"duration": 12000
 					},
 					"analysis": true
 				},
