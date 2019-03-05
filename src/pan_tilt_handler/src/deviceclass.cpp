@@ -60,9 +60,9 @@ DeviceClass::~DeviceClass(void)
 		delete m_streamInterface;
 }
 
-/*! rief Open an IO device
+/*! \brief Open an IO device
  \param portInfo The info to use for opening the port
- eturn True when successful
+ \return True when successful
  */
 bool
 DeviceClass::openPort(const XsPortInfo& portInfo)
@@ -85,12 +85,12 @@ DeviceClass::close()
 	m_streamInterface->close();
 }
 
-/*! rief Read available data from the open IO device
+/*! \brief Read available data from the open IO device
  \details This function will attempt to read all available data from the open device (COM port
  or USB port).
  The function will read from the device, but it won't wait for data to become available.
  \param raw A XsByteArray to where the read data will be stored.
- eturn Whether data has been read from the IO device
+ \return Whether data has been read from the IO device
  */
 XsResultValue
 DeviceClass::readDataToBuffer(XsByteArray& raw)
@@ -109,7 +109,7 @@ DeviceClass::readDataToBuffer(XsByteArray& raw)
  to work, you need to call readDataToBuffer() first.
  \param rawIn The buffered data in which to search for messages
  \param messages The messages found in the data
- eturn The messages that were read.
+ \return The messages that were read.
  */
 XsResultValue
 DeviceClass::processBufferedData(XsByteArray& rawIn, XsMessageArray& messages)
@@ -147,10 +147,10 @@ DeviceClass::processBufferedData(XsByteArray& rawIn, XsMessageArray& messages)
 	}
 }
 
-/*! rief Wait for the requested XsXbusMessageId
+/*! brief Wait for the requested XsXbusMessageId
  \param xmid The message id to wait for
  \param rcv  The received message
- eturn Whether the requested message was found
+ \return Whether the requested message was found
  */
 bool
 DeviceClass::waitForMessage(XsXbusMessageId xmid, XsMessage& rcv)
@@ -172,9 +172,9 @@ DeviceClass::waitForMessage(XsXbusMessageId xmid, XsMessage& rcv)
 	return foundAck;
 }
 
-/*! rief Write a message to the IO device
+/*! brief Write a message to the IO device
  \param msg The message to write
- eturn Whether the message could be written
+ \return Whether the message could be written
  */
 bool
 DeviceClass::writeMessage(const XsMessage& msg)
@@ -186,8 +186,8 @@ DeviceClass::writeMessage(const XsMessage& msg)
 	return (m_streamInterface->writeData(raw) == XRV_OK);
 }
 
-/*! rief Put a device in config mode
- eturn True when the device acknowledged config mode
+/*! brief Put a device in config mode
+ \return True when the device acknowledged config mode
  */
 bool
 DeviceClass::gotoConfig()
@@ -198,8 +198,8 @@ DeviceClass::gotoConfig()
 	return waitForMessage(XMID_GotoConfigAck, rcv);
 }
 
-/*! rief Put a device in measurement mode
- eturn True when the device acknowledged measurement mode
+/*! brief Put a device in measurement mode
+ \return True when the device acknowledged measurement mode
  */
 bool
 DeviceClass::gotoMeasurement()
@@ -210,8 +210,8 @@ DeviceClass::gotoMeasurement()
 	return waitForMessage(XMID_GotoMeasurementAck, rcv);
 }
 
-/*! rief Request the product code from a device
- eturn The product code when ok, otherwise an empty XsString
+/*! brief Request the product code from a device
+ \return The product code when ok, otherwise an empty XsString
  */
 XsString
 DeviceClass::getProductCode()
@@ -232,8 +232,8 @@ DeviceClass::getProductCode()
 		return XsString();
 }
 
-/*! rief Request the device id from a device
- eturn The device id (XsDeviceId) when ok, otherwise an empty XsDeviceId
+/*! brief Request the device id from a device
+ \return The device id (XsDeviceId) when ok, otherwise an empty XsDeviceId
  */
 XsDeviceId
 DeviceClass::getDeviceId()
@@ -249,10 +249,10 @@ DeviceClass::getDeviceId()
 		return XsDeviceId();
 }
 
-/*! rief Set the device mode of a device (outputmode and outputsettings)
+/*! brief Set the device mode of a device (outputmode and outputsettings)
  \param outputMode The XsOutputMode to set
  \param outputSettings The XsOutputSettings to set
- eturn True when successful
+ \return True when successful
  */
 bool
 DeviceClass::setDeviceMode(const XsOutputMode& outputMode, const XsOutputSettings& outputSettings)
@@ -275,9 +275,9 @@ DeviceClass::setDeviceMode(const XsOutputMode& outputMode, const XsOutputSetting
 	return true;
 }
 
-/*! rief Set the output configuration of a device
+/*! brief Set the output configuration of a device
  \param config An array XsOutputConfigurationArray) containing the one or multiple XsOutputConfigurations
- eturn True when successful
+ \return True when successful
  */
 bool
 DeviceClass::setOutputConfiguration(XsOutputConfigurationArray& config)

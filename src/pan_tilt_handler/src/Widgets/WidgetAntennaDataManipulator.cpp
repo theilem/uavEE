@@ -16,6 +16,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include <autopilot_interface/UTMToLatLong.h>
+#include <uavAP/Core/Logging/APLogger.h>
+#include "pan_tilt_handler/Widgets/WidgetAntennaDataManipulator.h"
+#include "ui_WidgetAntennaDataManipulator.h"
+
+WidgetAntennaDataManipulator::WidgetAntennaDataManipulator(QWidget* parent) :
+		QWidget(parent), ui(new Ui::WidgetAntennaDataManipulator)
+{
+	ui->setupUi(this);
+	ui->latlon->setChecked(1);
+	ui->GPSOverride->setChecked(1);
+	ui->activateServos->setChecked(1);
+	ui->pn->setText("40.0594");
+	ui->pe->setText("-88.5514");
+	ui->pd->setText("-170");
+	ui->headingOffet->setText("90");
+	ui->pitchOffset->setText("180");
+}
+
+void
+WidgetAntennaDataManipulator::connect(std::shared_ptr<PanTiltHandler> ah)
+{
 	/*if(ah->isIdle()){
 	 APLOG_WARN<<"PanTilt is idle, cannot create WidgetAntenna";
 	 return;

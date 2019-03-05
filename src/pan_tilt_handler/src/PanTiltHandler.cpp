@@ -16,6 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include "pan_tilt_handler/PanTiltHandler.h"
+#include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
+#include <autopilot_interface/detail/uavAPConversions.h>
+#include "pan_tilt_handler/PanTiltHandlerWidgetInterface.h"
+
+PanTiltHandler::PanTiltHandler() :
+		overrideGPS_(false), overrideTarget_(false), idlemode_(true), sendOutput_(false), target(0,
+				0, M_PI / 2, M_PI)
+{
 	/*auto sender = std::dynamic_pointer_cast<QObject>(AircraftSD);
 	 if (sender)
 	 QObject::connect(sender.get(), SIGNAL(onSensorData(const SensorData&)), this, SLOT(processAircraftSD(const SensorData&)));
@@ -83,7 +94,7 @@ PanTiltHandler::run(RunStage stage)
 //        }
 //        std::string arduinopath = configManager_.get()->getAntennaConfig().get_child("arduino_path").get_value<std::string>();
 		APLOG_WARN << "arduino path is " << arduinoPath_;
-		SerialNetworkParams params(arduinoPath_, 115200, "");
+		SerialNetworkParams params(arduinoPath_, 115200, "\r");
 		sender_ = idc_.get()->createSender(params);
 		if (!sender_.isConnected())
 		{
