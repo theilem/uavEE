@@ -16,6 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+
+#include <autopilot_interface/UTMToLatLong.h>
+#include "pan_tilt_handler/IMUReader.h"
+#include "pan_tilt_handler/PanTiltHandler.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <include/xcommunication/int_xsdatapacket.h>
+#include <include/xcommunication/legacydatapacket.h>
+#include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/Scheduler/IScheduler.h>
+#include <xsens/xsdatapacket.h>
+
+
 /*IMUReader::IMUReader(const std::string &portname)
  {
  const XsString name(portname.c_str());

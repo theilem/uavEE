@@ -16,6 +16,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include "pan_tilt_handler/PanTiltPIDCascade.h"
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+
+PanTiltPIDCascade::PanTiltPIDCascade(PanTiltData* panTiltSD,
+		simulation_interface::sensor_data* aircraftSD, PanTiltTarget* target,
+		PanTiltOutput* antennaOutput) :
+		panTiltSensorData(panTiltSD), aircraftSensorData(aircraftSD), antennaTarget(target), controlEnv_(
+				&panTiltSD->imuData.timepoint)
+{
+	APLOG_TRACE << "Create AntennaCascade";
+	Control::PID::Parameters defaultParams;
+	defaultParams.kp = 1;
+	auto zero = controlEnv_.addConstant(0);
+	auto headingDeviation = controlEnv_.addInput(&headingDeviation_);
+	headingPID_ = controlEnv_.addPID(zero, headingDeviation, defaultParams);
+	auto psi_dot = controlEnv_.addInput(&psiDot_);
+	auto headingRateTarget = controlEnv_.addSum(headingPID_, psi_dot);
+	auto headingRateCurrent = controlEnv_.addInput(&panTiltSD->imuData.attitudeRate[2]);
+	headingRatePID_ = controlEnv_.addPID(headingRateTarget, headingRateCurrent, defaultParams);
+	auto constrainedHeadingRate = controlEnv_.addConstraint(headingRatePID_, -1, 1);
+	controlEnv_.addOutput(constrainedHeadingRate, &antennaOutput->panOut);
+
+	auto theta = controlEnv_.addInput(&antennaTarget->pitch);
+	auto thetaDot = controlEnv_.addInput(&thetaDot_);
+//    auto pitchCurrent = controlEnv_.addInput(&panTiltSD->attitude[0]); //using roll instead of pitch because IMU mounted sideways
+	auto pitchDeviation = controlEnv_.addInput(&pitchDeviation_);
+	pitchPID_ = controlEnv_.addPID(zero, pitchDeviation, defaultParams);
+	auto pitchRateTarget = controlEnv_.addSum(pitchPID_, thetaDot);
+	auto pitchRateCurrent = controlEnv_.addInput(&panTiltSD->imuData.attitudeRate[0]);
+	pitchRatePID_ = controlEnv_.addPID(pitchRateTarget, pitchRateCurrent, defaultParams);
+	auto constrainedPitchRate = controlEnv_.addConstraint(pitchRatePID_, -1, 1);
+	controlEnv_.addOutput(constrainedPitchRate, &antennaOutput->tiltOut);
+
 	/*headingRatePID_ = controlEnv_.addPID(antennaTarget->heading,headingPID_,defaultParams);
 	 controlEnv_.addOutput(headingRatePID_,antennaOutput->panOut);
 	 //controlEnv_.addOutput();
