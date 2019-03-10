@@ -26,7 +26,7 @@
 		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": true,
+		"use_safety_bounds": false,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
@@ -43,10 +43,10 @@
 					"analysis": false
 				}
 			],
-			"roll_right_maneuver": [
+			"stall": [
 				{
 					"override": {
-						"local_planner/position_z": 200.0,
+						"local_planner/position_z": 200,
 						"local_planner/velocity": 50.0,
 						"pids/roll": 0.0
 					},
@@ -58,93 +58,15 @@
 				},
 				{
 					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 35000
-					},
-					"analysis": true
-				}
-			],
-			"roll_left_maneuver": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
+						"local_planner/position_z": 200,
+						"local_planner/velocity": 0.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "steady_state",
-						"steady_state": true
+						"type": "duration",
+						"duration": 100000
 					},
 					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": -45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 35000
-					},
-					"analysis": true
-				}
-			],
-			"roll_right_left_maneuver": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 30.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": -45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 40000
-					},
-					"analysis": true
-				}
-			],
-			"roll_left_right_maneuver": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": -30.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 40000
-					},
-					"analysis": true
 				}
 			]
 		}
