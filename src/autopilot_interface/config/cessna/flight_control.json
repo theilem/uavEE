@@ -3,7 +3,7 @@
 		"type": "rate",
 		"hard_roll_constraint": 45.0,
 		"hard_roll_rate_constraint": 30.0,
-		"hard_pitch_constraint": 30.0,
+		"hard_pitch_constraint": 45.0,
 		"hard_pitch_rate_constraint": 30.0,
 		"pids": {
 			"climb_angle": {

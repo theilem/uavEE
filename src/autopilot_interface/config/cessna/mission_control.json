@@ -59,8 +59,8 @@
 				{
 					"override": {
 						"local_planner/position_z": 200,
-						"local_planner/velocity": 0.0,
-						"pids/roll": 0.0
+						"pids/roll": 0.0,
+						"controller_outputs/throttle": -1.0
 					},
 					"condition": {
 						"type": "duration",
