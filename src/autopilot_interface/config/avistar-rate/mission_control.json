@@ -77,6 +77,130 @@
 					},
 					"analysis": false
 				}
+			],
+			"position_z": [
+				{
+					"override": {
+						"local_planner/position_z": 200,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "position_z",
+						"relational": "<=",
+						"threshold": "150",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 300,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "position_z",
+						"relational": ">=",
+						"threshold": "250",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				}
+			],
+			"attitude_x": [
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "attitude_x",
+						"relational": ">=",
+						"threshold": "35.0",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 20.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "attitude_x",
+						"relational": "<=",
+						"threshold": "-35",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				}
 			]
 		}
 	},
