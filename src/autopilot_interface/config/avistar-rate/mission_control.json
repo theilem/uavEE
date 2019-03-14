@@ -63,8 +63,17 @@
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "duration",
-						"duration": 100000
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "angular_rate_x",
+						"relational": ">=",
+						"threshold": "30",
+						"tolerance": "5.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
 					},
 					"analysis": false
 				}
