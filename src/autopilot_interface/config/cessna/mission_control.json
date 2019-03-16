@@ -43,37 +43,11 @@
 					"analysis": false
 				}
 			],
-			"stall_time": [
+			"stall": [
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 100000
-					},
-					"analysis": false
-				}
-			],
-			"stall_sensor": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
+						"local_planner/velocity": 40.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
