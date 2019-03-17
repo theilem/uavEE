@@ -43,7 +43,7 @@
 					"analysis": false
 				}
 			],
-			"stall_speed": [
+			"stall": [
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
@@ -260,7 +260,97 @@
 				{
 					"override": {
 						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.066666666667,
+						"controller_outputs/pitch": 0.15,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": -1.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "position_z",
+						"relational": "<=",
+						"threshold": "100",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				}
+			],
+			"phugoid_roll": [
+				{
+					"override": {
+						"local_planner/position_z": 300.0,
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 300.0,
+						"pids/roll": 0.0,
+						"controller_outputs/throttle": -1.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": -30.0,
+						"controller_outputs/throttle": -1.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "position_z",
+						"relational": "<",
+						"threshold": "200",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": 20.0,
+						"controller_outputs/throttle": -1.0
+					},
+					"condition": {
+						"type": "sensor_data",
+						"use_tolerance": true,
+						"filter_data": true,
+						"sensor": "attitude_y",
+						"relational": ">=",
+						"threshold": "20",
+						"tolerance": "0.0",
+						"data_filter": {
+							"type": "low_pass",
+							"alpha": "0.1"
+						}
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"controller_outputs/pitch": 0.15,
 						"controller_outputs/yaw": 0.0,
 						"controller_outputs/throttle": -1.0
 					},
