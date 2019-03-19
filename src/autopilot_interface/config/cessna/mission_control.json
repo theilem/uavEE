@@ -424,10 +424,25 @@
 			"test_constraint": [
 				{
 					"override": {
-						"controller_constraints/roll": 100.0,
-						"controller_constraints/roll_rate": 100.0,
-						"controller_constraints/pitch": 100.0,
-						"controller_constraints/pitch_rate": 100.0
+						"controller_constraints/roll": 20.0,
+						"controller_constraints/roll_rate": 50.0,
+						"controller_constraints/pitch": 30.0,
+						"controller_constraints/pitch_rate": 60.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analysis": false
+				}
+			],
+			"test_constraint_violate": [
+				{
+					"override": {
+						"controller_constraints/roll": 150.0,
+						"controller_constraints/roll_rate": 150.0,
+						"controller_constraints/pitch": 150.0,
+						"controller_constraints/pitch_rate": 150.0
 					},
 					"condition": {
 						"type": "duration",
