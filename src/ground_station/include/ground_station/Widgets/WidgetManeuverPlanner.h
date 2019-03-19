@@ -78,6 +78,7 @@ private:
 	std::map<ControllerTargets, NamedLineEdit*> controllerTargets_;
 	std::map<PIDs, NamedLineEdit*> pids_;
 	std::map<ControllerOutputs, NamedLineEdit*> controllerOutputs_;
+	std::map<ControllerConstraints, NamedLineEdit*> controllerConstraints_;
 	std::map<CustomOverrideIDs, NamedLineEdit*> custom_;
 };
 

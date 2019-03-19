@@ -116,6 +116,12 @@ WidgetManeuverPlanner::on_apply_clicked()
 			override.output.insert(std::make_pair(it.first, it.second->getDouble()));
 	}
 
+	for (const auto& it : controllerConstraints_)
+	{
+		if (!it.second->isEmpty())
+			override.constraint.insert(std::make_pair(it.first, it.second->getDouble()));
+	}
+
 	for (const auto& it : custom_)
 	{
 		if (!it.second->isEmpty())
@@ -153,6 +159,7 @@ WidgetManeuverPlanner::configure(const boost::property_tree::ptree& config)
 	std::vector<ControllerTargets> ct;
 	std::vector<PIDs> pids;
 	std::vector<ControllerOutputs> out;
+	std::vector<ControllerConstraints> constraints;
 	std::vector<CustomOverrideIDs> custom;
 
 	std::string overrideGroup;
@@ -182,6 +189,11 @@ WidgetManeuverPlanner::configure(const boost::property_tree::ptree& config)
 		case OverrideGroup::CONTROLLER_OUTPUTS:
 		{
 			pm.addEnumVector(overrideGroup, out, false);
+			break;
+		}
+		case OverrideGroup::CONTROLLER_CONSTRAINTS:
+		{
+			pm.addEnumVector(overrideGroup, constraints, false);
 			break;
 		}
 		case OverrideGroup::CUSTOM:
@@ -254,6 +266,19 @@ WidgetManeuverPlanner::configure(const boost::property_tree::ptree& config)
 		layoutOut->addWidget(edit);
 	}
 	ui->outputsGroup->setLayout(layoutOut);
+
+	QVBoxLayout* layoutConstraints = new QVBoxLayout;
+	layoutConstraints->setMargin(2);
+	layoutConstraints->setSpacing(0);
+	for (const auto& it : constraints)
+	{
+		if (it == ControllerConstraints::INVALID)
+			continue;
+		auto edit = new NamedLineEdit(EnumMap<ControllerConstraints>::convert(it), ui->constraintsGroup);
+		controllerConstraints_.insert(std::make_pair(it, edit));
+		layoutConstraints->addWidget(edit);
+	}
+	ui->constraintsGroup->setLayout(layoutConstraints);
 
 	QVBoxLayout* layoutCustom = new QVBoxLayout;
 	layoutCustom->setMargin(2);

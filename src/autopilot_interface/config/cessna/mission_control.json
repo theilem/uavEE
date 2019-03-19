@@ -60,7 +60,8 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -82,7 +83,8 @@
 						"controller_outputs/roll": 0.0,
 						"controller_outputs/pitch": 0.0,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -117,7 +119,8 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "duration",
@@ -129,7 +132,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": -30.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -150,7 +154,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": 30.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -172,7 +177,8 @@
 						"controller_outputs/roll": 0.0,
 						"controller_outputs/pitch": 0.0,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -207,7 +213,8 @@
 					"override": {
 						"local_planner/position_z": 300.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "duration",
@@ -219,7 +226,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": -30.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -240,7 +248,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": 20.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -262,7 +271,8 @@
 						"controller_outputs/roll": 0.0,
 						"controller_outputs/pitch": 0.15,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -297,7 +307,8 @@
 					"override": {
 						"local_planner/position_z": 300.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "duration",
@@ -309,7 +320,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": -30.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -330,7 +342,8 @@
 					"override": {
 						"pids/roll": 0.0,
 						"pids/pitch": 20.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -352,7 +365,8 @@
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.15,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -388,7 +402,8 @@
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.15,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -402,6 +417,21 @@
 							"type": "low_pass",
 							"alpha": "0.1"
 						}
+					},
+					"analysis": false
+				}
+			],
+			"test_constraint": [
+				{
+					"override": {
+						"controller_constraints/roll": 100.0,
+						"controller_constraints/roll_rate": 100.0,
+						"controller_constraints/pitch": 100.0,
+						"controller_constraints/pitch_rate": 100.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
 					},
 					"analysis": false
 				}
