@@ -28,8 +28,8 @@
 					"throttle"
 				],
 				"controller_constraints": [
-					"roll_rate",
-					"pitch_rate"
+					"pitch_rate",
+					"pitch_output"
 				]
 			}
 		}
