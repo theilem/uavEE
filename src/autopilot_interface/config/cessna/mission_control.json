@@ -40,7 +40,7 @@
 						"type": "duration",
 						"duration": 8000000
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"stall_speed": [
@@ -54,7 +54,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -76,7 +76,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -99,7 +99,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"stall_polar": [
@@ -113,7 +113,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -126,7 +126,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -148,7 +148,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -170,7 +170,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -193,7 +193,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"phugoid": [
@@ -207,7 +207,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -220,7 +220,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -242,7 +242,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -264,7 +264,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -287,7 +287,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"phugoid_roll": [
@@ -301,7 +301,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -314,7 +314,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -336,7 +336,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -358,7 +358,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -381,7 +381,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"idle_descent": [
@@ -395,7 +395,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				},
 				{
 					"override": {
@@ -418,7 +418,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			]
 		}
