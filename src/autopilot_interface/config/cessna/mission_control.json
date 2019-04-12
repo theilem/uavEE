@@ -65,7 +65,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 8000000
+						"duration": 10000
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": true
@@ -93,7 +93,7 @@
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 8000000
+						"duration": 10000
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": true
