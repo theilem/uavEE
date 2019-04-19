@@ -449,7 +449,7 @@
 			"idle_descent": [
 				{
 					"override": {
-						"local_planner/position_z": 300.0,
+						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
 						"pids/roll": 0.0
 					},
@@ -457,22 +457,73 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 200.0,
+						"local_planner/velocity": 39.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 10000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"local_planner/position_z": 400.0,
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 400.0,
+						"local_planner/velocity": 34.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"controller_outputs/throttle": -1.0,
+						"pids/roll": 0.0,
+						"pids/pitch": -10.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
 				},
 				{
 					"override": {
 						"pids/roll": 0.0,
-						"controller_outputs/pitch": 0.15,
-						"controller_outputs/yaw": 0.0,
 						"controller_outputs/throttle": -1.0,
-						"controller_constraints/pitch_rate": 100.0
+						"controller_outputs/pitch": 0.0
 					},
 					"condition": {
 						"type": "sensor_data",
 						"use_tolerance": true,
 						"filter_data": true,
 						"sensor": "position_z",
-						"relational": "<=",
+						"relational": "<",
 						"threshold": "100",
 						"tolerance": "0.0",
 						"data_filter": {
@@ -480,7 +531,16 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"override_controller_outputs": {
+						"type": "trim",
+						"enable": true,
+			            "roll": false,
+			            "pitch": true,
+			            "yaw": false,
+			            "throttle": false
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
 				}
 			]
 		}
