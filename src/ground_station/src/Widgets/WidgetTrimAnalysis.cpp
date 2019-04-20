@@ -65,26 +65,42 @@ WidgetTrimAnalysis::onControllerOutputTrim(const ControllerOutput& trim)
 }
 
 void
-WidgetTrimAnalysis::on_apply_clicked()
+WidgetTrimAnalysis::on_sendOffset_clicked()
 {
 	ControllerOutput offset;
 
-	if (!ui->rollOffset->text().isEmpty())
+	if (ui->rollOffset->text().isEmpty())
+	{
+		offset.rollOutput = 0;
+	}
+	else
 	{
 		offset.rollOutput = ui->rollOffset->text().toDouble();
 	}
 
-	if (!ui->pitchOffset->text().isEmpty())
+	if (ui->pitchOffset->text().isEmpty())
+	{
+		offset.pitchOutput = 0;
+	}
+	else
 	{
 		offset.pitchOutput = ui->pitchOffset->text().toDouble();
 	}
 
-	if (!ui->yawOffset->text().isEmpty())
+	if (ui->yawOffset->text().isEmpty())
+	{
+		offset.yawOutput = 0;
+	}
+	else
 	{
 		offset.yawOutput = ui->yawOffset->text().toDouble();
 	}
 
-	if (!ui->throttleOffset->text().isEmpty())
+	if (ui->throttleOffset->text().isEmpty())
+	{
+		offset.throttleOutput = 0;
+	}
+	else
 	{
 		offset.throttleOutput = ui->throttleOffset->text().toDouble();
 	}

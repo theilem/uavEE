@@ -62,7 +62,7 @@ public slots:
 private slots:
 
 	void
-	on_apply_clicked();
+	on_sendOffset_clicked();
 
 private:
 

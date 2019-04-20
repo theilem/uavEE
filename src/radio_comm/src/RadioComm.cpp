@@ -237,7 +237,7 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 		case Content::CONTROLLER_OUTPUT_TRIM:
 		{
 			radio_comm::serialized_object trim;
-			trim.serialized = dp::serialize(boost::any_cast<Override>(any)).getBuffer();
+			trim.serialized = dp::serialize(boost::any_cast<ControllerOutput>(any)).getBuffer();
 			controllerOutputTrimPublisher_.publish(trim);
 			break;
 		}
