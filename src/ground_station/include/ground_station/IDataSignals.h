@@ -28,6 +28,7 @@
 
 #include <QtCore/QObject>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 #include <simulation_interface/sensor_data.h>
@@ -103,6 +104,12 @@ signals:
 	 */
 	virtual void
 	onOverride(const Override&) = 0;
+
+	/**
+	 * @brief onControllerOutputTrim is called whenever new controller output trim is received
+	 */
+	virtual void
+	onControllerOutputTrim(const ControllerOutput&) = 0;
 
 	/**
 	 * @brief onPIDStati is called whenever new PID stati is received

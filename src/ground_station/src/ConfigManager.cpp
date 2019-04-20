@@ -202,6 +202,8 @@ ConfigManager::run(RunStage stage)
 		tunePIDService_ = nh.serviceClient<radio_comm::tune_pid>("/radio_comm/tune_pid");
 		overrideService_ = nh.serviceClient<radio_comm::serialized_service>(
 				"/radio_comm/send_override");
+		controllerOutputOffsetService_ = nh.serviceClient<radio_comm::serialized_service>(
+				"/radio_comm/send_controller_output_offset");
 		advancedControlService_ = nh.serviceClient<radio_comm::send_advanced_control>(
 				"/radio_comm/send_advanced_control");
 		localFrameService_ = nh.serviceClient<radio_comm::serialized_service>(
@@ -244,6 +246,14 @@ ConfigManager::sendOverride(const Override& override)
 	radio_comm::serialized_service ser;
 	ser.request.serialized = dp::serialize(override).getBuffer();
 	return overrideService_.call(ser);
+}
+
+bool
+ConfigManager::sendControllerOutputOffset(const ControllerOutput& offset)
+{
+	radio_comm::serialized_service ser;
+	ser.request.serialized = dp::serialize(offset).getBuffer();
+	return controllerOutputOffsetService_.call(ser);
 }
 
 bool

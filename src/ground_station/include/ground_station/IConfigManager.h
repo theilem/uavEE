@@ -26,6 +26,7 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <radio_comm/send_advanced_control.h>
 
@@ -103,6 +104,14 @@ public:
 	 */
 	virtual bool
 	sendOverride(const Override& override) = 0;
+
+	/**
+	 * @brief   write sends a controller output offset to the aircraft
+	 * @param   offset a ros service request containing controller output offset
+	 * @return  true if request was received
+	 */
+	virtual bool
+	sendControllerOutputOffset(const ControllerOutput& offset) = 0;
 
 	/**
 	 * @brief   writeManeuver sends a maneuver command telling the aircraft what

@@ -45,7 +45,17 @@
 							"type": "maneuver_planner"
 						},
 						{
-							"type": "steady_state_analysis"
+							"type": "vertical_layout",
+							"config": {
+								"items": [
+									{
+										"type": "steady_state_analysis"
+									},
+									{
+										"type": "trim_analysis"
+									}
+								]
+							}
 						},
 						{
 							"type": "overhead_map"

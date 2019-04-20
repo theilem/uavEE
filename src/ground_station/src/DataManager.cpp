@@ -95,6 +95,15 @@ DataManager::addOverride(const radio_comm::serialized_object& override)
 }
 
 void
+DataManager::addControllerOutputTrim(const radio_comm::serialized_object& trim)
+{
+	Packet packet(trim.serialized);
+	ControllerOutput t = dp::deserialize<ControllerOutput>(packet);
+
+	emit onControllerOutputTrim(t);
+}
+
+void
 DataManager::addPIDStati(const radio_comm::pidstati &stati)
 {
 	emit onPIDStati(stati);
@@ -155,6 +164,8 @@ DataManager::subscribeOnRos()
 			this);
 	overrideSubscriptionRos_ = nh.subscribe("radio_comm/override", 20,
 				&DataManager::addOverride, this);
+	controllerOutputTrimSubscriptionRos_ = nh.subscribe("radio_comm/controller_output_trim", 20,
+				&DataManager::addControllerOutputTrim, this);
 	localFrameSubscriptionRos_ = nh.subscribe("radio_comm/local_frame", 20,
 			&DataManager::setLocalFrame, this);
 	localPlannerDataSubscriptionRos_ = nh.subscribe("radio_comm/local_planner_status", 20,

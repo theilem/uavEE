@@ -35,6 +35,7 @@
 #include "ground_station/Widgets/QFlightInstruments/WidgetPFD.h"
 #include "ground_station/Widgets/WidgetLocalFrame.h"
 #include "ground_station/Widgets/WidgetLocalPlanner.h"
+#include "ground_station/Widgets/WidgetTrimAnalysis.h"
 #include "ground_station/GSWidgetFactory.h"
 #include "ground_station/IWidgetInterface.h"
 
@@ -53,6 +54,7 @@ GSWidgetFactory::GSWidgetFactory()
 	addWidget<WidgetAdvancedControl>();
 	addWidget<WidgetLocalFrame>();
 	addWidget<WidgetLocalPlanner>();
+	addWidget<WidgetTrimAnalysis>();
 }
 
 QWidget*
