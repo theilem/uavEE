@@ -43,11 +43,11 @@
 					"analyze_maneuver": false
 				}
 			],
-			"trim_analysis_roll": [
+			"trim_analysis": [
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
+						"local_planner/velocity": 40.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
@@ -60,49 +60,15 @@
 				{
 					"override": {
 						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": true
-				}
-			],
-			"trim_roll": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
+						"local_planner/velocity": 39.0,
 						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0
 					},
 					"condition": {
 						"type": "duration",
 						"duration": 10000
 					},
-					"override_controller_outputs": {
-						"type": "trim",
-						"enable": true,
-			            "roll": true,
-			            "pitch": false,
-			            "yaw": false,
-			            "throttle": false
-					},
 					"analyze_maneuver": false,
-					"analyze_trim": false
+					"analyze_trim": true
 				}
 			],
 			"stall_speed": [
@@ -449,32 +415,6 @@
 			"idle_descent": [
 				{
 					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 39.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": true
-				},
-				{
-					"override": {
 						"local_planner/position_z": 400.0,
 						"local_planner/velocity": 40.0,
 						"pids/roll": 0.0
@@ -534,10 +474,10 @@
 					"override_controller_outputs": {
 						"type": "trim",
 						"enable": true,
-			            "roll": false,
-			            "pitch": true,
-			            "yaw": false,
-			            "throttle": false
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": false
