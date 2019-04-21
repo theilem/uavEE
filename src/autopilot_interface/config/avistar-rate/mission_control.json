@@ -67,7 +67,7 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": true
 				}
 			],
@@ -82,7 +82,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -103,7 +103,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -124,7 +124,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -146,7 +146,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"stall_polar": [
@@ -160,7 +160,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -172,7 +172,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -193,7 +193,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -215,7 +215,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -237,7 +237,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"phugoid": [
@@ -251,7 +251,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -263,7 +263,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -284,7 +284,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -306,7 +306,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -328,7 +328,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"phugoid_roll": [
@@ -342,7 +342,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -354,7 +354,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -375,7 +375,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -396,7 +396,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -418,7 +418,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"idle_descent": [
@@ -432,7 +432,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -445,7 +445,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -459,7 +459,7 @@
 						"type": "duration",
 						"duration": 1000
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -489,7 +489,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			],
@@ -504,7 +504,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -525,7 +525,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -546,7 +546,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			],
@@ -561,7 +561,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -582,7 +582,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -603,7 +603,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -624,7 +624,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			]
