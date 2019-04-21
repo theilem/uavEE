@@ -2,6 +2,7 @@
 	"main_config": {
 		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/flight_control.json",
 		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/mission_control.json",
+		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavAP/src/config/avistar/alvolo.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -27,14 +28,18 @@
 					"heading",
 					"velocity"
 				],
-				"controller_targets": [
-					"velocity",
-					"yaw_rate",
-					"climb_angle"
-				],
 				"pids": [
 					"roll",
 					"pitch"
+				],
+				"controller_outputs": [
+					"roll",
+					"pitch",
+					"throttle"
+				],
+				"controller_constraints": [
+					"pitch",
+					"pitch_rate"
 				]
 			}
 		}
@@ -50,7 +55,20 @@
 							"type": "maneuver_planner"
 						},
 						{
-							"type": "steady_state_analysis"
+							"type": "vertical_layout",
+							"config": {
+								"items": [
+									{
+										"type": "local_frame"
+									},
+									{
+										"type": "advanced_control"
+									},
+									{
+										"type": "trim_analysis"
+									}
+								]
+							}
 						},
 						{
 							"type": "overhead_map"
