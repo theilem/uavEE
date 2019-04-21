@@ -26,7 +26,7 @@
 		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": false,
+		"use_safety_bounds": true,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
@@ -40,7 +40,7 @@
 						"type": "duration",
 						"duration": 8000000
 					},
-					"analysis": false
+					"analyze_maneuver": false
 				}
 			],
 			"trim_analysis": [
@@ -635,7 +635,7 @@
 		"use_approach": false,
 		"default_velocity": 20,
 		"missions": {
-			"simple_mission": {
+			"simple": {
 				"velocity": 20,
 				"infinite": true,
 				"offset": {
@@ -666,7 +666,7 @@
 					}
 				]
 			},
-			"validation_mission": {
+			"validation": {
 				"velocity": 20,
 				"infinite": true,
 				"offset": {
@@ -713,6 +713,37 @@
 					{
 						"e": 150,
 						"n": 150,
+						"u": 0
+					}
+				]
+			},
+			"flight_testing": {
+				"velocity": 20,
+				"infinite": true,
+				"offset": {
+					"e": 200,
+					"n": -65,
+					"u": 150
+				},
+				"waypoints": [
+					{
+						"e": 140,
+						"n": 65,
+						"u": 0
+					},
+					{
+						"e": -140,
+						"n": 65,
+						"u": 0
+					},
+					{
+						"e": -140,
+						"n": -65,
+						"u": 0
+					},
+					{
+						"e": 140,
+						"n": -65,
 						"u": 0
 					}
 				]
