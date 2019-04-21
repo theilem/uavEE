@@ -24,12 +24,12 @@
 					"pitch"
 				],
 				"controller_outputs": [
-					"roll",
+					"pitch",
 					"throttle"
 				],
 				"controller_constraints": [
-					"pitch_rate",
-					"pitch_output"
+					"pitch",
+					"pitch_rate"
 				]
 			}
 		}
