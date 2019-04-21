@@ -528,6 +528,14 @@
 						"type": "duration",
 						"duration": 5000
 					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
+					},
 					"analyze_maneuver": false,
 					"analyze_trim": false
 				}
@@ -597,6 +605,14 @@
 					"condition": {
 						"type": "duration",
 						"duration": 5000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": false
