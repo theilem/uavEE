@@ -32,7 +32,7 @@
 			"default": [
 				{
 					"override": {
-						"local_planner/position_z": 100.0,
+						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0
 					},
@@ -46,7 +46,7 @@
 			"trim_analysis": [
 				{
 					"override": {
-						"local_planner/position_z": 100.0,
+						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0
 					},
@@ -59,7 +59,7 @@
 				},
 				{
 					"override": {
-						"local_planner/position_z": 100.0,
+						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0
 					},
@@ -509,13 +509,13 @@
 				},
 				{
 					"override": {
-						"local_planner/velocity": 40.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.5
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 500
+						"duration": 200
 					},
 					"override_controller_outputs": {
 						"type": "offset",
@@ -530,13 +530,21 @@
 				},
 				{
 					"override": {
-						"local_planner/velocity": 40.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 5000
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": false
@@ -545,8 +553,8 @@
 			"doublet": [
 				{
 					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 40.0,
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
@@ -558,13 +566,13 @@
 				},
 				{
 					"override": {
-						"local_planner/velocity": 40.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.5
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 500
+						"duration": 200
 					},
 					"override_controller_outputs": {
 						"type": "offset",
@@ -579,13 +587,13 @@
 				},
 				{
 					"override": {
-						"local_planner/velocity": 40.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": -0.5
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 500
+						"duration": 200
 					},
 					"override_controller_outputs": {
 						"type": "offset",
@@ -600,13 +608,21 @@
 				},
 				{
 					"override": {
-						"local_planner/velocity": 40.0,
+						"local_planner/velocity": 20.0,
 						"pids/roll": 0.0,
 						"controller_outputs/pitch": 0.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 5000
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
 					},
 					"analyze_maneuver": false,
 					"analyze_trim": false
