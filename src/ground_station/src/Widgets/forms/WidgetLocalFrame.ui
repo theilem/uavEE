@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
+    <width>218</width>
     <height>359</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -34,7 +34,7 @@
     </spacer>
    </item>
    <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <property name="verticalSpacing">
@@ -57,19 +57,19 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="baseSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
@@ -82,17 +82,35 @@
           <string>N/A</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
         <widget class="QLineEdit" name="originEValue">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -113,19 +131,19 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="baseSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
@@ -138,17 +156,35 @@
           <string>N/A</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="QLineEdit" name="originNValue">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -169,19 +205,19 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="baseSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
@@ -194,24 +230,42 @@
           <string>N/A</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
        <item row="2" column="2">
         <widget class="QLineEdit" name="originUValue">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="orientationLabel">
          <property name="text">
-          <string>Orientation:</string>
+          <string>Rotation:</string>
          </property>
         </widget>
        </item>
@@ -225,19 +279,19 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="baseSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>0</height>
           </size>
          </property>
@@ -250,42 +304,64 @@
           <string>N/A</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
        <item row="3" column="2">
         <widget class="QLineEdit" name="orientationValue">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QPushButton" name="reset">
-         <property name="text">
-          <string>Reset</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="copy">
-         <property name="text">
-          <string>Copy</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="reset">
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="copy">
+           <property name="text">
+            <string>Copy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPushButton" name="send">
          <property name="text">
-          <string>Send</string>
+          <string>Send Frame</string>
          </property>
         </widget>
        </item>
