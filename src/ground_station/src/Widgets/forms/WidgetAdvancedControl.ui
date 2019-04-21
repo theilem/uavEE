@@ -220,7 +220,7 @@
      <item>
       <widget class="QPushButton" name="send">
        <property name="text">
-        <string>Send</string>
+        <string>Send Control</string>
        </property>
       </widget>
      </item>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>367</width>
+    <width>371</width>
     <height>305</height>
    </rect>
   </property>
@@ -123,7 +123,7 @@
          <item>
           <widget class="QLabel" name="maneuverLabel">
            <property name="text">
-            <string>Maneuvers</string>
+            <string>Auto Maneuver</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -140,7 +140,7 @@
          <item>
           <widget class="QLabel" name="missionLabel">
            <property name="text">
-            <string>Missions</string>
+            <string>Mission</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -162,7 +162,7 @@
        <item row="1" column="0">
         <widget class="QPushButton" name="sendManeuver">
          <property name="text">
-          <string>Send Maneuver Override</string>
+          <string>Send Auto Maneuver</string>
          </property>
         </widget>
        </item>
@@ -176,14 +176,14 @@
        <item row="2" column="0">
         <widget class="QPushButton" name="apply">
          <property name="text">
-          <string>Send Manual Override</string>
+          <string>Send Manual Maneuver</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QPushButton" name="abort">
          <property name="text">
-          <string>Abort All Override</string>
+          <string>Abort Maneuver</string>
          </property>
         </widget>
        </item>
