@@ -531,6 +531,76 @@
 					"analyze_maneuver": false,
 					"analyze_trim": false
 				}
+			],
+			"doublet": [
+				{
+					"override": {
+						"local_planner/position_z": 200.0,
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0,
+						"controller_outputs/pitch": 0.5
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0,
+						"controller_outputs/pitch": -0.5
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": false,
+						"pitch": true,
+						"yaw": false,
+						"throttle": false
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0,
+						"controller_outputs/pitch": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				}
 			]
 		}
 	},
