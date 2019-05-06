@@ -22,6 +22,7 @@
  *  Created on: Jul 28, 2017
  *      Author: mircot
  */
+#include <boost/thread/thread_time.hpp>
 #include <simulation_interface/codec/Codec.h>
 #include <simulation_interface/SimulationConnector.h>
 #include <uavAP/Core/DataPresentation/IDataPresentation.h>
