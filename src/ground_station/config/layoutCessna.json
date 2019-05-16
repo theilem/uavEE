@@ -49,7 +49,7 @@
 							"config": {
 								"items": [
 									{
-										"type": "steady_state_analysis"
+										"type": "local_frame"
 									},
 									{
 										"type": "trim_analysis"
