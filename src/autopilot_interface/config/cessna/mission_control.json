@@ -40,7 +40,7 @@
 						"type": "duration",
 						"duration": 8000000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"trim_analysis": [
@@ -48,13 +48,13 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -67,7 +67,7 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": true
 				}
 			],
@@ -76,13 +76,13 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -104,7 +104,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -127,7 +127,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"stall_polar": [
@@ -135,13 +135,13 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -154,7 +154,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -176,7 +176,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -198,7 +198,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -221,7 +221,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"phugoid": [
@@ -229,13 +229,13 @@
 					"override": {
 						"local_planner/position_z": 300.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -248,7 +248,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -270,7 +270,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -292,7 +292,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -315,7 +315,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"phugoid_roll": [
@@ -323,13 +323,13 @@
 					"override": {
 						"local_planner/position_z": 300.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -342,7 +342,7 @@
 						"type": "duration",
 						"duration": 5000
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -364,7 +364,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -386,7 +386,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				},
 				{
 					"override": {
@@ -409,7 +409,7 @@
 							"alpha": "0.1"
 						}
 					},
-					"analyze_maneuver": false
+					"analyze_maneuver": true
 				}
 			],
 			"idle_descent": [
@@ -417,13 +417,13 @@
 					"override": {
 						"local_planner/position_z": 400.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -436,7 +436,7 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -449,7 +449,7 @@
 						"type": "duration",
 						"duration": 1000
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -479,7 +479,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			],
@@ -488,13 +488,13 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -515,7 +515,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -536,7 +536,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			],
@@ -545,13 +545,13 @@
 					"override": {
 						"local_planner/position_z": 200.0,
 						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -572,7 +572,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -593,7 +593,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -614,7 +614,7 @@
 						"yaw": false,
 						"throttle": false
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			]
