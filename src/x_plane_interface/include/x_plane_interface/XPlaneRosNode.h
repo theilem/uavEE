@@ -83,10 +83,11 @@ private:
 	XPLMDataRef accelerationRefs_[3];
 	XPLMDataRef attitudeRefs_[3];
 	XPLMDataRef angularRateRefs_[3];
+	XPLMDataRef throttleRef_;
+	XPLMDataRef rpmRef_;
 
 	XPLMDataRef overridesRef_[2];
 	XPLMDataRef joystickAttitudeRef_[3];
-	XPLMDataRef throttleRef_;
 
 	unsigned int sequenceNr_;
 
