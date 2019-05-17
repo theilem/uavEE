@@ -1,9 +1,9 @@
 ﻿{
 	"steady_state_analysis": {
 		"tolerance": {
-			"local_planner/position_x": 3.0,
-			"local_planner/position_y": 3.0,
-			"local_planner/position_z": 3.0,
+			"local_planner/position_x": 5.0,
+			"local_planner/position_y": 5.0,
+			"local_planner/position_z": 5.0,
 			"local_planner/velocity": 0.5,
 			"local_planner/heading": 0.5,
 			"local_planner/climb_rate": 0.5,
