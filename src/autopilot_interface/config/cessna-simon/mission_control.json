@@ -687,7 +687,8 @@
 						"controller_outputs/pitch": 0.0,
 						"controller_outputs/yaw": 0.0,
 						"controller_outputs_waveforms/roll": "sine",
-						"wavelength": 1000
+						"wavelength": 1000,
+						"phase": 500
 					},
 					"condition": {
 						"type": "duration",
