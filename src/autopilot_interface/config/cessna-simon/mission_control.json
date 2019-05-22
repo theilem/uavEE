@@ -686,34 +686,12 @@
 						"controller_outputs/roll": 0.5,
 						"controller_outputs/pitch": 0.0,
 						"controller_outputs/yaw": 0.0,
-						"controller_outputs_waveforms/roll": "sine"
+						"controller_outputs_waveforms/roll": "sine",
+						"wavelength": 1000
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 500
-					},
-					"override_controller_outputs": {
-						"type": "offset",
-						"enable": true,
-						"roll": true,
-						"pitch": true,
-						"yaw": true,
-						"throttle": false
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"local_planner/velocity": 40.0,
-						"controller_outputs/roll": -0.5,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs_waveforms/roll": "sine"
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 500
+						"duration": 1000
 					},
 					"override_controller_outputs": {
 						"type": "offset",
