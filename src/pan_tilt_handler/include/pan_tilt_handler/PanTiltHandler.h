@@ -1,34 +1,16 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 ﻿#ifndef PANTILTHANDLER_H
 #define PANTILTHANDLER_H
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h>
-#include <uavAP/Core/IDC/Serial/SerialIDC.h>
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/IDC/IDCSender.h>
 #include "PanTiltPIDCascade.h"
 #include <ground_station/IDataSignals.h>
 #include <ground_station/IPIDConfigurator.h>
 #include <ground_station/IWidgetInterface.h>
 #include <mutex>
-#include <uavAP/Core/IDC/Serial/SerialIDC.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/SensorData.h>
 #include "pan_tilt_handler/PanTiltHandlerWidgetInterface.h"
@@ -38,12 +20,12 @@ class PanTiltHandler: public IDataSignals,
 		public IRunnableObject,
 		public IPIDConfigurator
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 
-	static constexpr TypeId typeId = "pan_tilt_handler";
-
 	PanTiltHandler();
+
+	static constexpr TypeId typeId = "pantilt";
 
 	static std::shared_ptr<PanTiltHandler>
 	create(const boost::property_tree::ptree& config);
@@ -81,8 +63,6 @@ public:
 signals:
 	void
 	onActuationData(const simulation_interface::actuation&) override;
-	//void
-	//onConfirmation(int) override;
 	void
 	onSensorData(const simulation_interface::sensor_data&) override;
 	void
@@ -92,9 +72,17 @@ signals:
 	void
 	onPathSectionChange(int) override;
 	void
-	onLocalPlannerStatus(const LocalPlannerStatus&) override;
+	onLocalPlannerStatus(const radio_comm::serialized_proto&) override;
 	void
 	onPIDStati(const radio_comm::pidstati&) override;
+	void
+	onLocalFrame(const VehicleOneFrame &);
+	void
+	onOverride(const Override &);
+	void
+	onControllerOutputTrim(const ControllerOutput &);
+	void
+	onInspectingMetrics(const SteadyStateMetrics &);
 
 public slots:
 	void
@@ -117,8 +105,9 @@ private:
 
 	std::string arduinoPath_;
 
-	Sender sender_;
-	ObjectHandle<INetworkLayer> idc_;
+	//TODO use IDC class to send serial
+	//    Sender sender_;
+	//    ObjectHandle<IInterDeviceComm> idc_;
 	ObjectHandle<IScheduler> scheduler_;
 	std::shared_ptr<PanTiltHandlerWidgetInterface> widgetInterface_;
 	PanTiltTarget target;

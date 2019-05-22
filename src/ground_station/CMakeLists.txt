@@ -242,6 +242,53 @@ target_link_libraries(${PROJECT_NAME}_node
    protobuf
 )
 
+list(REMOVE_ITEM WIDGET_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/ground_station/Widgets/WidgetOverheadMap.h)
+list(REMOVE_ITEM WIDGET_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/WidgetOverheadMap.cpp)
+list(REMOVE_ITEM UI_FORMS ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/forms/WidgetOverheadMap.ui)
+
+list(REMOVE_ITEM WIDGET_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/ground_station/Widgets/WidgetLocalFrame.h)
+list(REMOVE_ITEM WIDGET_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/WidgetLocalFrame.cpp)
+list(REMOVE_ITEM UI_FORMS ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/forms/WidgetLocalFrame.ui)
+
+list(REMOVE_ITEM WIDGET_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/ground_station/Widgets/GraphicsMapView.h)
+list(REMOVE_ITEM WIDGET_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/GraphicsMapView.cpp)
+
+qt5_wrap_cpp(widget_MOCS_lib ${WIDGET_HEADERS})
+qt5_wrap_ui(ui_HDRS_lib ${UI_FORMS})
+
+#message(INFO MOCS ${WIDGET_HEADERS})
+#message(INFO SRCS ${WIDGET_SRCS})
+#message(INFO UI ${UI_FORMS})
+
+message(misc Mocs)
+message(${misc_MOCS})
+message(headers for mocs)
+message(${HEADERS_FOR_MOCS})
+
+set(ligGSWIDGETHDRS include/ground_station/IGSWidget.h
+    include/ground_station/IPIDConfigurator.h
+    include/ground_station/IConfigManager.h
+    include/ground_station/IWidgetInterface.h
+    include/ground_station/IDataSignals.h
+)
+
+qt5_wrap_cpp(ligGSWIDGETMOCS ${ligGSWIDGETHDRS})
+
+add_library(${PROJECT_NAME}_widgets
+    ${widget_MOCS_lib}
+    ${WIDGET_SRCS}
+    ${ui_HDRS_lib}
+	${ligGSWIDGETMOCS}
+ )
+
+target_link_libraries(${PROJECT_NAME}_widgets
+   Qt5::PrintSupport
+   Qt5::Svg
+   boost_date_time
+   uavap_mission_control
+)
+
+
 #############
 ## Install ##
 #############

@@ -85,6 +85,13 @@ WidgetPFD::~WidgetPFD()
 	}
 }
 
+QWidget *WidgetPFD::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetPFD(parent));
+	widget->connectInterface(interface);
+	return widget;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /*auto sender = std::dynamic_pointer_cast<QObject>(dataSignals);

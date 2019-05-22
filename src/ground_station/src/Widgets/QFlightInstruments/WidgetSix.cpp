@@ -114,6 +114,13 @@ WidgetSix::update()
 	m_ui->widgetVSI->update();
 }
 
+QWidget *WidgetSix::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetSix(parent));
+	widget->connectInterface(interface);
+	return widget;
+}
+
 void
 WidgetSix::on_hasNewSample(const simulation_interface::sensor_data& s) //TODO Update widget images for SI and change data to SI
 {

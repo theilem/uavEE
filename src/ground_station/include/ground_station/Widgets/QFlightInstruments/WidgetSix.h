@@ -139,13 +139,8 @@ public:
 		m_widgetVSI->setClimbRate(climbRate);
 	}
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetSix(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
 
 private slots:
 	void

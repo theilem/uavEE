@@ -68,7 +68,7 @@ WidgetCPGrid::onPIDStati(const radio_comm::pidstati& stati)
 {
 	for (auto& it : stati.stati)
 	{
-		auto plot = plots.find(it.id);
+		auto plot = plots.find(static_cast<PIDs>(it.id));
 		if (plot == plots.end())
 		{
 			APLOG_WARN << "PID status id " << it.id << " does not match any plot";
@@ -174,4 +174,11 @@ WidgetCPGrid::on_sendAllParams_clicked()
 WidgetCPGrid::~WidgetCPGrid()
 {
 	delete ui;
+}
+
+QWidget *WidgetCPGrid::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetCPGrid(parent));
+	widget->connectInterface(interface);
+	return widget;
 }

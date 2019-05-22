@@ -41,7 +41,7 @@ struct PIDInfo
 	}
 };
 
-using PIDParametersMap = std::map<int, PIDInfo>;
+using PIDParametersMap = std::map<PIDs, PIDInfo>;
 
 /**
  * @brief   The IPIDConfigurator class serves as an interface for all classes

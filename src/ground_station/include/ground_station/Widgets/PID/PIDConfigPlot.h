@@ -36,7 +36,7 @@ Q_OBJECT
 public:
 	explicit
 	PIDConfigPlot(QWidget *parent = 0);
-	PIDConfigPlot(QWidget *parent, int key, std::string name,
+	PIDConfigPlot(QWidget *parent, PIDs key, std::string name,
 			const Control::PID::Parameters& param);
 	void
 	setData(double current, double target);

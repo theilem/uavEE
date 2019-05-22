@@ -39,6 +39,13 @@ WidgetSensorData::~WidgetSensorData()
 	delete ui;
 }
 
+QWidget *WidgetSensorData::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetSensorData(parent));
+	widget->connectInterface(interface);
+	return widget;
+}
+
 void
 WidgetSensorData::onLocalFrame(const VehicleOneFrame& localFrame)
 {

@@ -81,13 +81,8 @@ public:
 	virtual
 	~WidgetPFD();
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetPFD(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
 
 	inline void
 	update()

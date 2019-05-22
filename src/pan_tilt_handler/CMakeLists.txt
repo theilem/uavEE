@@ -156,6 +156,7 @@ include_directories(
   ${xsens_inc}
   ${xsens_inc_pub}
   ${CMAKE_BINARY_DIR}/pan_tilt_handler
+  ${CMAKE_SOURCE_DIR}/ground_station/include
 )
 
 ## Declare a C++ library
@@ -176,12 +177,12 @@ file(GLOB PTH_SRCS src/*.cpp
                                         src/Widgets/*.cpp
                     )
 
-# add_executable(${PROJECT_NAME}_node src/pan_tilt_handler_node.cpp
-#                                    ${WIDGET_HEADERS}
-#                                    ${PTH_SRCS}
-#                                    ${widget_MOCS}
-#                                    ${misc_MOCS}
-#                                    ${ui_HDRS}  )
+ add_executable(${PROJECT_NAME}_node src/pan_tilt_handler_node.cpp
+									${WIDGET_HEADERS}
+									${PTH_SRCS}
+									${widget_MOCS}
+									${misc_MOCS}
+									${ui_HDRS}  )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -192,21 +193,22 @@ file(GLOB PTH_SRCS src/*.cpp
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-#   Qt5::Widgets
-#   Qt5::Svg
-#   Qt5::OpenGL
-#   Qt5::PrintSupport
-#   uavap_core
-#   control
-#   protobuf
-#   /usr/local/xsens/public/xcommunication/libxcommunication.a #FIXME
-#   /usr/local/xsens/lib64/libxstypes.so
-#)
+target_link_libraries(${PROJECT_NAME}_node
+   ${catkin_LIBRARIES}
+   Qt5::Widgets
+   Qt5::Svg
+   Qt5::OpenGL
+   Qt5::PrintSupport
+   uavap_core
+   control
+   protobuf
+   /usr/local/xsens/public/xcommunication/libxcommunication.a #FIXME
+   /usr/local/xsens/lib64/libxstypes.so
+   ground_station_widgets
+)
 
 
 

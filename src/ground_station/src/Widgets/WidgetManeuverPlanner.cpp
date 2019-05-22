@@ -36,6 +36,13 @@ WidgetManeuverPlanner::~WidgetManeuverPlanner()
 	delete ui;
 }
 
+QWidget *WidgetManeuverPlanner::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetManeuverPlanner(parent));
+	widget->connectInterface(interface);
+	return widget;
+}
+
 void
 WidgetManeuverPlanner::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {

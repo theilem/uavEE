@@ -20,6 +20,12 @@ INCLUDEPATH = \
 	$$PWD/power_modeling/include/ \
 	$$PWD/radio_comm/include/ \
 	$$PWD/simulation_interface/include \
-	$$PWD/x_plane_interface/include/
+	$$PWD/x_plane_interface/include/ \
+	$$PWD/../build/ground_station \
+	$$PWD/../build/pan_tilt_handler \
+	$$PWD/../devel/include \
+	/opt/ros/kinetic/include \
 
-#DEFINES = 
+
+#DEFINES = __cplusplus = 201103L
+CONFIG += c++17

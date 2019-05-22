@@ -8,10 +8,10 @@ add_compile_options(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  simulation_interface
-)
+	roscpp
+	std_msgs
+	simulation_interface
+	)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 include("../uavAP.cmake")
 
 link_directories(	${UAVAP_LIB_DIR}
-					${PROTOBUF_LIBRARIES})
+	${PROTOBUF_LIBRARIES})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -107,11 +107,11 @@ link_directories(	${UAVAP_LIB_DIR}
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES autopilot_interface
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
-)
+	INCLUDE_DIRS include
+	#  LIBRARIES autopilot_interface
+	#  CATKIN_DEPENDS roscpp std_msgs
+	#  DEPENDS system_lib
+	)
 
 ###########
 ## Build ##
@@ -121,11 +121,11 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
 	include
-  	${catkin_INCLUDE_DIRS}
-  	${UAVAP_INCLUDE_DIR}
-  	${BOOST_INCLUDE_DIR}
-  	${EIGEN_INCLUDE_DIR}
-)
+	${catkin_INCLUDE_DIRS}
+	${UAVAP_INCLUDE_DIR}
+	${BOOST_INCLUDE_DIR}
+	${EIGEN_INCLUDE_DIR}
+	)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -141,12 +141,12 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/autopilot_interface_node.cpp
-									src/AutopilotInterface/ApExtInterface.cpp
-                                    src/AutopilotInterface/DeviceBridge.cpp
-                                    src/AutopilotInterface/DirectInterface.cpp
-                                    src/APRosInterface.cpp
-                                    src/AutopilotLauncher.cpp
-                                    src/LogParser.cpp)
+	src/AutopilotInterface/ApExtInterface.cpp
+	src/AutopilotInterface/DeviceBridge.cpp
+	src/AutopilotInterface/DirectInterface.cpp
+	src/APRosInterface.cpp
+	src/AutopilotLauncher.cpp
+	src/LogParser.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,15 +160,15 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
-  ${catkin_LIBRARIES}
-  uavap_core
-  uavap_flight_analysis
-  protobuf
-  ap_ext
-  uavap_api
-  dl
-  rt
-)
+	${catkin_LIBRARIES}
+	uavap_core
+	uavap_flight_analysis
+	protobuf
+	ap_ext
+	uavap_api
+	dl
+	rt
+	)
 
 #############
 ## Install ##

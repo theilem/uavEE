@@ -337,7 +337,7 @@ ConfigManager::setPIDMap(const std::string& path)
 			params.configure(it.second);
 
 			PIDInfo info(it.first, params);
-			pidParams_.insert(std::make_pair((int) id, info));
+			pidParams_.insert(std::make_pair(id, info));
 		}
 	} catch (boost::property_tree::ptree_error& err)
 	{

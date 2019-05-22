@@ -19,9 +19,9 @@
 #include "ground_station/Widgets/PID/PIDConfigPlot.h"
 #include "ui_PIDConfigPlot.h"
 
-PIDConfigPlot::PIDConfigPlot(QWidget *parent, int key, std::string name,
+PIDConfigPlot::PIDConfigPlot(QWidget *parent, PIDs key, std::string name,
 		const Control::PID::Parameters &param) :
-		QWidget(parent), ui(new Ui::PIDConfigPlot), key_(key)
+		QWidget(parent), ui(new Ui::PIDConfigPlot), key_(static_cast<int>(key))
 {
 	ui->setupUi(this);
 	//ui->customPlot->setTitle(QString::fromStdString(name));

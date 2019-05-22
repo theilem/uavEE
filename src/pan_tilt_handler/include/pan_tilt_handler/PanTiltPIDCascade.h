@@ -1,26 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 ﻿#ifndef PANTILTPIDCASCADE_H
 #define PANTILTPIDCASCADE_H
 #include <uavAP/FlightControl/Controller/PIDController/IPIDCascade.h>
 #include <uavAP/FlightControl/Controller/ControlElements/ControlEnvironment.h>
-#include <uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <simulation_interface/sensor_data.h>
 #include <ground_station/IPIDConfigurator.h>
 #include <uavAP/Core/SensorData.h>
@@ -32,14 +14,8 @@ struct PanTiltTarget
 	double pitch;
 	double headingoffset;
 	double pitchoffset;
-	PanTiltTarget() :
-			heading(0), pitch(0), headingoffset(0), pitchoffset(0)
-	{
-	}
-	PanTiltTarget(double h, double p, double ho, double po) :
-			heading(h), pitch(p), headingoffset(ho), pitchoffset(po)
-	{
-	}
+	PanTiltTarget() : heading(0), pitch(0), headingoffset(0), pitchoffset(0) {}
+	PanTiltTarget(double h, double p, double ho, double po) : heading(h), pitch(p), headingoffset(ho), pitchoffset(po) {}
 };
 
 struct PanTiltOutput
@@ -50,34 +26,38 @@ struct PanTiltOutput
 
 enum class PanTiltPIDs
 {
-	HEADING = 0, PITCH, HEADINGRATE, PITCHRATE,
+	HEADING = 0,
+	PITCH,
+	HEADINGRATE,
+	PITCHRATE,
 };
 
 const static std::map<PanTiltPIDs, std::string> PanTiltPIDBimapLeft =
 {
-{ PanTiltPIDs::HEADING, "heading" },
-{ PanTiltPIDs::PITCH, "pitch" },
-{ PanTiltPIDs::HEADINGRATE, "headingrate" },
-{ PanTiltPIDs::PITCHRATE, "pitchrate" }, };
+	{PanTiltPIDs::HEADING, "heading"},
+	{PanTiltPIDs::PITCH, "pitch"},
+	{PanTiltPIDs::HEADINGRATE, "headingrate"},
+	{PanTiltPIDs::PITCHRATE, "pitchrate"},
+};
 
 const static std::map<std::string, PanTiltPIDs> PanTiltPIDBimapRight =
 {
-{ "heading", PanTiltPIDs::HEADING },
-{ "pitch", PanTiltPIDs::PITCH },
-{ "headingrate", PanTiltPIDs::HEADINGRATE },
-{ "pitchrate", PanTiltPIDs::PITCHRATE }, };
+	{"heading", PanTiltPIDs::HEADING},
+	{"pitch", PanTiltPIDs::PITCH},
+	{"headingrate", PanTiltPIDs::HEADINGRATE},
+	{"pitchrate", PanTiltPIDs::PITCHRATE},
+};
 
 class PanTiltPIDCascade: public IPIDCascade
 {
 public:
-	PanTiltPIDCascade(PanTiltData* panTiltSD, simulation_interface::sensor_data* aircraftSD,
-			PanTiltTarget* target, PanTiltOutput* antennaOutput);
+	PanTiltPIDCascade(PanTiltData* panTiltSD, simulation_interface::sensor_data* aircraftSD, PanTiltTarget* target, PanTiltOutput* antennaOutput);
 
 	bool
 	configure(const boost::property_tree::ptree& config) override;
 
 	bool
-	tunePID(int pid, const Control::PID::Parameters& params) override;
+	tunePID(PIDs pid, const Control::PID::Parameters& params) override;
 
 	bool
 	tuneRollBounds(double, double) override; //unneeded here
@@ -85,7 +65,7 @@ public:
 	bool
 	tunePitchBounds(double, double) override; //unneeded here
 
-	std::map<int, PIDStatus>
+	std::map<PIDs, PIDStatus>
 	getPIDStatus() override;
 
 	void
@@ -111,5 +91,7 @@ private:
 	double thetaDot_;
 	double psiDot_;
 };
+
+
 
 #endif // PANTILTPIDCASCADE_H

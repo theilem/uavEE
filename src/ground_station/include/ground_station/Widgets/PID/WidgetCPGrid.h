@@ -33,7 +33,7 @@ class IWidgetInterface;
 
 class WidgetCPGrid: public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
 
@@ -43,13 +43,10 @@ public:
 	WidgetCPGrid(QWidget* parent = 0);
 	~WidgetCPGrid();
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetCPGrid(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
+
+
 
 public slots:
 	void
@@ -66,7 +63,7 @@ private:
 	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 	QString title;
 	Ui::WidgetCPGrid* ui;
-	std::map<int, std::shared_ptr<PIDConfigPlot>> plots;
+	std::map<PIDs, std::shared_ptr<PIDConfigPlot>> plots;
 };
 
 #endif // WIDGETCPGRID_H

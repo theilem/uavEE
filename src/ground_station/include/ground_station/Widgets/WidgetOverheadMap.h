@@ -44,13 +44,8 @@ public:
 	WidgetOverheadMap(QWidget* parent = 0);
 	~WidgetOverheadMap();
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetOverheadMap(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
 
 	void
 	setMode(GraphicsMapView::ViewMode mode);

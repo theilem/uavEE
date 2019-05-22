@@ -42,13 +42,8 @@ public:
 	WidgetPIDPlots(QWidget* parent = 0);
 	~WidgetPIDPlots();
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetPIDPlots(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
 
 private slots:
 
@@ -76,7 +71,7 @@ private:
 	clearGrid();
 
 	Ui::WidgetPIDPlots* ui;
-	std::map<int, std::shared_ptr<PIDCustomPlot>> plots;
+	std::map<PIDs, std::shared_ptr<PIDCustomPlot>> plots;
 };
 
 #endif // WIDGETPIDPLOTS_H

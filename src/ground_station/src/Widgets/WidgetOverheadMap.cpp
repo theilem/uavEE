@@ -54,6 +54,13 @@ WidgetOverheadMap::~WidgetOverheadMap()
 	delete ui;
 }
 
+QWidget *WidgetOverheadMap::createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget *parent)
+{
+	auto widget(new WidgetOverheadMap(parent));
+	widget->connectInterface(interface);
+	return widget;
+}
+
 void
 WidgetOverheadMap::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 {

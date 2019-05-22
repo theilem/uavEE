@@ -44,13 +44,8 @@ public:
 	WidgetManeuverPlanner(QWidget* parent = 0);
 	~WidgetManeuverPlanner();
 
-	static inline QWidget*
-	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent)
-	{
-		auto widget(new WidgetManeuverPlanner(parent));
-		widget->connectInterface(interface);
-		return widget;
-	}
+	static QWidget*
+	createGSWidget(std::shared_ptr<IWidgetInterface> interface, QWidget* parent);
 
 	bool
 	configure(const boost::property_tree::ptree& config);
