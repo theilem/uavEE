@@ -21,8 +21,6 @@
 			},
 			"maneuver_planner": {
 				"local_planner": [
-					"position_x",
-					"position_y",
 					"position_z",
 					"heading",
 					"velocity"
@@ -30,14 +28,6 @@
 				"pids": [
 					"roll",
 					"pitch"
-				],
-				"controller_outputs": [
-					"pitch",
-					"throttle"
-				],
-				"controller_constraints": [
-					"pitch",
-					"pitch_rate"
 				]
 			}
 		}

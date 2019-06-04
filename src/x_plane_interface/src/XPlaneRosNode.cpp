@@ -62,6 +62,12 @@ XPlaneRosNode::XPlaneRosNode() :
 	angularRateRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/Q");
 	angularRateRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/R");
 
+	batteryVoltageRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt");
+	batteryCurrentRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp");
+
+	aileronRef_ = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
+	elevatorRef_ = XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def");
+	rudderRef_ = XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def");
 	throttleRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use");
 	rpmRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad");
 
@@ -213,6 +219,18 @@ XPlaneRosNode::getSensorData()
 	sd.sequenceNr = sequenceNr_++;
 
 	sd.header.stamp = ros::Time::now();
+
+	float batteryVoltage[8];
+	XPLMGetDatavf(batteryVoltageRef_, batteryVoltage, 0, 8);
+	sd.battery_voltage = batteryVoltage[0];
+
+	float batteryCurrent[8];
+	XPLMGetDatavf(batteryCurrentRef_, batteryCurrent, 0, 8);
+	sd.battery_current = batteryCurrent[0];
+
+	sd.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
+	sd.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
+	sd.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
 
 	float throttle[8];
 	XPLMGetDatavf(throttleRef_, throttle, 0, 8);

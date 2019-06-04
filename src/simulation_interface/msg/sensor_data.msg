@@ -8,5 +8,8 @@ float64 ground_speed
 uint32 sequenceNr
 float64 battery_voltage
 float64 battery_current
+float64 aileron
+float64 elevator
+float64 rudder
 float64 throttle
 float64 rpm
