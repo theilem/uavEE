@@ -1,0 +1,168 @@
+{
+	"local_frame": {
+		"origin": [
+			366990.057,
+			4429905.681,
+			424
+		],
+		"yaw": 0
+	},
+	"global_planner": {
+		"type": "spline",
+		"tau": 0.6
+	},
+	"maneuver_planner": {
+		"safety_bounds": {
+			"center": {
+				"north": 0,
+				"east": 0,
+				"up": 250
+			},
+			"major_side_length": 8000,
+			"minor_side_length": 4000,
+			"major_side_orientation": 0,
+			"height": 250
+		},
+		"return_velocity": 20,
+		"manual_restart": false,
+		"maneuver_restart": false,
+		"use_safety_bounds": false,
+		"perform_in_safety_bounds": true,
+		"maneuvers": {
+			"default": [
+				{
+					"override": {
+						"local_planner/position_z": 200.0,
+						"local_planner/velocity": 50.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 8000000
+					},
+					"analyze_maneuver": true
+				}
+			],
+			"trim_analysis": [
+				{
+					"override": {
+						"local_planner/position_z": 200.0,
+						"local_planner/velocity": 40.0,
+						"local_planner/heading": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/position_z": 200.0,
+						"local_planner/velocity": 40.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 10000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				}
+			]
+		}
+	},
+	"mission_planner": {
+		"type": "custom",
+		"use_approach": false,
+		"default_velocity": 50,
+		"missions": {
+			"simple_mission": {
+				"velocity": 50,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 200
+				},
+				"waypoints": [
+					{
+						"e": 2000,
+						"n": 1000,
+						"u": 0
+					},
+					{
+						"e": 2000,
+						"n": -1000,
+						"u": 0
+					},
+					{
+						"e": -2000,
+						"n": -1000,
+						"u": 0
+					},
+					{
+						"e": -2000,
+						"n": 1000,
+						"u": 0
+					}
+				]
+			},
+			"validation_mission": {
+				"velocity": 50,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 200
+				},
+				"waypoints": [
+					{
+						"e": 3000,
+						"n": 1500,
+						"u": 0
+					},
+					{
+						"e": 3000,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": 1500,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": -1500,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": -1500,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": 1500,
+						"n": 1500,
+						"u": 0
+					}
+				]
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}
