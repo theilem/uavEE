@@ -11,7 +11,7 @@
 		"mission_control":
 		{
             "binary":"MissionControl",
-			"config":"mission_control_.json"
+			"config":"mission_control.json"
 		},
 		"communication":
 		{
