@@ -27,7 +27,8 @@
 				],
 				"pids": [
 					"roll",
-					"pitch"
+					"pitch",
+					"rpm"
 				]
 			}
 		}

@@ -71,6 +71,60 @@
 					"analyze_trim": true
 				}
 			],
+			"motor_testing": [
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": 0.0,
+						"pids/rpm": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": 0.0,
+						"pids/rpm": 700.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": 0.0,
+						"pids/rpm": 1000.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"pids/roll": 0.0,
+						"pids/pitch": 0.0,
+						"pids/rpm": 1500.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"analyze_maneuver": false,
+					"analyze_trim": false
+				}
+			],
 			"stall_speed": [
 				{
 					"override": {
