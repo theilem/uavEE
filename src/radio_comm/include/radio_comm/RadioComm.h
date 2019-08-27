@@ -47,13 +47,7 @@ class IPC;
 class IScheduler;
 class Packet;
 class ITimeProvider;
-
-enum class Content
-;
-enum class Target
-;
-template<typename C, typename T>
-class IDataPresentation;
+class DataPresentation;
 
 class RadioComm: public IAggregatableObject, public IRunnableObject
 {
@@ -64,10 +58,10 @@ public:
 	RadioComm() = default;
 
 	static std::shared_ptr<RadioComm>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -120,7 +114,7 @@ private:
 	sendPacket(const Packet& packet);
 
 	ObjectHandle<IDC> idc_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<IPC> ipc_;
 
 	Subscription groundStationSubscription_;

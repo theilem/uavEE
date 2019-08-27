@@ -26,8 +26,7 @@
 #ifndef SIMULATION_INTERFACE_SIMULATIONINTERFACEHELPER_H_
 #define SIMULATION_INTERFACE_SIMULATIONINTERFACEHELPER_H_
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/API/ChannelMixing.h>
 #include "simulation_interface/SimulationConnector.h"
 #include <uavAP/Core/Framework/Helper.h>
@@ -48,7 +47,7 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IDC>();
 		addDefaultCreator<IPC>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 		addFactory<NetworkFactory>();
 	}
 };

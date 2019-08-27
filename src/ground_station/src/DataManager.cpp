@@ -36,7 +36,7 @@
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 
 std::shared_ptr<DataManager>
-DataManager::create(const boost::property_tree::ptree&)
+DataManager::create(const Configuration&)
 {
 	return std::make_shared<DataManager>();
 }
@@ -74,9 +74,6 @@ DataManager::addSensorData(const simulation_interface::sensor_data &sd)
 void
 DataManager::setLocalPlannerStatus(const radio_comm::serialized_proto& status)
 {
-	LocalPlannerStatus s;
-	s.ParseFromString(status.proto_message);
-	mapLogic_.get()->setLocalPlannerStatus(s);
 }
 
 void
@@ -118,10 +115,9 @@ DataManager::notifyAggregationOnUpdate(const Aggregator &agg)
 void
 DataManager::setSafetyBounds(const std_msgs::String& bounds)
 {
-	std::string boundsString = bounds.data;
+	Packet p(bounds.data);
 
-	Rectanguloid rect;
-	rect.ParseFromString(boundsString);
+	Rectanguloid rect = dp::deserialize<Rectanguloid>(p);
 	auto ml = mapLogic_.get();
 
 	if (!ml)
@@ -153,8 +149,8 @@ DataManager::subscribeOnRos()
 			this);
 	missionSubscriptionRos_ = nh.subscribe("radio_comm/mission", 20, &DataManager::setMission,
 			this);
-	overrideSubscriptionRos_ = nh.subscribe("radio_comm/override", 20,
-				&DataManager::addOverride, this);
+	overrideSubscriptionRos_ = nh.subscribe("radio_comm/override", 20, &DataManager::addOverride,
+			this);
 	localFrameSubscriptionRos_ = nh.subscribe("radio_comm/local_frame", 20,
 			&DataManager::setLocalFrame, this);
 	localPlannerDataSubscriptionRos_ = nh.subscribe("radio_comm/local_planner_status", 20,

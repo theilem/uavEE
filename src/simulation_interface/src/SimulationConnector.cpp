@@ -22,10 +22,9 @@
  *  Created on: Jul 28, 2017
  *      Author: mircot
  */
-#include <boost/thread/thread_time.hpp>
 #include <simulation_interface/codec/Codec.h>
 #include <simulation_interface/SimulationConnector.h>
-#include <uavAP/Core/DataPresentation/IDataPresentation.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/TimeProvider/ITimeProvider.h>
@@ -131,7 +130,7 @@ SimulationConnector::sense(const Packet& packet)
 	sd.velocity.linear.x = velocityLinear.y();
 	sd.velocity.linear.y = velocityLinear.x();
 	sd.velocity.linear.z = -1 * velocityLinear.z();
-	sd.attitude.z = boundAngleRad(-(sd.attitude.z - M_PI/2));
+	sd.attitude.z = boundAngleRad(-(sd.attitude.z - M_PI / 2));
 
 	//Convert p-q-r to rates
 	double sRoll = sin(sd.attitude.x);
@@ -139,9 +138,7 @@ SimulationConnector::sense(const Packet& packet)
 	double sPitch = sin(sd.attitude.y);
 	double cPitch = cos(sd.attitude.y);
 	Eigen::Matrix3d rotL1B;
-	rotL1B << 1, 0, -sPitch,
-			0, cRoll, sRoll*cPitch,
-			0, -sRoll, cRoll*cPitch;
+	rotL1B << 1, 0, -sPitch, 0, cRoll, sRoll * cPitch, 0, -sRoll, cRoll * cPitch;
 
 	Vector3 rates(sd.velocity.angular.x, sd.velocity.angular.y, sd.velocity.angular.z);
 
@@ -170,7 +167,7 @@ SimulationConnector::sense(const Packet& packet)
 void
 SimulationConnector::actuate(const simulation_interface::actuation& out)
 {
-	std::unique_lock < std::mutex > lock(timePointsMutex_);
+	std::unique_lock<std::mutex> lock(timePointsMutex_);
 	auto it = timepoints_.find(out.sequenceNr);
 	if (it == timepoints_.end())
 	{
@@ -186,9 +183,9 @@ SimulationConnector::actuate(const simulation_interface::actuation& out)
 	}
 	else
 	{
-		auto diff = boost::get_system_time() - it->second;
+		auto diff = Clock::now() - it->second;
 		std_msgs::Int32 delay;
-		delay.data = diff.total_microseconds();
+		delay.data = std::chrono::duration_cast<Microseconds>(diff).count();
 		delayPublisher_.publish(delay);
 		timepoints_.erase(timepoints_.cbegin(), --it);
 	}
@@ -211,9 +208,9 @@ SimulationConnector::actuate(const simulation_interface::actuation& out)
 }
 
 bool
-SimulationConnector::configure(const boost::property_tree::ptree& config)
+SimulationConnector::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<bool>("correct_sim_delay", correctSimDelay_, false);
 
@@ -221,7 +218,7 @@ SimulationConnector::configure(const boost::property_tree::ptree& config)
 }
 
 std::shared_ptr<SimulationConnector>
-SimulationConnector::create(const boost::property_tree::ptree& config)
+SimulationConnector::create(const Configuration& config)
 {
 	auto sim = std::make_shared<SimulationConnector>();
 	sim->configure(config);
@@ -231,10 +228,10 @@ SimulationConnector::create(const boost::property_tree::ptree& config)
 void
 SimulationConnector::sendSensorData(simulation_interface::sensor_data data)
 {
-	TimePoint timepoint = boost::get_system_time();
+	TimePoint timepoint = Clock::now();
 
-	data.header.stamp = ros::Time::fromBoost(timepoint);
-	std::unique_lock < std::mutex > lock(timePointsMutex_);
+	data.header.stamp = ros::Time::now();
+	std::unique_lock<std::mutex> lock(timePointsMutex_);
 
 	timepoints_.insert(std::make_pair(data.sequenceNr, timepoint));
 	while (timepoints_.size() > 100)
@@ -259,15 +256,15 @@ SimulationConnector::handleSimDelay(const simulation_interface::sensor_data& dat
 	if (correctionCounter_ == 0)
 	{
 		++correctionCounter_;
-		correctionInit_ = boost::get_system_time();
+		correctionInit_ = Clock::now();
 		sendSensorData(data);
 		return;
 	}
 
-	TimePoint now = boost::get_system_time();
+	TimePoint now = Clock::now();
 	Duration timediff = (correctionInit_ + Milliseconds(10) * correctionCounter_) - now;
 
-	if (timediff.is_negative())
+	if (timediff.count() < 0)
 	{
 		sendSensorData(data);
 		correctionCounter_ = 0;

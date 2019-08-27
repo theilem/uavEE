@@ -30,7 +30,7 @@
 #include <functional>
 
 std::shared_ptr<DirectInterface>
-DirectInterface::create(const boost::property_tree::ptree& config)
+DirectInterface::create(const Configuration& config)
 {
 	auto smi = std::make_shared<DirectInterface>();
 	smi->configure(config);
@@ -38,7 +38,7 @@ DirectInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-DirectInterface::configure(const boost::property_tree::ptree& config)
+DirectInterface::configure(const Configuration& config)
 {
 	return true;
 }

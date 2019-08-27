@@ -237,10 +237,8 @@ target_link_libraries(${PROJECT_NAME}_node
    Qt5::OpenGL
    Qt5::PrintSupport
    uavap_core
-   uavap_core_proto
    uavap_flight_analysis
    uavap_mission_control
-   protobuf
 )
 
 #############

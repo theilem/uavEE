@@ -65,7 +65,7 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	if (!aggregator)
 	{
 		XPlaneHelper helper;
-		boost::property_tree::ptree config;
+		Configuration config;
 		aggregator = new Aggregator;
 		*aggregator = helper.createAggregation(config);
 	}

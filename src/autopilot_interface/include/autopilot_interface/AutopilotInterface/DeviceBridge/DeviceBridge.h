@@ -38,14 +38,8 @@
 
 #include <memory>
 
-enum class Content
-;
-enum class Target
-;
-
+class DataPresentation;
 class INetworkLayer;
-template<typename C, typename T>
-class IDataPresentation;
 class IDC;
 
 class DeviceBridge: public IAutopilotInterface, public IAggregatableObject, public IRunnableObject
@@ -59,10 +53,10 @@ public:
 	~DeviceBridge();
 
 	static std::shared_ptr<DeviceBridge>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -90,7 +84,7 @@ private:
 	OnControllerOut onControllerOut_;
 
 	ObjectHandle<IDC> idc_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 };
 

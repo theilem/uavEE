@@ -18,8 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 include("../uavAP.cmake")
 
-link_directories(	${UAVAP_LIB_DIR}
-					${PROTOBUF_LIBRARIES})
+link_directories(	${UAVAP_LIB_DIR})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -162,9 +161,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   uavap_core
-  uavap_core_proto
   uavap_flight_analysis
-  protobuf
   ap_ext
   uavap_api
   dl

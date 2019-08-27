@@ -38,7 +38,7 @@ APRosInterface::~APRosInterface()
 }
 
 std::shared_ptr<APRosInterface>
-APRosInterface::create(const boost::property_tree::ptree& config)
+APRosInterface::create(const Configuration& config)
 {
 	auto interface = std::make_shared<APRosInterface>();
 	interface->configure(config);
@@ -46,9 +46,9 @@ APRosInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-APRosInterface::configure(const boost::property_tree::ptree& config)
+APRosInterface::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	return pm.map();
 }
 

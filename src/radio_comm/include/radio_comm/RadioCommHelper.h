@@ -26,8 +26,7 @@
 #ifndef RADIO_COMM_INCLUDE_RADIO_COMM_RADIOCOMMHELPER_H_
 #define RADIO_COMM_INCLUDE_RADIO_COMM_RADIOCOMMHELPER_H_
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/Framework/Helper.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/IDC/NetworkLayer/NetworkFactory.h>
@@ -47,7 +46,7 @@ public:
 		addDefault<SchedulerFactory>();
 		addDefaultCreator<IDC>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 		addDefaultCreator<IPC>();
 		addFactory<NetworkFactory>();
 	}

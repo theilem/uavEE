@@ -50,7 +50,7 @@ public:
 	 * @param   key is the name of the widget
 	 * @return  json configuration for widget that matches input name
 	 */
-	virtual boost::property_tree::ptree
+	virtual Configuration
 	getWidgetConfigByName(const std::string& key) const = 0;
 
 	/**
@@ -59,7 +59,7 @@ public:
 	 * @return  mission control json specified in ground station config json
 	 *          that should be set to same json aircraft is using
 	 */
-	virtual const boost::property_tree::ptree&
+	virtual const Configuration&
 	getMissionConfig() const = 0;
 
 	/**
@@ -68,7 +68,7 @@ public:
 	 * @return  flight control json specified in ground station config json that
 	 *          should be set to same json aircraft is using
 	 */
-	virtual const boost::property_tree::ptree&
+	virtual const Configuration&
 	getFlightConfig() const = 0;
 
 	/**
@@ -77,7 +77,7 @@ public:
 	 *          and widget configs
 	 * @return  ground station config json
 	 */
-	virtual const boost::property_tree::ptree&
+	virtual const Configuration&
 	getGSConfig() const = 0;
 
 	/**
@@ -86,7 +86,7 @@ public:
 	 * @return  Alvolo json specified in ground station config json
 	 *          that should be set to same json aircraft is using
 	 */
-	virtual const boost::property_tree::ptree&
+	virtual const Configuration&
 	getAlvoloConfig() const = 0;
 
 	/**
@@ -136,9 +136,6 @@ public:
 
 	virtual bool
 	sendLocalFrame(const VehicleOneFrame& frame) = 0;
-
-	virtual bool
-	tuneLocalPlanner(const LocalPlannerParams& params) = 0;
 
 	virtual bool
 	tuneManeuverPlanner(const ManeuverPlannerParams& params) = 0;

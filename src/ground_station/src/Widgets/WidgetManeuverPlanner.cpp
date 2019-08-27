@@ -54,13 +54,13 @@ WidgetManeuverPlanner::connectInterface(std::shared_ptr<IWidgetInterface> interf
 	if (configManager_.isSet())
 	{
 		auto cm = configManager_.get();
-		PropertyMapper pm(cm->getMissionConfig());
-		boost::property_tree::ptree planner;
-		boost::property_tree::ptree maneuver;
+		PropertyMapper<Configuration> pm(cm->getMissionConfig());
+		Configuration planner;
+		Configuration maneuver;
 		if (pm.add("mission_planner", planner, true))
 		{
-			PropertyMapper plannerPm(planner);
-			boost::property_tree::ptree missions;
+			PropertyMapper<Configuration> plannerPm(planner);
+			Configuration missions;
 			if (plannerPm.add("missions", missions, true))
 			{
 				for (const auto& it : missions)
@@ -71,8 +71,8 @@ WidgetManeuverPlanner::connectInterface(std::shared_ptr<IWidgetInterface> interf
 		}
 		if (pm.add("maneuver_planner", maneuver, true))
 		{
-			PropertyMapper plannerPm(maneuver);
-			boost::property_tree::ptree maneuvers;
+			PropertyMapper<Configuration> plannerPm(maneuver);
+			Configuration maneuvers;
 			if (plannerPm.add("maneuvers", maneuvers, true))
 			{
 				for (const auto& it : maneuvers)
@@ -145,9 +145,9 @@ WidgetManeuverPlanner::on_sendManeuver_clicked()
 }
 
 bool
-WidgetManeuverPlanner::configure(const boost::property_tree::ptree& config)
+WidgetManeuverPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	std::vector<LocalPlannerTargets> lp;
 	std::vector<ControllerTargets> ct;

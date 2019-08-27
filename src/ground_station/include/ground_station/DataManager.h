@@ -35,9 +35,7 @@
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/Object/IAggregatableObject.h>
-#include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h>
 #include <radio_comm/serialized_object.h>
@@ -71,7 +69,7 @@ public:
 	 * @return  std::shared_ptr<DataManager> to newly instantiated ConfigManager
 	 */
 	static std::shared_ptr<DataManager>
-	create(const boost::property_tree::ptree&);
+	create(const Configuration&);
 
 	/**
 	 * @brief   notifyAggregationOnUpdate sets references to ConfigManager and MapLogic
@@ -200,9 +198,6 @@ private:
 	 */
 	void
 	subscribeOnRos();
-
-	///! member used to check if the current path section has changed
-	LocalPlannerStatus lpStatus_;
 
 	///! reference to MapLogic for map widgets to have latest data
 	ObjectHandle<MapLogic> mapLogic_;

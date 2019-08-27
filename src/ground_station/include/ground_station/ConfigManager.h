@@ -75,7 +75,7 @@ public:
 	 * @return  std::shared_ptr<ConfigManager> to newly instantiated ConfigManager
 	 */
 	static std::shared_ptr<ConfigManager>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	/**
 	 * @brief   called by create,
@@ -84,24 +84,24 @@ public:
 	 * @return true on success, false on failure
 	 */
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	const PIDParametersMap&
 	getPIDMap() const override;
 
-	boost::property_tree::ptree
+	Configuration
 	getWidgetConfigByName(const std::string& key) const override;
 
-	const boost::property_tree::ptree&
+	const Configuration&
 	getMissionConfig() const override;
 
-	const boost::property_tree::ptree&
+	const Configuration&
 	getFlightConfig() const override;
 
-	const boost::property_tree::ptree&
+	const Configuration&
 	getGSConfig() const override;
 
-	const boost::property_tree::ptree&
+	const Configuration&
 	getAlvoloConfig() const override;
 
 	void
@@ -115,9 +115,6 @@ public:
 
 	bool
 	tunePID(const PIDTuning& tunePID) override;
-
-	bool
-	tuneLocalPlanner(const LocalPlannerParams& params) override;
 
 	bool
 	tuneManeuverPlanner(const ManeuverPlannerParams& params) override;
@@ -161,7 +158,7 @@ private:
 	 *          widget configs from ground station config
 	 * @return  json containing widget configs
 	 */
-	boost::property_tree::ptree
+	Configuration
 	getWidgetConfigs() const;
 
 	/**
@@ -169,7 +166,7 @@ private:
 	 *          main config from ground station config
 	 * @return  json containing main config
 	 */
-	boost::property_tree::ptree
+	Configuration
 	getMainConfig() const;
 
 	/**
@@ -181,16 +178,16 @@ private:
 	setPIDMap(const std::string& path);
 
 	///! property tree representing json configuration for ground station
-	boost::property_tree::ptree gsConfig_;
+	Configuration gsConfig_;
 
 	///! property tree representing json configuration for aircraft flight config
-	boost::property_tree::ptree flightConfig_;
+	Configuration flightConfig_;
 
 	///! propery tree representing json configuration for aircraft mission config
-	boost::property_tree::ptree missionConfig_;
+	Configuration missionConfig_;
 
 	///! propery tree representing json configuration for aircraft alvolo config
-	boost::property_tree::ptree alvoloConfig_;
+	Configuration alvoloConfig_;
 
 	///! string representation of path to resource folder
 	std::string resourcePath_;

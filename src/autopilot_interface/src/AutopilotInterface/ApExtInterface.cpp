@@ -50,7 +50,7 @@ ApExtInterface::~ApExtInterface()
 }
 
 std::shared_ptr<ApExtInterface>
-ApExtInterface::create(const boost::property_tree::ptree& config)
+ApExtInterface::create(const Configuration& config)
 {
 	auto ap = std::make_shared<ApExtInterface>();
 	ap->configure(config);
@@ -58,20 +58,20 @@ ApExtInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ApExtInterface::configure(const boost::property_tree::ptree& config)
+ApExtInterface::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	boost::property_tree::ptree alvoloConfig;
+	Configuration alvoloConfig;
 	pm.add("alvolo_config", alvoloConfig_, true);
 	pm.add("alvolo_config", alvoloConfig, true);
 
-	PropertyMapper pmAlvolo(alvoloConfig);
+	PropertyMapper<Configuration> pmAlvolo(alvoloConfig);
 
-	boost::property_tree::ptree interfaceConfig;
+	Configuration interfaceConfig;
 	pmAlvolo.add("interface", interfaceConfig, true);
 
-	PropertyMapper pmInterface(interfaceConfig);
+	PropertyMapper<Configuration> pmInterface(interfaceConfig);
 
 //	pmInterface.add<ChannelMixing>("", channelMixing_, true);
 //	pmInterface.add<unsigned int>("num_output_channel", numChannels_, true);
@@ -233,13 +233,15 @@ ApExtInterface::sendSensorData(const SensorData& sensorData)
 			//Valid flag for GPS fix
 			imu->valid_flags = 0x80;
 
-			imu->imu_time_year = sensorData.timestamp.date().year();
-			imu->imu_time_month = sensorData.timestamp.date().month();
-			imu->imu_time_day = sensorData.timestamp.date().day();
-			imu->imu_time_hour = sensorData.timestamp.time_of_day().hours();
-			imu->imu_time_minute = sensorData.timestamp.time_of_day().minutes();
-			imu->imu_time_second = sensorData.timestamp.time_of_day().seconds();
-			imu->imu_time_nano = sensorData.timestamp.time_of_day().fractional_seconds(); // TODO Microseconds?
+			auto sinceEpoch = sensorData.timestamp.time_since_epoch();
+
+			imu->imu_time_year = std::chrono::duration_cast<Hours>(sinceEpoch).count() / (365 * 24);
+			imu->imu_time_month = std::chrono::duration_cast<Hours>(sinceEpoch).count() % (365 * 24) / (365 * 24 / 12); // A bit wrong
+			imu->imu_time_day = std::chrono::duration_cast<Hours>(sinceEpoch).count() % (365 * 24) / 24;
+			imu->imu_time_hour = std::chrono::duration_cast<Hours>(sinceEpoch).count() % 24;
+			imu->imu_time_minute = std::chrono::duration_cast<Minutes>(sinceEpoch).count() % 60;
+			imu->imu_time_second = std::chrono::duration_cast<Seconds>(sinceEpoch).count() % 24;;
+			imu->imu_time_nano = std::chrono::duration_cast<Nanoseconds>(sinceEpoch).count() % (int)1e9;
 		}
 	}
 

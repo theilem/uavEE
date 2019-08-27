@@ -50,10 +50,10 @@ public:
 	~DirectInterface() = default;
 
 	static std::shared_ptr<DirectInterface>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	boost::signals2::connection
 	subscribeOnControllerOut(const OnControllerOut::slot_type& slot) override;

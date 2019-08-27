@@ -28,8 +28,6 @@
 
 #include "pan_tilt_handler/PanTiltHandler.h"
 #include "pan_tilt_handler/IMUReader.h"
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
 #include <uavAP/Core/Framework/Helper.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>

@@ -50,8 +50,8 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	boost::property_tree::ptree config;
-	boost::property_tree::ptree panTiltConfig;
+	Configuration config;
+	Configuration panTiltConfig;
 	panTiltConfig.add("imu_path", IMUPath);
 	panTiltConfig.add("arduino_path", arduinoPath);
 	config.add_child("pan_tilt_handler", panTiltConfig);

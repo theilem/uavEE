@@ -36,7 +36,7 @@
  }*/
 
 std::shared_ptr<IMUReader>
-IMUReader::create(const boost::property_tree::ptree& config)
+IMUReader::create(const Configuration& config)
 {
 	auto pth = std::make_shared<IMUReader>();
 	pth->configure(config);
@@ -44,7 +44,7 @@ IMUReader::create(const boost::property_tree::ptree& config)
 }
 
 bool
-IMUReader::configure(const boost::property_tree::ptree& config)
+IMUReader::configure(const Configuration& config)
 {
 	PropertyMapper propertyMapper(config);
 	if (!propertyMapper.add("imu_path", portName_, true))

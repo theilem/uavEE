@@ -76,7 +76,7 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 		changeFrame(localFrame_, InertialFrame(), sd);
 	}
 
-	t = QString::fromStdString(boost::posix_time::to_simple_string(sd.timestamp));
+	t = QString::fromStdString("N/A");
 	ui->timeValue->setText(t);
 
 	t.sprintf("%10.5f", sd.position.x());

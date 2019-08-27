@@ -7,8 +7,8 @@
  */
 #include <ground_station/Widgets/WidgetManualWind.h>
 #include <uavAP/Core/Logging/APLogger.h>
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/FlightAnalysis/WindEstimation/WindInfo.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "ui_WidgetManualWind.h"
 
 WidgetManualWind::WidgetManualWind(QWidget* parent):QWidget(parent)

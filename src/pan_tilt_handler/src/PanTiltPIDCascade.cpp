@@ -60,11 +60,11 @@ PanTiltPIDCascade::PanTiltPIDCascade(PanTiltData* panTiltSD,
 }
 
 bool
-PanTiltPIDCascade::configure(const boost::property_tree::ptree& config)
+PanTiltPIDCascade::configure(const Configuration& config)
 {
 	APLOG_WARN << "recieved call to configure";
 	PropertyMapper pm(config);
-	boost::property_tree::ptree pidConfig;
+	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 	Control::PID::Parameters params;
 	for (auto it : pidConfig)

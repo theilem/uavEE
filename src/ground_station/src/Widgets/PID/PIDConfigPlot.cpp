@@ -20,7 +20,7 @@
 #include "ui_PIDConfigPlot.h"
 
 PIDConfigPlot::PIDConfigPlot(QWidget *parent, int key, std::string name,
-		const Control::PID::Parameters &param) :
+		const Control::PIDParameters &param) :
 		QWidget(parent), ui(new Ui::PIDConfigPlot), key_(key)
 {
 	ui->setupUi(this);
@@ -29,15 +29,15 @@ PIDConfigPlot::PIDConfigPlot(QWidget *parent, int key, std::string name,
 	//ui->customPlot->setTname
 	title = QString::fromStdString(name);
 	// Set title and PID params
-	ui->kP->setText(QString::number(param.kp));
+	ui->kP->setText(QString::number(param.kp()));
 	ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kI->setText(QString::number(param.ki));
+	ui->kI->setText(QString::number(param.ki()));
 	ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kD->setText(QString::number(param.kd));
+	ui->kD->setText(QString::number(param.kd()));
 	ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->IMax->setText(QString::number(param.imax));
+	ui->IMax->setText(QString::number(param.imax()));
 	ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->FF->setText(QString::number(param.ff));
+	ui->FF->setText(QString::number(param.ff()));
 	ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 }
 
@@ -133,7 +133,7 @@ PIDConfigPlot::setIMax(double iMax)
 void
 PIDConfigPlot::on_send_clicked()
 {
-	Control::PID::Parameters a;
+	Control::PIDParameters a;
 	a.kp = ui->kP->text().toDouble();
 	a.ki = ui->kI->text().toDouble();
 	a.kd = ui->kD->text().toDouble();

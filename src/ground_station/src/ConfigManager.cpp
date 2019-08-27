@@ -28,8 +28,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
-#include <uavAP/Core/protobuf/messages/ManeuverPlanner.pb.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
@@ -48,7 +46,7 @@ ConfigManager::ConfigManager() :
 }
 
 std::shared_ptr<ConfigManager>
-ConfigManager::create(const boost::property_tree::ptree& config)
+ConfigManager::create(const Configuration& config)
 {
 	auto cm = std::make_shared<ConfigManager>();
 	cm->configure(config);
@@ -56,10 +54,10 @@ ConfigManager::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ConfigManager::configure(const boost::property_tree::ptree& config)
+ConfigManager::configure(const Configuration& config)
 {
 	std::string path;
-	PropertyMapper propertyMapper(config);
+	PropertyMapper<Configuration> propertyMapper(config);
 	if (propertyMapper.add("ground_station_config_path", path, true))
 		boost::property_tree::read_json(path, gsConfig_);
 	else
@@ -70,55 +68,55 @@ ConfigManager::configure(const boost::property_tree::ptree& config)
 	return propertyMapper.map();
 }
 
-boost::property_tree::ptree
+Configuration
 ConfigManager::getMainConfig() const
 {
-	PropertyMapper propertyMapper(gsConfig_);
-	boost::property_tree::ptree mainconf;
+	PropertyMapper<Configuration> propertyMapper(gsConfig_);
+	Configuration mainconf;
 	propertyMapper.add("main_config", mainconf, true);
 	return mainconf;
 }
 
-boost::property_tree::ptree
+Configuration
 ConfigManager::getWidgetConfigs() const
 {
-	boost::property_tree::ptree widgetconf;
+	Configuration widgetconf;
 	auto c = getMainConfig();
-	PropertyMapper mc(c);
+	PropertyMapper<Configuration> mc(c);
 	mc.add("widget_configs", widgetconf, true);
 	return widgetconf;
 }
 
-boost::property_tree::ptree
+Configuration
 ConfigManager::getWidgetConfigByName(const std::string& key) const
 {
 	auto mc = getWidgetConfigs();
-	PropertyMapper wc(mc);
-	boost::property_tree::ptree widgetConf;
+	PropertyMapper<Configuration> wc(mc);
+	Configuration widgetConf;
 	if (!wc.add(key, widgetConf, true))
 		APLOG_ERROR << "Could not find widget configs for " << key;
 	return widgetConf;
 }
 
-const boost::property_tree::ptree&
+const Configuration&
 ConfigManager::getMissionConfig() const
 {
 	return missionConfig_;
 }
 
-const boost::property_tree::ptree&
+const Configuration&
 ConfigManager::getFlightConfig() const
 {
 	return flightConfig_;
 }
 
-const boost::property_tree::ptree&
+const Configuration&
 ConfigManager::getGSConfig() const
 {
 	return gsConfig_;
 }
 
-const boost::property_tree::ptree&
+const Configuration&
 ConfigManager::getAlvoloConfig() const
 {
 	return alvoloConfig_;
@@ -143,7 +141,7 @@ ConfigManager::run(RunStage stage)
 	case RunStage::INIT:
 	{
 		auto mainConfig = getMainConfig();
-		PropertyMapper pm(mainConfig);
+		PropertyMapper<Configuration> pm(mainConfig);
 
 		std::string flightConfPath;
 		pm.add("flight_control_path", flightConfPath, true);
@@ -221,21 +219,12 @@ ConfigManager::tunePID(const PIDTuning& tunePID)
 {
 	radio_comm::tune_pid req;
 	req.request.id = tunePID.pid;
-	req.request.kp = tunePID.params.kp;
-	req.request.ki = tunePID.params.ki;
-	req.request.kd = tunePID.params.kd;
-	req.request.ff = tunePID.params.ff;
-	req.request.imax = tunePID.params.imax;
+	req.request.kp = tunePID.params.kp();
+	req.request.ki = tunePID.params.ki();
+	req.request.kd = tunePID.params.kd();
+	req.request.ff = tunePID.params.ff();
+	req.request.imax = tunePID.params.imax();
 	return tunePIDService_.call(req);
-}
-
-bool
-ConfigManager::tuneLocalPlanner(const LocalPlannerParams& params)
-{
-	radio_comm::tune_generic ser;
-	ser.request.id = static_cast<int>(Tuning::LOCAL_PLANNER);
-	ser.request.proto_message = params.SerializeAsString();
-	return genericTuningService_.call(ser);
 }
 
 bool
@@ -308,7 +297,7 @@ ConfigManager::sendLocalFrame(const VehicleOneFrame& frame)
 void
 ConfigManager::setPIDMap(const std::string& path)
 {
-	boost::property_tree::ptree conf;
+	Configuration conf;
 	boost::property_tree::read_json(path, conf);
 	try
 	{
@@ -323,13 +312,14 @@ ConfigManager::setPIDMap(const std::string& path)
 				APLOG_WARN << "Airplane PID name " << it.first << " invalid.";
 				continue;
 			}
-			Control::PID::Parameters params;
-			params.configure(it.second);
+			Control::PIDParameters params;
+			PropertyMapper<Configuration> pm(it.second);
+			params.configure(pm);
 
 			PIDInfo info(it.first, params);
 			pidParams_.insert(std::make_pair((int) id, info));
 		}
-	} catch (boost::property_tree::ptree_error& err)
+	} catch (ConfigurationError& err)
 	{
 		APLOG_ERROR << "Error in config file: " << err.what();
 		return;

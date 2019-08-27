@@ -50,10 +50,10 @@ public:
 	~ApExtInterface();
 
 	static std::shared_ptr<ApExtInterface>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

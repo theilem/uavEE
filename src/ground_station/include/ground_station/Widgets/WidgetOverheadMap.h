@@ -114,7 +114,7 @@ private:
 	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 
 	void
-	configure(const boost::property_tree::ptree& json);
+	configure(const Configuration& json);
 
 	ObjectHandle<MapLogic> mapLogic_;
 	Ui::WidgetOverheadMap* ui;

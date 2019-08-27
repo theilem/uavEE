@@ -160,7 +160,7 @@ WidgetAirplaneView::~WidgetAirplaneView()
 }
 
 void
-WidgetAirplaneView::configure(const boost::property_tree::ptree &json)
+WidgetAirplaneView::configure(const Configuration &json)
 {
 	if (json.contains("cs"))
 	{

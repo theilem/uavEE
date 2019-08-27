@@ -26,6 +26,7 @@
 #ifndef UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #define UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #include <boost/property_tree/ptree.hpp>
+#include <boost/signals2.hpp>
 #include <uavAP/Core/IDC/IDCSender.h>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
@@ -45,8 +46,7 @@
 
 class IScheduler;
 class ITimeProvider;
-template<typename C, typename T>
-class IDataPresentation;
+class DataPresentation;
 class SensorData;
 class IDC;
 
@@ -61,10 +61,10 @@ public:
 	~SimulationConnector();
 
 	static std::shared_ptr<SimulationConnector>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
@@ -89,7 +89,7 @@ private:
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<ITimeProvider> timeProvider_;
 	ObjectHandle<IDC> idc_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	ros::Publisher sensorPublisher_;
 	ros::Publisher delayPublisher_;

@@ -28,13 +28,13 @@ MapLocation::MapLocation(double east, double north) :
 }
 
 MapLocation
-MapLocation::fromJson(const boost::property_tree::ptree &json)
+MapLocation::fromJson(const Configuration &json)
 {
 	/*if (json.contains("lat") && json.contains("lon"))
 	 {
 	 return MapLocation::fromLatLong(json["lat"].toDouble(), json["lon"].toDouble());
 	 }*/
-	PropertyMapper pm(json);
+	PropertyMapper<Configuration> pm(json);
 	double x, y;
 	if (pm.add<double>("lat", x, false) && pm.add<double>("lon", y, false))
 		return MapLocation::fromLatLong(x, y);

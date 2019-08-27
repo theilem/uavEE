@@ -136,7 +136,6 @@ include_directories(
   	${EIGEN_INCLUDE_DIR}
   	${UAVAP_INCLUDE_DIR}
   	${BOOST_INCLUDE_DIR}
-  	${PROTOBUF_INLCUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -169,9 +168,7 @@ add_executable(${PROJECT_NAME}_node src/radio_comm_node.cpp
 target_link_libraries(${PROJECT_NAME}_node
    	${catkin_LIBRARIES}
    	uavap_core
-   	uavap_core_proto
    	uavap_flight_analysis
-   	protobuf   	
    	boost_thread
    	pthread
    	rt

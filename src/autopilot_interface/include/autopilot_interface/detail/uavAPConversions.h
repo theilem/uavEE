@@ -29,7 +29,6 @@
 #include <ros/time.h>
 
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/protobuf/messages/LocalPlanner.pb.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "simulation_interface/sensor_data.h"
 #include "radio_comm/pidstati.h"
@@ -67,7 +66,7 @@ apToRos(const SensorData& sd)
 	data.air_speed = sd.airSpeed;
 	data.ground_speed = sd.groundSpeed;
 
-	data.header.stamp = ros::Time::fromBoost(sd.timestamp);
+	data.header.stamp = ros::Time::now(); //Quick hack
 
 	data.battery_voltage = sd.batteryVoltage;
 	data.battery_current = sd.batteryCurrent;
@@ -91,7 +90,7 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	data.groundSpeed = sd.ground_speed;
 	data.airSpeed = sd.air_speed;
 
-	data.timestamp = sd.header.stamp.toBoost();
+	data.timestamp = Clock::now(); //Quick hack//sd.header.stamp.toBoost();
 	data.hasGPSFix = true;
 	data.autopilotActive = true;
 
@@ -120,16 +119,16 @@ apToRos(const PIDStati& stati)
 	return data;
 }
 
-inline radio_comm::velocity_body
-apToRos(const VelocityBody& vel)
-{
-	radio_comm::velocity_body data;
-
-	data.velocity_x = vel.velocity_x();
-	data.velocity_y = vel.velocity_y();
-	data.velocity_z = vel.velocity_z();
-
-	return data;
-}
+//inline radio_comm::velocity_body
+//apToRos(const VelocityBody& vel)
+//{
+//	radio_comm::velocity_body data;
+//
+//	data.velocity_x = vel.velocity_x();
+//	data.velocity_y = vel.velocity_y();
+//	data.velocity_z = vel.velocity_z();
+//
+//	return data;
+//}
 
 #endif /* AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_UAVAPCONVERSIONS_H_ */

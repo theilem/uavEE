@@ -26,7 +26,7 @@
 #include "autopilot_interface/AutopilotInterface/DeviceBridge/DeviceBridge.h"
 #include "autopilot_interface/detail/uavAPConversions.h"
 #include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/IDataPresentation.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <functional>
@@ -40,7 +40,7 @@ DeviceBridge::~DeviceBridge()
 }
 
 std::shared_ptr<DeviceBridge>
-DeviceBridge::create(const boost::property_tree::ptree& config)
+DeviceBridge::create(const Configuration& config)
 {
 	auto bridge = std::make_shared<DeviceBridge>();
 	bridge->configure(config);
@@ -48,9 +48,9 @@ DeviceBridge::create(const boost::property_tree::ptree& config)
 }
 
 bool
-DeviceBridge::configure(const boost::property_tree::ptree& config)
+DeviceBridge::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	return pm.map();
 }
 
@@ -105,7 +105,8 @@ DeviceBridge::sendSensorData(const SensorData& sd)
 		APLOG_ERROR << "DataPresentation missing. Cannot send sensordata.";
 		return;
 	}
-	auto packet = dp->serialize(sd, Content::SENSOR_DATA);
+	auto packet = dp->serialize(sd);
+	dp->addHeader(packet, Content::SENSOR_DATA);
 	sensorDataSender_.sendPacket(packet);
 }
 
@@ -129,13 +130,13 @@ DeviceBridge::onPacket(const Packet& packet)
 		APLOG_ERROR << "DataPresentation missing. Cannot handle packet.";
 		return;
 	}
-	Content content;
-	auto any = dp->deserialize(packet, content);
+	Packet p = packet;
+	Content content = dp->extractHeader<Content>(p);
 
 	ControllerOutput control;
 	if (content == Content::CONTROLLER_OUTPUT)
 	{
-		control = boost::any_cast<ControllerOutput>(any);
+		control = dp->deserialize<ControllerOutput>(p);
 	}
 	else
 	{
