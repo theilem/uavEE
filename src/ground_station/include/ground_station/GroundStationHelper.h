@@ -47,7 +47,7 @@ public:
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefaultCreator<IDC>();
+//		addDefaultCreator<IDC>();
 
 		addDefaultCreator<DataManager>();
 		addDefaultCreator<LayoutGenerator>();

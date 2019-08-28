@@ -199,14 +199,14 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 		case Content::LINEAR_LOCAL_PLANNER_STATUS:
 		{
 			radio_comm::serialized_proto msg;
-			msg.proto_message = packet.getBuffer(); //Use packet with content header to distinguish later
+			msg.proto_message = p.getBuffer(); //Use packet with content header to distinguish later
 			localPlannerStatusPublisher_.publish(msg);
 			break;
 		}
 		case Content::MANEUVER_LOCAL_PLANNER_STATUS:
 		{
 			radio_comm::serialized_proto msg;
-			msg.proto_message = packet.getBuffer(); //Use packet with content header to distinguish later
+			msg.proto_message = p.getBuffer(); //Use packet with content header to distinguish later
 			localPlannerStatusPublisher_.publish(msg);
 			break;
 		}

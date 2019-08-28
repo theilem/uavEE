@@ -30,6 +30,6 @@
 		"maneuver": "sequence"
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }

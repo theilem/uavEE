@@ -63,13 +63,13 @@
 		"safety_velocity": 50,
 		"k_altitude": 2.0,
 		"k_convergence": 0.002,
-		"k_yaw_rate": 0.5
+		"k_yawrate": 0.5
 	},
 	"data_handling": {
 		"period": 100,
 		"target":"flight_control"
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }

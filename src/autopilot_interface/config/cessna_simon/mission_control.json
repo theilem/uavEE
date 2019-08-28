@@ -14,11 +14,7 @@
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
-			"center": {
-				"north": 0,
-				"east": 0,
-				"up": 250
-			},
+			"center": [0,0,250],
 			"major_side_length": 8000,
 			"minor_side_length": 4000,
 			"major_side_orientation": 0,
@@ -313,6 +309,6 @@
 		}
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }
