@@ -83,7 +83,7 @@ WidgetOverheadMap::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 }
 
 void
-WidgetOverheadMap::configure(const boost::property_tree::ptree& json)
+WidgetOverheadMap::configure(const Configuration& json)
 {
 	/*if (json.contains("airplaneImagePath"))
 	 {
@@ -97,7 +97,7 @@ WidgetOverheadMap::configure(const boost::property_tree::ptree& json)
 		APLOG_ERROR << "MapLogic missing in overheadmap";
 		return;
 	}
-	PropertyMapper pm(json);
+	PropertyMapper<Configuration> pm(json);
 	std::string aircraftImagePath;
 	pm.add("aircraft_image", aircraftImagePath, true);
 	QPixmap temp;
@@ -112,7 +112,7 @@ WidgetOverheadMap::configure(const boost::property_tree::ptree& json)
 	 APLOG_TRACE << "new config center " << ui->mapView->center.latitude() << " "
 	 << ui->mapView->center.longitude();
 	 }*/
-	boost::property_tree::ptree center;
+	Configuration center;
 	pm.add("map_center", center, true);
 	ui->mapView->center = MapLocation::fromJson(center);
 	ui->CenterX->setText(QString::number(ui->mapView->center.latitude()));
@@ -123,7 +123,7 @@ WidgetOverheadMap::configure(const boost::property_tree::ptree& json)
 	 APLOG_TRACE << "new NWCorner center " << ui->mapView->nwCorner.latitude() << " "
 	 << ui->mapView->nwCorner.longitude();
 	 }*/
-	boost::property_tree::ptree nw_corner;
+	Configuration nw_corner;
 	pm.add("map_nw_corner", nw_corner, true);
 	ui->mapView->nwCorner = MapLocation::fromJson(nw_corner);
 
@@ -134,7 +134,7 @@ WidgetOverheadMap::configure(const boost::property_tree::ptree& json)
 	 << ui->mapView->seCorner.longitude();
 	 }*/
 
-	boost::property_tree::ptree se_corner;
+	Configuration se_corner;
 	pm.add("map_se_corner", se_corner, true);
 	ui->mapView->seCorner = MapLocation::fromJson(se_corner);
 }

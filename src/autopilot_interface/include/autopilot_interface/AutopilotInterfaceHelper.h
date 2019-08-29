@@ -27,14 +27,14 @@
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACEHELPER_H_
 
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/DataPresentationFactory.h>
+
 #include <uavAP/Core/Framework/Helper.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/IDC/NetworkLayer/NetworkFactory.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 #include <autopilot_interface/APRosInterface.h>
 #include <autopilot_interface/AutopilotInterface/AutopilotInterfaceFactory.h>
@@ -50,7 +50,7 @@ public:
 	{
 		addDefault<TimeProviderFactory>();
 		addDefault<SchedulerFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 		addFactory<NetworkFactory>();
 		addCreator<IDC>();
 

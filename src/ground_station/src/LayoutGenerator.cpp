@@ -18,6 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <boost/property_tree/json_parser.hpp>
 #include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "ground_station/LayoutGenerator.h"
 #include <QApplication>
 #include <QGridLayout>
@@ -47,7 +48,7 @@ LayoutGenerator::~LayoutGenerator()
 }
 
 std::shared_ptr<LayoutGenerator>
-LayoutGenerator::create(const boost::property_tree::ptree&)
+LayoutGenerator::create(const Configuration&)
 {
 	return std::make_shared<LayoutGenerator>();
 }
@@ -59,6 +60,7 @@ LayoutGenerator::notifyAggregationOnUpdate(const Aggregator& agg)
 	pidConfigurator_.setFromAggregationIfNotSet(agg);
 	mapLogic_.setFromAggregationIfNotSet(agg);
 	dataSignals_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -140,6 +142,12 @@ ObjectHandle<IPIDConfigurator>
 LayoutGenerator::getPIDConfigurator() const
 {
 	return pidConfigurator_;
+}
+
+ObjectHandle<DataHandling>
+LayoutGenerator::getDataHandling() const
+{
+	return dataHandling_;
 }
 
 void
@@ -241,13 +249,13 @@ LayoutGenerator::changeWidget(WidgetLoader* wid, const QString& type)
 }
 
 QWidget*
-LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* parent)
+LayoutGenerator::createLayout(const Configuration& json, QWidget* parent)
 {
 	//const QString type = json["type"].toString();
 	//QJsonObject config;
 	//if (json.contains("config"))
 	//		config = json["config"].toObject();
-	PropertyMapper pm(json);
+	PropertyMapper<Configuration> pm(json);
 	std::string type;
 	if (!pm.add("type", type, true))
 	{
@@ -255,19 +263,19 @@ LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* 
 		return new QWidget(parent);
 	}
 
-	boost::property_tree::ptree config;
+	Configuration config;
 
 	//
 	// LAYOUTS
 	//
 	if (pm.add("config", config, false))
 	{
-		PropertyMapper config_pm(config);
+		PropertyMapper<Configuration> config_pm(config);
 		if (type == "horizontal_layout")
 		{
 			QWidget* wHBox = new QWidget(parent);
 			//QJsonArray items = config["items"].toArray();
-			std::vector<boost::property_tree::ptree> items;
+			std::vector<Configuration> items;
 			if (!config_pm.addVector("items", items, true))
 			{
 				APLOG_WARN << "horizontal layout has no items";
@@ -287,7 +295,7 @@ LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* 
 		{
 			QWidget* wVBox = new QWidget(parent);
 			//QJsonArray items = config["items"].toArray();
-			std::vector<boost::property_tree::ptree> items;
+			std::vector<Configuration> items;
 			if (!config_pm.addVector("items", items, true))
 			{
 				APLOG_WARN << "vertical layout has no items";
@@ -306,7 +314,7 @@ LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* 
 		}
 		if (type == "quad_layout")
 		{
-			boost::property_tree::ptree nw, ne, sw, se;
+			Configuration nw, ne, sw, se;
 			QWidget* wGrid = new QWidget(parent);
 			QGridLayout* grid(new QGridLayout(wGrid));
 			QWidget* wNW, *wNE, *wSW, *wSE;
@@ -361,7 +369,7 @@ LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* 
 		if (type == "tab_layout")
 		{
 			//QJsonArray tabs = config["tabs"].toArray();
-			std::vector<boost::property_tree::ptree> items;
+			std::vector<Configuration> items;
 			if (!config_pm.addVector("items", items, true))
 			{
 				APLOG_WARN << "tab layout has no items";
@@ -370,9 +378,9 @@ LayoutGenerator::createLayout(const boost::property_tree::ptree& json, QWidget* 
 			QTabWidget* wTabs = new QTabWidget();
 			for (int x = 0; x < items.size(); x++)
 			{
-				boost::property_tree::ptree tab = items[x];
+				Configuration tab = items[x];
 				//QString name = tab["name"].toString();
-				PropertyMapper pm(tab);
+				PropertyMapper<Configuration> pm(tab);
 				std::string name = "tab " + (x + 1);
 				pm.add("name", name, false);
 				QWidget* wTab = createLayout(tab, parent);
@@ -436,7 +444,7 @@ LayoutGenerator::addWin()
 		APLOG_TRACE << "Cancelled config loading.";
 		return;
 	}
-	boost::property_tree::ptree config;
+	Configuration config;
 	boost::property_tree::read_json(confPath.toStdString(), config);
 	makeScrollableWin(createLayout(config, NULL));
 }

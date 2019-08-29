@@ -2,7 +2,7 @@
 	"controller": {
 		"type": "rate",
 		"hard_roll_constraint": 45.0,
-		"hard_roll_rate_constraint": 30.0,
+		"hard_roll_rate_constraint": 15.0,
 		"hard_pitch_constraint": 30.0,
 		"hard_pitch_rate_constraint": 30.0,
 		"pids": {
@@ -16,7 +16,7 @@
 			"pitch": {
 				"ff": 0,
 				"imax": 0.2,
-				"kd": 0.2,
+				"kd": 0.1,
 				"ki": 1,
 				"kp": 0.8
 			},
@@ -30,28 +30,28 @@
 			"roll": {
 				"ff": 0,
 				"imax": 0,
-				"kd": 0,
+				"kd": 0.07,
 				"ki": 0,
-				"kp": 6
+				"kp": 1.5
 			},
 			"roll_rate": {
-				"ff": 0.25,
-				"imax": 0.2,
+				"ff": 0.4,
+				"imax": 0,
 				"kd": 0,
-				"ki": 0.2,
-				"kp": 0.1
+				"ki": 0,
+				"kp": 0.15
 			},
 			"rudder": {
 				"ff": 0,
 				"imax": 1,
-				"kd": 0.05,
-				"ki": 0.5,
-				"kp": 0.5
+				"kd": 0.01,
+				"ki": 0.3,
+				"kp": 0.2
 			},
 			"velocity": {
 				"ff": 0,
 				"imax": 10,
-				"kd": 0,
+				"kd": -0.04,
 				"ki": -0.2,
 				"kp": -1
 			}
@@ -65,9 +65,9 @@
 		"k_convergence": 0.01,
 		"k_yaw_rate": 0.65
 	},
-	"fc_data_handling": {
-		"compress_sensor_data": true,
-		"period": 100
+	"data_handling": {
+		"period": 100,
+		"target":"flight_control"
 	},
 	"data_presentation": {
 		"compress_double": true

@@ -34,6 +34,8 @@
 #include <uavAP/Core/Scheduler/IScheduler.h>
 
 #include <autopilot_interface/AutopilotInterface/IAutopilotInterface.h>
+#include <boost/token_functions.hpp>
+#include <boost/tokenizer.hpp>
 
 LogParser::LogParser() :
 		dataIdxToString_(
@@ -129,7 +131,7 @@ LogParser::initializeSample()
 }
 
 std::shared_ptr<LogParser>
-LogParser::create(const boost::property_tree::ptree& config)
+LogParser::create(const Configuration& config)
 {
 	auto lp = std::make_shared<LogParser>();
 	lp->configure(config);
@@ -137,22 +139,22 @@ LogParser::create(const boost::property_tree::ptree& config)
 }
 
 bool
-LogParser::configure(const boost::property_tree::ptree& config)
+LogParser::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	boost::property_tree::ptree alvoloConfig;
+	Configuration alvoloConfig;
 	pm.add("alvolo_config", alvoloConfig, true);
 	pm.add("log_file_path", logFilePath_, true);
 	pm.add("log_header_path", logHeaderPath_, true);
 	pm.add("period", period_, true);
 
-	PropertyMapper pmAlvolo(alvoloConfig);
+	PropertyMapper<Configuration> pmAlvolo(alvoloConfig);
 
-	boost::property_tree::ptree interfaceConfig;
+	Configuration interfaceConfig;
 	pmAlvolo.add("interface", interfaceConfig, true);
 
-	PropertyMapper pmInterface(interfaceConfig);
+	PropertyMapper<Configuration> pmInterface(interfaceConfig);
 
 	pmInterface.add<bool>("internal_imu", internalImu_, false);
 	pmInterface.add<bool>("external_gps", externalGps_, false);

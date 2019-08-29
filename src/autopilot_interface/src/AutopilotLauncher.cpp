@@ -31,7 +31,7 @@ AutopilotLauncher::AutopilotLauncher()
 }
 
 std::shared_ptr<AutopilotLauncher>
-AutopilotLauncher::create(const boost::property_tree::ptree& config)
+AutopilotLauncher::create(const Configuration& config)
 {
 	auto al = std::make_shared<AutopilotLauncher>();
 	al->configure(config);
@@ -39,9 +39,9 @@ AutopilotLauncher::create(const boost::property_tree::ptree& config)
 }
 
 bool
-AutopilotLauncher::configure(const boost::property_tree::ptree& config)
+AutopilotLauncher::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add("watchdog_binary", watchdogBinary_, true);
 	pm.add("watchdog_config", watchdogConfig_, true);
 	return pm.map();

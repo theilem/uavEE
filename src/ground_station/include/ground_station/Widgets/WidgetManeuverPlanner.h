@@ -53,7 +53,7 @@ public:
 	}
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 private slots:
 	void

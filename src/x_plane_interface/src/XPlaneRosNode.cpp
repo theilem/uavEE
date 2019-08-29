@@ -90,7 +90,7 @@ XPlaneRosNode::~XPlaneRosNode()
 }
 
 std::shared_ptr<XPlaneRosNode>
-XPlaneRosNode::create(const boost::property_tree::ptree& config)
+XPlaneRosNode::create(const Configuration& config)
 {
 	return std::make_shared<XPlaneRosNode>();
 }

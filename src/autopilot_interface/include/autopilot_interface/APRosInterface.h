@@ -25,7 +25,7 @@
 
 #ifndef AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_APROSINTERFACE_H_
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_APROSINTERFACE_H_
-#include <boost/property_tree/ptree.hpp>
+#include <boost/signals2.hpp>
 #include <power_modeling/power_info.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
@@ -51,10 +51,10 @@ public:
 	~APRosInterface();
 
 	static std::shared_ptr<APRosInterface>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

@@ -79,7 +79,7 @@ private:
 	void
 	on_hasNewSample(const simulation_interface::actuation& ad);
 	void
-	configure(const boost::property_tree::ptree &json);
+	configure(const Configuration &json);
 	Ui::WidgetAirplaneView *ui;
 	QLabel battLLL;
 	QLabel battLL;

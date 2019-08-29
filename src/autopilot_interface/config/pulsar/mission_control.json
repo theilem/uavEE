@@ -5,7 +5,7 @@
             4435383.06,
             200
         ],
-        "yaw": 47
+        "yaw": 0
     },
     "global_planner": {
         "type": "spline",
@@ -23,7 +23,7 @@
             "major_side_orientation": 0,
             "height": 120
         },
-        "return_velocity": 12,
+        "return_velocity": 15,
         "manual_restart": false,
         "maneuver_restart": false,
         "use_safety_bounds": false,
@@ -40,7 +40,7 @@
                 {
                     "override": {
                         "local_planner/position_z": 100,
-                        "local_planner/velocity": 12.0,
+                        "local_planner/velocity": 15.0,
                         "pids/roll": 0.0
                     },
                     "condition": {
@@ -81,10 +81,10 @@
     "mission_planner": {
         "type": "custom",
         "use_approach": false,
-        "default_velocity": 12,
+        "default_velocity": 15,
         "missions": {
             "simple": {
-                "velocity": 12,
+                "velocity": 15,
                 "infinite": true,
                 "offset": {
                     "e": 0,
@@ -115,7 +115,7 @@
                 ]
             },
             "energy": {
-                "velocity": 12,
+                "velocity": 15,
                 "infinite": true,
                 "offset": {
                     "e": 0,
@@ -186,7 +186,7 @@
                 ]
             },
             "energy_flat": {
-                "velocity": 12,
+                "velocity": 15,
                 "infinite": true,
                 "offset": {
                     "e": 0,
@@ -257,7 +257,7 @@
                 ]
             },
             "validation": {
-                "velocity": 12,
+                "velocity": 15,
                 "infinite": true,
                 "offset": {
                     "e": 0,
@@ -303,159 +303,6 @@
                     {
                         "e": 150,
                         "n": 150,
-                        "u": 0
-                    }
-                ]
-            },
-            "validation_300": {
-                "velocity": 12,
-                "infinite": true,
-                "offset": {
-                    "e": 0,
-                    "n": 0,
-                    "u": 100
-                },
-                "waypoints": [
-                    {
-                        "e": 250,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 250,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": 150,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -150,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -250,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -250,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": -150,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 150,
-                        "n": 75,
-                        "u": 0
-                    }
-                ]
-            },
-            "validation_350": {
-                "velocity": 12,
-                "infinite": true,
-                "offset": {
-                    "e": 0,
-                    "n": 0,
-                    "u": 100
-                },
-                "waypoints": [
-                    {
-                        "e": 275,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 275,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": 175,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -175,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -275,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -275,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": -175,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 175,
-                        "n": 75,
-                        "u": 0
-                    }
-                ]
-            },
-            "validation_400": {
-                "velocity": 12,
-                "infinite": true,
-                "offset": {
-                    "e": 0,
-                    "n": 0,
-                    "u": 100
-                },
-                "waypoints": [
-                    {
-                        "e": 300,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 300,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": 200,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -200,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -300,
-                        "n": -75,
-                        "u": 0
-                    },
-                    {
-                        "e": -300,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": -200,
-                        "n": 75,
-                        "u": 0
-                    },
-                    {
-                        "e": 200,
-                        "n": 75,
                         "u": 0
                     }
                 ]

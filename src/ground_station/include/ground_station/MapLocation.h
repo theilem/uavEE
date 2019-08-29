@@ -19,16 +19,16 @@
 #ifndef LOCATION_H
 #define LOCATION_H
 
-#include <boost/property_tree/ptree.hpp>
 #include <QJsonObject>
 #include <uavAP/Core/LinearAlgebra.h>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 class MapLocation
 {
 public:
 	MapLocation(double east = 0, double north = 0);
 
 	static MapLocation
-	fromJson(const boost::property_tree::ptree & json);
+	fromJson(const Configuration & json);
 	static MapLocation
 	fromLatLong(double Lat, double Long);
 	static MapLocation

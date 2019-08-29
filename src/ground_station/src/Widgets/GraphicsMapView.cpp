@@ -206,7 +206,7 @@ GraphicsMapView::drawTrajectory(QPainter *painter)
 		return;
 	}
 
-	LocalPlannerStatus status = mapLogic->getLocalPlannerStatus();
+//	LocalPlannerStatus status = mapLogic->getLocalPlannerStatus();
 	Trajectory traj = mapLogic->getPath();
 
 	if (traj.pathSections.empty())
@@ -218,13 +218,13 @@ GraphicsMapView::drawTrajectory(QPainter *painter)
 		return;
 
 
-	if (status.has_linear_status())
-	{
-		if (status.linear_status().is_in_approach() && traj.approachSection)
-		{
-			drawPathSection(painter, traj.approachSection, lastPoint);
-		}
-	}
+//	if (status.has_linear_status())
+//	{
+//		if (status.linear_status().is_in_approach() && traj.approachSection)
+//		{
+//			drawPathSection(painter, traj.approachSection, lastPoint);
+//		}
+//	}
 
 	for (auto ps : traj.pathSections)
 	{
@@ -275,22 +275,22 @@ GraphicsMapView::highlightActivePath(QPainter *painter) //highlights active path
 	bool inApproach = false;
 
 
-	LocalPlannerStatus lp = ml->getLocalPlannerStatus();
-	if (lp.has_linear_status())
-	{
-		pathIndex =  lp.linear_status().current_path_section();
-		inApproach = lp.linear_status().is_in_approach();
-	}
-	else if (lp.has_maneuver_status())
-	{
-		pathIndex =  lp.maneuver_status().current_path_section();
-		inApproach = lp.maneuver_status().is_in_approach();
-	}
-	else
-	{
-		APLOG_ERROR << "Status cannot be displayed.";
-		return;
-	}
+//	LocalPlannerStatus lp = ml->getLocalPlannerStatus();
+//	if (lp.has_linear_status())
+//	{
+//		pathIndex =  lp.linear_status().current_path_section();
+//		inApproach = lp.linear_status().is_in_approach();
+//	}
+//	else if (lp.has_maneuver_status())
+//	{
+//		pathIndex =  lp.maneuver_status().current_path_section();
+//		inApproach = lp.maneuver_status().is_in_approach();
+//	}
+//	else
+//	{
+//		APLOG_ERROR << "Status cannot be displayed.";
+//		return;
+//	}
 
 
 
@@ -457,16 +457,10 @@ GraphicsMapView::drawSafetyNet(QPainter *painter)
 
 	const auto& bounds = mapLogic->getSafetyBounds();
 
-	if (!bounds.has_center())
-	{
-		APLOG_TRACE << "GraphicsMapView: Safety Bounds Center Missing.";
-		return;
-	}
-
-	auto center = toVector(bounds.center());
-	double rotation = bounds.major_side_orientation() * M_PI / 180.0;
-	double majorOffset = bounds.major_side_length() / 2;
-	double minorOffset = bounds.minor_side_length() / 2;
+	const auto& center = bounds.center;
+	double rotation = bounds.majorSideOrientation * M_PI / 180.0;
+	double majorOffset = bounds.majorSideLength / 2;
+	double minorOffset = bounds.minorSideLength / 2;
 
 	Vector2 Q1 = rotate2Drad(Vector2(majorOffset, minorOffset), rotation) + center.head(2);
 	Vector2 Q2 = rotate2Drad(Vector2(-majorOffset, minorOffset), rotation) + center.head(2);
@@ -498,49 +492,49 @@ GraphicsMapView::drawControllerTarget(QPainter* painter)
 		APLOG_ERROR << "GraphicsMapView: MapLogic not set!";
 		return;
 	}
-	auto status = mapLogic->getLocalPlannerStatus();
-	if (!status.has_linear_status())
-		return;
-	if (status.linear_status().has_airplane_status())
-	{
-		//drawing controller target
-
-		double command = status.linear_status().airplane_status().heading_target();
-		QPointF airplaneLoc = LocalFrameToMapPoint(aircraftLocation.easting(),
-				aircraftLocation.northing()); //ENU
-		QPointF dest = QPointF(airplaneLoc.x() + 50 * cos(-command + M_PI / 2),
-				airplaneLoc.y() - 50 * sin(-command + M_PI / 2));
-		QPen pen;
-		pen.setColor(Qt::red);
-		pen.setWidth(3);
-		painter->setPen(pen);
-		painter->drawLine(airplaneLoc, dest);
-
-		//drawing position deviation
-		auto pathIndex = status.linear_status().current_path_section();
-		if (mapLogic->getPath().pathSections.size() <= pathIndex)
-		{
-			return;
-		}
-
-		std::shared_ptr<IPathSection> ps;
-		if (status.linear_status().is_in_approach())
-			ps = mapLogic->getPath().approachSection;
-		else
-			ps = mapLogic->getPath().pathSections.at(pathIndex);
-		Vector3 currentPos = xyzTypeToVector3(mapLogic->getSensorData().position);
-		ps->updatePosition(currentPos);
-
-		Vector3 closestPoint = currentPos + ps->getPositionDeviation();
-		QPointF mapPoint = LocalFrameToMapPoint(closestPoint[0], closestPoint[1]);
-		pen.setColor(Qt::blue);
-		pen.setWidth(2);
-		painter->setPen(pen);
-		painter->drawLine(airplaneLoc, mapPoint);
-		pen.setWidth(5);
-		painter->setPen(pen);
-		painter->drawPoint(mapPoint);
-	}
+//	auto status = mapLogic->getLocalPlannerStatus();
+//	if (!status.has_linear_status())
+//		return;
+////	if (status.linear_status().has_airplane_status())
+//	{
+//		//drawing controller target
+//
+//		double command = status.linear_status().airplane_status().heading_target();
+//		QPointF airplaneLoc = LocalFrameToMapPoint(aircraftLocation.easting(),
+//				aircraftLocation.northing()); //ENU
+//		QPointF dest = QPointF(airplaneLoc.x() + 50 * cos(-command + M_PI / 2),
+//				airplaneLoc.y() - 50 * sin(-command + M_PI / 2));
+//		QPen pen;
+//		pen.setColor(Qt::red);
+//		pen.setWidth(3);
+//		painter->setPen(pen);
+//		painter->drawLine(airplaneLoc, dest);
+//
+//		//drawing position deviation
+//		auto pathIndex = status.linear_status().current_path_section();
+//		if (mapLogic->getPath().pathSections.size() <= pathIndex)
+//		{
+//			return;
+//		}
+//
+//		std::shared_ptr<IPathSection> ps;
+//		if (status.linear_status().is_in_approach())
+//			ps = mapLogic->getPath().approachSection;
+//		else
+//			ps = mapLogic->getPath().pathSections.at(pathIndex);
+//		Vector3 currentPos = xyzTypeToVector3(mapLogic->getSensorData().position);
+//		ps->updatePosition(currentPos);
+//
+//		Vector3 closestPoint = currentPos + ps->getPositionDeviation();
+//		QPointF mapPoint = LocalFrameToMapPoint(closestPoint[0], closestPoint[1]);
+//		pen.setColor(Qt::blue);
+//		pen.setWidth(2);
+//		painter->setPen(pen);
+//		painter->drawLine(airplaneLoc, mapPoint);
+//		pen.setWidth(5);
+//		painter->setPen(pen);
+//		painter->drawPoint(mapPoint);
+//	}
 }
 
 Vector3

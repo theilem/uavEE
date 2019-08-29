@@ -35,7 +35,7 @@ PanTiltHandler::PanTiltHandler() :
 }
 
 std::shared_ptr<PanTiltHandler>
-PanTiltHandler::create(const boost::property_tree::ptree& config)
+PanTiltHandler::create(const Configuration& config)
 {
 	auto pth = std::make_shared<PanTiltHandler>();
 	pth->configure(config);
@@ -43,7 +43,7 @@ PanTiltHandler::create(const boost::property_tree::ptree& config)
 }
 
 bool
-PanTiltHandler::configure(const boost::property_tree::ptree& config)
+PanTiltHandler::configure(const Configuration& config)
 {
 	PropertyMapper propertyMapper(config);
 	if (!propertyMapper.add("pan_tilt_handler_arduino_path", arduinoPath_, true))

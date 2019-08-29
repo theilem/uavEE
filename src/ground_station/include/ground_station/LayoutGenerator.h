@@ -60,7 +60,7 @@ public:
 	 * @return  a shared pointer to the newly created layout generator
 	 */
 	static std::shared_ptr<LayoutGenerator>
-	create(const boost::property_tree::ptree&);
+	create(const Configuration&);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -79,6 +79,9 @@ public:
 
 	ObjectHandle<IPIDConfigurator>
 	getPIDConfigurator() const override;
+
+	ObjectHandle<DataHandling>
+	getDataHandling() const override;
 
 private:
 
@@ -117,7 +120,7 @@ private:
 	 * @return  QWidget pointer that represents the entire passed in json
 	 */
 	QWidget*
-	createLayout(const boost::property_tree::ptree& json, QWidget* parent);
+	createLayout(const Configuration& json, QWidget* parent);
 
 	/**
 	 * @brief   createWidget is a wrapper function for the GSWidgetFactory
@@ -152,6 +155,7 @@ private:
 
 	///!reference to data signals
 	ObjectHandle<IDataSignals> dataSignals_;
+	ObjectHandle<DataHandling> dataHandling_;
 
 private slots:
 	/**

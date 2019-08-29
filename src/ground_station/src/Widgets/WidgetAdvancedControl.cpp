@@ -58,14 +58,14 @@ WidgetAdvancedControl::connectInterface(std::shared_ptr<IWidgetInterface> interf
 	{
 		auto cm = configManager_.get();
 
-		PropertyMapper pm(cm->getAlvoloConfig());
-		boost::property_tree::ptree interface;
+		PropertyMapper<Configuration> pm(cm->getAlvoloConfig());
+		Configuration interface;
 		pm.add("interface", interface, true);
 
-		PropertyMapper interfacePm(interface);
-		boost::property_tree::ptree specialControl;
-		boost::property_tree::ptree camberControl;
-		boost::property_tree::ptree throwsControl;
+		PropertyMapper<Configuration> interfacePm(interface);
+		Configuration specialControl;
+		Configuration camberControl;
+		Configuration throwsControl;
 
 		if (interfacePm.add("special_control", specialControl, true))
 		{

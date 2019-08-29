@@ -27,8 +27,6 @@
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/Logging/APLogger.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/IDataPresentation.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
@@ -39,6 +37,9 @@
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <autopilot_interface/detail/uavAPConversions.h>
 #include <simulation_interface/sensor_data.h>
+#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/IPC/IPC.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 #include "radio_comm/serialized_proto.h"
 #include "radio_comm/RadioComm.h"
@@ -46,7 +47,7 @@
 #include "radio_comm/serialized_object.h"
 
 std::shared_ptr<RadioComm>
-RadioComm::create(const boost::property_tree::ptree& config)
+RadioComm::create(const Configuration& config)
 {
 	auto comm = std::make_shared<RadioComm>();
 	if (!comm->configure(config))
@@ -55,9 +56,9 @@ RadioComm::create(const boost::property_tree::ptree& config)
 }
 
 bool
-RadioComm::configure(const boost::property_tree::ptree& config)
+RadioComm::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	return pm.map();
 }
 
@@ -66,6 +67,7 @@ RadioComm::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	idc_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);
+	ipc_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -87,6 +89,11 @@ RadioComm::run(RunStage stage)
 			return true;
 		}
 
+		if (!ipc_.isSet())
+		{
+			APLOG_WARN << "IPC not set. Cannot connect to DataHandlings.";
+		}
+
 		ros::NodeHandle nh;
 		sensorDataPublisher_ = nh.advertise<simulation_interface::sensor_data>(
 				"/radio_comm/sensor_data", 20);
@@ -96,8 +103,10 @@ RadioComm::run(RunStage stage)
 		trajectoryPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/trajectory",
 				20);
 		missionPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/mission", 20);
-		overridePublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/override", 20);
-		controllerOutputTrimPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/controller_output_trim", 20);
+		overridePublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/override",
+				20);
+		controllerOutputTrimPublisher_ = nh.advertise<radio_comm::serialized_object>(
+				"/radio_comm/controller_output_trim", 20);
 		localFramePublisher_ = nh.advertise<radio_comm::serialized_object>(
 				"/radio_comm/local_frame", 20);
 		localPlannerStatusPublisher_ = nh.advertise<radio_comm::serialized_proto>(
@@ -117,12 +126,13 @@ RadioComm::run(RunStage stage)
 		tunePIDService_ = nh.advertiseService("/radio_comm/tune_pid", &RadioComm::tunePID, this);
 		sendOverrideService_ = nh.advertiseService("/radio_comm/send_override",
 				&RadioComm::sendOverride, this);
-		sendControllerOutputOffsetService_ = nh.advertiseService("/radio_comm/send_controller_output_offset",
-						&RadioComm::sendControllerOutputOffset, this);
+		sendControllerOutputOffsetService_ = nh.advertiseService(
+				"/radio_comm/send_controller_output_offset", &RadioComm::sendControllerOutputOffset,
+				this);
 		sendAdvancedControlService_ = nh.advertiseService("/radio_comm/send_advanced_control",
 				&RadioComm::sendAdvancedControl, this);
 		sendLocalFrameService_ = nh.advertiseService("/radio_comm/send_local_frame",
-						&RadioComm::sendLocalFrame, this);
+				&RadioComm::sendLocalFrame, this);
 
 		break;
 	}
@@ -138,6 +148,18 @@ RadioComm::run(RunStage stage)
 				std::bind(&RadioComm::onAutopilotPacket, this, std::placeholders::_1));
 
 		radioSender_ = idc->createSender("autopilot");
+
+//		if (auto ipc = ipc_.get())
+//		{
+//			groundStationSubscription_ = ipc->subscribeOnPackets("ground_station_to_comm",
+//					std::bind(&RadioComm::sendPacket, this, std::placeholders::_1));
+//
+//			if (!groundStationSubscription_.connected())
+//			{
+//				APLOG_WARN << "Cannot connect to data_mc_com";
+//			}
+//		}
+
 		break;
 	}
 	case RunStage::FINAL:
@@ -158,19 +180,8 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 		return;
 	}
 
-	std::string packetString = packet.getBuffer();
-
-	Content content(Content::INVALID);
-
-	boost::any any;
-	try
-	{
-		any = dp->deserialize(packet, content);
-	} catch (std::runtime_error& err)
-	{
-		APLOG_ERROR << "runtime error: " << err.what();
-		return;
-	}
+	Packet p = packet;
+	Content content = dp->extractHeader<Content>(p);
 
 	try
 	{
@@ -178,66 +189,72 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 		{
 		case Content::SENSOR_DATA:
 		{
-			sensorDataPublisher_.publish(apToRos(boost::any_cast<SensorData>(any)));
+			sensorDataPublisher_.publish(apToRos(dp->deserialize<SensorData>(p)));
 			break;
 		}
 		case Content::PID_STATUS:
-			pidStatiPublisher_.publish(apToRos(boost::any_cast<PIDStati>(any)));
+			pidStatiPublisher_.publish(apToRos(dp->deserialize<PIDStati>(p)));
 			break;
 		case Content::INSPECTING_METRICS:
 		{
 			radio_comm::serialized_object inspectingMetrics;
-			inspectingMetrics.serialized =
-					dp::serialize(boost::any_cast<SteadyStateMetrics>(any)).getBuffer();
+			inspectingMetrics.serialized = p.getBuffer();
 			inspectingMetricsPublisher_.publish(inspectingMetrics);
 			break;
 		}
-		case Content::LOCAL_PLANNER_STATUS:
+		case Content::LINEAR_LOCAL_PLANNER_STATUS:
 		{
 			radio_comm::serialized_proto msg;
-			msg.proto_message = boost::any_cast<LocalPlannerStatus>(any).SerializeAsString();
+			msg.proto_message = p.getBuffer(); //Use packet with content header to distinguish later
+			localPlannerStatusPublisher_.publish(msg);
+			break;
+		}
+		case Content::MANEUVER_LOCAL_PLANNER_STATUS:
+		{
+			radio_comm::serialized_proto msg;
+			msg.proto_message = p.getBuffer(); //Use packet with content header to distinguish later
 			localPlannerStatusPublisher_.publish(msg);
 			break;
 		}
 		case Content::SAFETY_BOUNDS:
 		{
 			std_msgs::String msg;
-			msg.data = boost::any_cast<Rectanguloid>(any).SerializeAsString();
+			msg.data = p.getBuffer();
 			safetyBoundsPublisher_.publish(msg);
 			break;
 		}
 		case Content::TRAJECTORY:
 		{
 			radio_comm::serialized_object traj;
-			traj.serialized = dp::serialize(boost::any_cast<Trajectory>(any)).getBuffer();
+			traj.serialized = p.getBuffer();
 			trajectoryPublisher_.publish(traj);
 			break;
 		}
 		case Content::MISSION:
 		{
 			radio_comm::serialized_object mission;
-			mission.serialized = dp::serialize(boost::any_cast<Mission>(any)).getBuffer();
+			mission.serialized = p.getBuffer();
 			missionPublisher_.publish(mission);
 			break;
 		}
 		case Content::LOCAL_FRAME:
 		{
 			radio_comm::serialized_object local;
-			local.serialized = dp::serialize(boost::any_cast<VehicleOneFrame>(any)).getBuffer();
+			local.serialized = p.getBuffer();
 			localFramePublisher_.publish(local);
 			break;
 		}
 		case Content::OVERRIDE:
 		{
 			radio_comm::serialized_object override;
-			override.serialized = dp::serialize(boost::any_cast<Override>(any)).getBuffer();
+			override.serialized = p.getBuffer();
 			overridePublisher_.publish(override);
 			break;
 		}
 		case Content::CONTROLLER_OUTPUT_TRIM:
 		{
 			radio_comm::serialized_object trim;
-			trim.serialized = dp::serialize(boost::any_cast<ControllerOutput>(any)).getBuffer();
+			trim.serialized = p.getBuffer();
 			controllerOutputTrimPublisher_.publish(trim);
 			break;
 		}
@@ -245,9 +262,6 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 			APLOG_ERROR << "Unknown Content " << (int) content;
 			break;
 		}
-	} catch (boost::bad_any_cast& err)
-	{
-		APLOG_ERROR << "Bad any cast for Content " << (int) content << ": " << any.empty();
 	} catch (std::runtime_error& err)
 	{
 		APLOG_ERROR << "runtime error in conversion: " << err.what();
@@ -265,8 +279,9 @@ RadioComm::selectMission(radio_comm::select_mission::Request& req,
 		APLOG_ERROR << "DataPresentation missing.";
 		return false;
 	}
-	auto packet = dp->serialize(req.mission, Content::SELECT_MISSION);
-	dp->setTarget(packet, Target::MISSION_CONTROL);
+	auto packet = dp->serialize(req.mission);
+	dp->addHeader(packet, Content::SELECT_MISSION);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
 	return sendPacket(packet);
 }
 
@@ -280,8 +295,9 @@ RadioComm::selectManeuver(radio_comm::select_maneuver::Request& req,
 		APLOG_ERROR << "DataPresentation missing.";
 		return false;
 	}
-	auto packet = dp->serialize(req.maneuver, Content::SELECT_MANEUVER_SET);
-	dp->setTarget(packet, Target::MISSION_CONTROL);
+	auto packet = dp->serialize(req.maneuver);
+	dp->addHeader(packet, Content::SELECT_MANEUVER_SET);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
 	return sendPacket(packet);
 }
 
@@ -299,8 +315,9 @@ RadioComm::selectInspectingMetrics(radio_comm::serialized_service::Request& req,
 
 	InspectingMetricsPair pair = dp::deserialize<InspectingMetricsPair>(req.serialized);
 
-	auto packet = dp->serialize(pair, Content::SELECT_INSPECTING_METRICS);
-	dp->setTarget(packet, Target::FLIGHT_ANALYSIS);
+	auto packet = dp->serialize(pair);
+	dp->addHeader(packet, Content::SELECT_INSPECTING_METRICS);
+	dp->addHeader(packet, Target::FLIGHT_ANALYSIS);
 
 	resp.valid = true;
 
@@ -340,9 +357,9 @@ RadioComm::requestData(radio_comm::request_data::Request& req,
 	if (target != Target::INVALID)
 	{
 		resp.valid_request = true;
-		auto packet = dp->serialize(static_cast<DataRequest>(req.data_request_id),
-				Content::REQUEST_DATA);
-		dp->setTarget(packet, target);
+		auto packet = dp->serialize(static_cast<DataRequest>(req.data_request_id));
+		dp->addHeader(packet, Content::REQUEST_DATA);
+		dp->addHeader(packet, target);
 		return sendPacket(packet);
 	}
 
@@ -361,16 +378,17 @@ RadioComm::tunePID(radio_comm::tune_pid::Request& req, radio_comm::tune_pid::Res
 	}
 	PIDTuning tuning;
 	tuning.pid = req.id;
-	tuning.params.kp = req.kp;
-	tuning.params.ki = req.ki;
-	tuning.params.kd = req.kd;
-	tuning.params.ff = req.ff;
-	tuning.params.imax = req.imax;
+	tuning.params.kp.setValue(req.kp);
+	tuning.params.ki.setValue(req.ki);
+	tuning.params.kd.setValue(req.kd);
+	tuning.params.ff.setValue(req.ff);
+	tuning.params.imax.setValue(req.imax);
 
 	resp.valid_request = true;
 
-	auto packet = dp->serialize(tuning, Content::TUNE_PID);
-	dp->setTarget(packet, Target::FLIGHT_CONTROL);
+	auto packet = dp->serialize(tuning);
+	dp->addHeader(packet, Content::TUNE_PID);
+	dp->addHeader(packet, Target::FLIGHT_CONTROL);
 	return sendPacket(packet);
 }
 
@@ -390,11 +408,9 @@ RadioComm::tuneGeneric(radio_comm::tune_generic::Request& req,
 	{
 	case static_cast<int>(Tuning::LOCAL_PLANNER):
 	{
-		LocalPlannerParams params;
-		params.ParseFromString(req.proto_message);
+		Packet packet(req.proto_message);
 		resp.valid = true;
-		packet = dp->serialize(params, Content::TUNE_LOCAL_PLANNER);
-		dp->setTarget(packet, Target::FLIGHT_CONTROL);
+		dp->addHeader(packet, Target::FLIGHT_CONTROL);
 		break;
 	}
 	default:
@@ -424,8 +440,9 @@ RadioComm::sendOverride(radio_comm::serialized_service::Request& req,
 
 	Override override = dp::deserialize<Override>(req.serialized);
 
-	auto packet = dp->serialize(override, Content::OVERRIDE);
-	dp->setTarget(packet, Target::MISSION_CONTROL);
+	auto packet = dp->serialize(override);
+	dp->addHeader(packet, Content::OVERRIDE);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
 
 	resp.valid = true;
 
@@ -446,8 +463,9 @@ RadioComm::sendControllerOutputOffset(radio_comm::serialized_service::Request& r
 
 	ControllerOutput offset = dp::deserialize<ControllerOutput>(req.serialized);
 
-	auto packet = dp->serialize(offset, Content::CONTROLLER_OUTPUT_OFFSET);
-	dp->setTarget(packet, Target::MISSION_CONTROL);
+	auto packet = dp->serialize(offset);
+	dp->addHeader(packet, Content::CONTROLLER_OUTPUT_OFFSET);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
 
 	resp.valid = true;
 
@@ -503,8 +521,9 @@ RadioComm::sendAdvancedControl(radio_comm::send_advanced_control::Request& req,
 		advanced.camberValue = req.camber_val;
 	}
 
-	auto packet = dp->serialize(advanced, Content::ADVANCED_CONTROL);
-	dp->setTarget(packet, Target::FLIGHT_CONTROL);
+	auto packet = dp->serialize(advanced);
+	dp->addHeader(packet, Content::ADVANCED_CONTROL);
+	dp->addHeader(packet, Target::FLIGHT_CONTROL);
 
 	resp.valid_request = true;
 
@@ -525,8 +544,9 @@ RadioComm::sendLocalFrame(radio_comm::serialized_service::Request& req,
 
 	VehicleOneFrame frame = dp::deserialize<VehicleOneFrame>(req.serialized);
 
-	auto packet = dp->serialize(frame, Content::LOCAL_FRAME);
-	dp->setTarget(packet, Target::MISSION_CONTROL);
+	auto packet = dp->serialize(frame);
+	dp->addHeader(packet, Content::LOCAL_FRAME);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
 
 	resp.valid = true;
 

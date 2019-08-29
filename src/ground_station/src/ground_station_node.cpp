@@ -108,8 +108,8 @@ main(int argc, char** argv)
 		APLOG_WARN << "Could not open resource file at " << f.symLinkTarget().toStdString();
 	}
 
-	boost::property_tree::ptree config;
-	boost::property_tree::ptree configManagerConfig;
+	Configuration config;
+	Configuration configManagerConfig;
 	configManagerConfig.add("ground_station_config_path", confPath);
 	configManagerConfig.add("ground_station_resource_path", resourcePath);
 	config.add_child("config_manager", configManagerConfig);

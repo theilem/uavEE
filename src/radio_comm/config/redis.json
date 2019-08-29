@@ -1,0 +1,18 @@
+{
+	"network": {
+		"type": "redis",
+		"sub": {
+			"autopilot": {
+				"channel": "status" 
+			}
+		},
+		"pub": {
+			"autopilot": {
+				"channel": "command" 
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

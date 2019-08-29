@@ -30,7 +30,7 @@ MapLogic::MapLogic() :
 }
 
 std::shared_ptr<MapLogic>
-MapLogic::create(const boost::property_tree::ptree&)
+MapLogic::create(const Configuration&)
 {
 	return std::make_shared<MapLogic>();
 }
@@ -156,12 +156,6 @@ MapLogic::getSensorData() const
 }
 
 void
-MapLogic::setLocalPlannerStatus(const LocalPlannerStatus& lpStatus)
-{
-	lpStatus_ = lpStatus;
-}
-
-void
 MapLogic::addLocation(const Vector3& pos)
 {
 	MapLocation loc = MapLocation(pos.x(), pos.y());
@@ -199,12 +193,6 @@ void
 MapLogic::setPath(const Trajectory& traj)
 {
 	pathSections_ = traj;
-}
-
-const LocalPlannerStatus&
-MapLogic::getLocalPlannerStatus() const
-{
-	return lpStatus_;
 }
 
 std::string

@@ -136,7 +136,6 @@ include_directories(
   	${EIGEN_INCLUDE_DIR}
   	${UAVAP_INCLUDE_DIR}
   	${BOOST_INCLUDE_DIR}
-  	${PROTOBUF_INLCUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -170,7 +169,6 @@ target_link_libraries(${PROJECT_NAME}_node
    	${catkin_LIBRARIES}
    	uavap_core
    	uavap_flight_analysis
-   	protobuf   	
    	boost_thread
    	pthread
    	rt

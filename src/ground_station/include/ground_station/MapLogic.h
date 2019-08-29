@@ -23,13 +23,13 @@
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h>
-#include <uavAP/Core/protobuf/messages/Shapes.pb.h>
 #include <simulation_interface/sensor_data.h>
 #include <radio_comm/request_data.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
 
 class IConfigManager;
 class IScheduler;
@@ -46,7 +46,7 @@ public:
 	MapLogic();
 
 	static std::shared_ptr<MapLogic>
-	create(const boost::property_tree::ptree&);
+	create(const Configuration&);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -65,9 +65,6 @@ public:
 
 	int
 	getCurrentPathSection() const;
-
-	const LocalPlannerStatus&
-	getLocalPlannerStatus() const;
 
 	bool
 	askForAll();
@@ -107,9 +104,6 @@ public:
 private:
 
 	void
-	setLocalPlannerStatus(const LocalPlannerStatus& lpStatus);
-
-	void
 	addLocation(const Vector3& pos);
 
 	void
@@ -125,7 +119,6 @@ private:
 	Trajectory pathSections_;
 	int currentPath_;
 	std::vector<MapLocation> pathHistory_;
-	LocalPlannerStatus lpStatus_;
 	ControllerTarget controllerTarget_;
 	simulation_interface::sensor_data sensorData_;
 	VehicleOneFrame localFrame_;

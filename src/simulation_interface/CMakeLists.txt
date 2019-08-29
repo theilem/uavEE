@@ -20,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 include("../uavAP.cmake")
 
 link_directories(	${UAVAP_LIB_DIR}
-					${PROTOBUF_LIBRARIES})
+					)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -128,7 +128,6 @@ include_directories(
   ${UAVAP_INCLUDE_DIR}
   ${EIGEN_INCLUDE_DIR}
   ${BOOST_INCLUDE_DIR}
-  ${PROTOBUF_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -164,7 +163,6 @@ target_link_libraries(${PROJECT_NAME}_node
   	uavap_core
   	uavap_flight_analysis
 	ap_ext
-   	protobuf
    	boost_thread
    	boost_chrono
    	pthread

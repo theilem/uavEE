@@ -1,0 +1,9 @@
+{
+	"autopilot_interface":
+	{
+		"type":"direct"
+	},
+	"ros_interface":
+	{
+	}
+}

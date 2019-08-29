@@ -5,7 +5,7 @@
 			4435383.06,
 			168
 		],
-		"yaw": 47
+		"yaw": 0
 	},
 	"global_planner": {
 		"type": "fillet",
@@ -26,7 +26,7 @@
 		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": true,
+		"use_safety_bounds": false,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
