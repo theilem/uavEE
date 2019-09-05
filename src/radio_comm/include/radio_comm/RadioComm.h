@@ -103,6 +103,10 @@ private:
 			radio_comm::serialized_service::Response& resp);
 
 	bool
+	sendControllerOutputOffset(radio_comm::serialized_service::Request& req,
+			radio_comm::serialized_service::Response& resp);
+
+	bool
 	sendAdvancedControl(radio_comm::send_advanced_control::Request& req,
 			radio_comm::send_advanced_control::Response& resp);
 
@@ -127,6 +131,7 @@ private:
 	ros::Publisher trajectoryPublisher_;
 	ros::Publisher missionPublisher_;
 	ros::Publisher overridePublisher_;
+	ros::Publisher controllerOutputTrimPublisher_;
 	ros::Publisher localFramePublisher_;
 	ros::Publisher safetyBoundsPublisher_;
 	ros::Publisher localPlannerStatusPublisher_;
@@ -138,6 +143,7 @@ private:
 	ros::ServiceServer genericTuningService_;
 	ros::ServiceServer tunePIDService_;
 	ros::ServiceServer sendOverrideService_;
+	ros::ServiceServer sendControllerOutputOffsetService_;
 	ros::ServiceServer sendAdvancedControlService_;
 	ros::ServiceServer sendLocalFrameService_;
 };

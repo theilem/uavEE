@@ -111,6 +111,9 @@ signals:
 	onOverride(const Override&) override;
 
 	void
+	onControllerOutputTrim(const ControllerOutput&) override;
+
+	void
 	onPIDStati(const radio_comm::pidstati&) override;
 
 	void
@@ -175,6 +178,14 @@ private:
 	addOverride(const radio_comm::serialized_object& override);
 
 	/**
+	 * @brief addControllerOutputTrim handles onControllerOutputTrim. It signals all widgets
+	 * subscribed to onControllerOutputTrim
+	 * @param trim the trim received
+	 */
+	void
+	addControllerOutputTrim(const radio_comm::serialized_object& trim);
+
+	/**
 	 * @brief addPIDStati handles onPIDStati. It signals all connected widgets
 	 * that there is new PIDStati
 	 * @param stati
@@ -213,6 +224,9 @@ private:
 
 	///! subscription to incoming ROS override messages
 	ros::Subscriber overrideSubscriptionRos_;
+
+	///! subscription to incoming ROS controller output trim messages
+	ros::Subscriber controllerOutputTrimSubscriptionRos_;
 
 	///! subscription to incoming ROS local frame messages
 	ros::Subscriber localFrameSubscriptionRos_;

@@ -10,17 +10,13 @@
 	"global_planner": {
 		"type": "spline",
 		"tau": 0.6,
-		"orbit_radius":300.0
+		"orbit_radius": 600.0
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
-			"center": {
-				"north": 0,
-				"east": 0,
-				"up": 250
-			},
-			"major_side_length": 80000,
-			"minor_side_length": 40000,
+			"center": [0, 0, 250],
+			"major_side_length": 8000,
+			"minor_side_length": 4000,
 			"major_side_orientation": 0,
 			"height": 250
 		},
@@ -494,8 +490,8 @@
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "duration",
-						"duration": 7000
+						"type": "steady_state",
+						"steady_state": true
 					},
 					"analyze_maneuver": true,
 					"analyze_trim": false
@@ -740,33 +736,14 @@
 						"local_planner/velocity": 40.0,
 						"controller_outputs/roll": 0.5,
 						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs_waveforms/roll": "sine",
+						"wavelength": 1000,
+						"phase": 500
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 500
-					},
-					"override_controller_outputs": {
-						"type": "offset",
-						"enable": true,
-						"roll": true,
-						"pitch": true,
-						"yaw": true,
-						"throttle": false
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"local_planner/velocity": 40.0,
-						"controller_outputs/roll": -0.5,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 500
+						"duration": 2000
 					},
 					"override_controller_outputs": {
 						"type": "offset",
@@ -1057,6 +1034,6 @@
 		}
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }

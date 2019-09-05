@@ -50,162 +50,12 @@
                     "analysis": false
                 }
             ],
-            "sequence_1": [
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 17.0,
-						"local_planner/heading": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 17.0,
-						"pids/roll": 45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 17.0,
-						"pids/roll": -40.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 17.0,
-						"pids/roll": 35.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"sequence_2": [
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 20.0,
-						"local_planner/heading": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 20.0,
-						"pids/roll": -25.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 7000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 20.0,
-						"pids/roll": 25.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 12000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 20.0,
-						"pids/roll": -30.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 11000
-					},
-					"analysis": true
-				}
-			],
-			"sequence_3": [
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 15.0,
-						"local_planner/heading": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 15.0,
-						"pids/roll": -45.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 9000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 15.0,
-						"pids/roll": 30.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 13000
-					},
-					"analysis": true
-				},
-				{
-					"override": {
-						"local_planner/position_z": 100.0,
-						"local_planner/velocity": 15.0,
-						"pids/roll": -30.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 8000
-					},
-					"analysis": true
-				}
-			],
-			"roll_-45_45_maneuver": [
+            "stall": [
 				{
 					"override": {
 						"local_planner/position_z": 100,
 						"local_planner/velocity": 15.0,
-						"pids/roll": -45.0
+						"pids/roll": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -216,12 +66,12 @@
 				{
 					"override": {
 						"local_planner/position_z": 100,
-						"local_planner/velocity": 15.0,
-						"pids/roll": 45.0
+						"local_planner/velocity": 0.0,
+						"pids/roll": 0.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 19000
+						"duration": 100000
 					},
 					"analysis": false
 				}

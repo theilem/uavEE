@@ -32,6 +32,7 @@
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <autopilot_interface/detail/uavAPConversions.h>
@@ -104,6 +105,8 @@ RadioComm::run(RunStage stage)
 		missionPublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/mission", 20);
 		overridePublisher_ = nh.advertise<radio_comm::serialized_object>("/radio_comm/override",
 				20);
+		controllerOutputTrimPublisher_ = nh.advertise<radio_comm::serialized_object>(
+				"/radio_comm/controller_output_trim", 20);
 		localFramePublisher_ = nh.advertise<radio_comm::serialized_object>(
 				"/radio_comm/local_frame", 20);
 		localPlannerStatusPublisher_ = nh.advertise<radio_comm::serialized_proto>(
@@ -123,6 +126,9 @@ RadioComm::run(RunStage stage)
 		tunePIDService_ = nh.advertiseService("/radio_comm/tune_pid", &RadioComm::tunePID, this);
 		sendOverrideService_ = nh.advertiseService("/radio_comm/send_override",
 				&RadioComm::sendOverride, this);
+		sendControllerOutputOffsetService_ = nh.advertiseService(
+				"/radio_comm/send_controller_output_offset", &RadioComm::sendControllerOutputOffset,
+				this);
 		sendAdvancedControlService_ = nh.advertiseService("/radio_comm/send_advanced_control",
 				&RadioComm::sendAdvancedControl, this);
 		sendLocalFrameService_ = nh.advertiseService("/radio_comm/send_local_frame",
@@ -143,16 +149,16 @@ RadioComm::run(RunStage stage)
 
 		radioSender_ = idc->createSender("autopilot");
 
-		if (auto ipc = ipc_.get())
-		{
-			groundStationSubscription_ = ipc->subscribeOnPackets("ground_station_to_comm",
-					std::bind(&RadioComm::sendPacket, this, std::placeholders::_1));
-
-			if (!groundStationSubscription_.connected())
-			{
-				APLOG_WARN << "Cannot connect to data_mc_com";
-			}
-		}
+//		if (auto ipc = ipc_.get())
+//		{
+//			groundStationSubscription_ = ipc->subscribeOnPackets("ground_station_to_comm",
+//					std::bind(&RadioComm::sendPacket, this, std::placeholders::_1));
+//
+//			if (!groundStationSubscription_.connected())
+//			{
+//				APLOG_WARN << "Cannot connect to data_mc_com";
+//			}
+//		}
 
 		break;
 	}
@@ -243,6 +249,13 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 			radio_comm::serialized_object override;
 			override.serialized = p.getBuffer();
 			overridePublisher_.publish(override);
+			break;
+		}
+		case Content::CONTROLLER_OUTPUT_TRIM:
+		{
+			radio_comm::serialized_object trim;
+			trim.serialized = p.getBuffer();
+			controllerOutputTrimPublisher_.publish(trim);
 			break;
 		}
 		default:
@@ -429,6 +442,29 @@ RadioComm::sendOverride(radio_comm::serialized_service::Request& req,
 
 	auto packet = dp->serialize(override);
 	dp->addHeader(packet, Content::OVERRIDE);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
+
+	resp.valid = true;
+
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::sendControllerOutputOffset(radio_comm::serialized_service::Request& req,
+		radio_comm::serialized_service::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+
+	ControllerOutput offset = dp::deserialize<ControllerOutput>(req.serialized);
+
+	auto packet = dp->serialize(offset);
+	dp->addHeader(packet, Content::CONTROLLER_OUTPUT_OFFSET);
 	dp->addHeader(packet, Target::MISSION_CONTROL);
 
 	resp.valid = true;

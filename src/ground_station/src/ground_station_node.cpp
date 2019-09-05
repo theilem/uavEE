@@ -39,6 +39,7 @@
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <simulation_interface/sensor_data.h>
 #include <simulation_interface/actuation.h>
 #include <radio_comm/pidstati.h>
@@ -54,6 +55,7 @@ Q_DECLARE_METATYPE(SteadyStateMetrics)
 Q_DECLARE_METATYPE(Override)
 Q_DECLARE_METATYPE(Mission)
 Q_DECLARE_METATYPE(Trajectory)
+Q_DECLARE_METATYPE(ControllerOutput)
 
 int
 main(int argc, char** argv)
@@ -120,6 +122,7 @@ main(int argc, char** argv)
 	qRegisterMetaType<Override>();
 	qRegisterMetaType<Mission>();
 	qRegisterMetaType<Trajectory>();
+	qRegisterMetaType<ControllerOutput>();
 
 	GroundStationHelper helper;
 

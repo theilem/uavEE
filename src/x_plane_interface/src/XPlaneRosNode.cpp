@@ -62,14 +62,21 @@ XPlaneRosNode::XPlaneRosNode() :
 	angularRateRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/Q");
 	angularRateRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/R");
 
+	batteryVoltageRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt");
+	batteryCurrentRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp");
+
+	aileronRef_ = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
+	elevatorRef_ = XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def");
+	rudderRef_ = XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def");
+	throttleRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use");
+	rpmRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad");
+
 	overridesRef_[0] = XPLMFindDataRef("sim/operation/override/override_joystick");
 	overridesRef_[1] = XPLMFindDataRef("sim/operation/override/override_throttles");
 
 	joystickAttitudeRef_[0] = XPLMFindDataRef("sim/joystick/yoke_roll_ratio");
 	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
 	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
-
-	throttleRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use");
 
 //    double x, y, z;
 //    XPLMWorldToLocal(40.0594, -88.5514, 206, &x, &y, &z);
@@ -212,6 +219,27 @@ XPlaneRosNode::getSensorData()
 	sd.sequenceNr = sequenceNr_++;
 
 	sd.header.stamp = ros::Time::now();
+
+	float batteryVoltage[8];
+	XPLMGetDatavf(batteryVoltageRef_, batteryVoltage, 0, 8);
+	sd.battery_voltage = batteryVoltage[0];
+
+	float batteryCurrent[8];
+	XPLMGetDatavf(batteryCurrentRef_, batteryCurrent, 0, 8);
+	sd.battery_current = batteryCurrent[0];
+
+	sd.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
+	sd.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
+	sd.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
+
+	float throttle[8];
+	XPLMGetDatavf(throttleRef_, throttle, 0, 8);
+	sd.throttle = throttle[0];
+
+	float rpm[8];
+	XPLMGetDatavf(rpmRef_, rpm, 0, 8);
+	rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
+	sd.rpm = rpm[0];
 
 	sensorDataPublisher_.publish(sd);
 

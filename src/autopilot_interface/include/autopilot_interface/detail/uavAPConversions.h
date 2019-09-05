@@ -70,6 +70,9 @@ apToRos(const SensorData& sd)
 
 	data.battery_voltage = sd.batteryVoltage;
 	data.battery_current = sd.batteryCurrent;
+	data.aileron = sd.aileron;
+	data.elevator = sd.elevator;
+	data.rudder = sd.rudder;
 	data.throttle = sd.throttle;
 	data.rpm = sd.rpm;
 
@@ -96,6 +99,9 @@ rosToAp(const simulation_interface::sensor_data& sd)
 
 	data.batteryVoltage = sd.battery_voltage;
 	data.batteryCurrent = sd.battery_current;
+	data.aileron = sd.aileron;
+	data.elevator = sd.elevator;
+	data.rudder = sd.rudder;
 	data.throttle = sd.throttle;
 	data.rpm = sd.rpm;
 

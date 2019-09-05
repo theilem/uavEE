@@ -9,7 +9,7 @@
 		"roll_rate_constraint": 30.0,
 		"pitch_constraint": 10.0,
 		"pitch_rate_constraint": 30.0,
-		"use_rpm_controller": true,
+		"use_rpm_controller": false,
 		"pids": {
 			"climb_angle": {
 				"ff": 0,
@@ -73,15 +73,15 @@
 		"type": "maneuver",
 		"period": 0,
 		"safety_velocity": 50,
-		"k_altitude": 2.0,
+		"k_altitude": 1.0,
 		"k_convergence": 0.002,
-		"k_yawrate": 0.5
+		"k_yaw_rate": 1.0
 	},
 	"data_handling": {
 		"period": 100,
 		"target":"flight_control"
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }

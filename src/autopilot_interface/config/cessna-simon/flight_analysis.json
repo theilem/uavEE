@@ -25,10 +25,10 @@
 		"in_tolerance_duration": 5000
 	},
 	"maneuver_analysis": {
-		"log_path": "/home/sim/Downloads/",
+		"log_path": "/home/simonyu/Downloads/",
 		"maneuver": "flight_testing"
 	},
 	"data_presentation": {
-		"compress_double": true
+		"compress_double": false
 	}
 }

@@ -22,23 +22,14 @@
 			},
 			"maneuver_planner": {
 				"local_planner": [
-					"position_x",
-					"position_y",
 					"position_z",
 					"heading",
 					"velocity"
 				],
-				"controller_targets": [
-					"climb_angle"
-				],
 				"pids": [
 					"roll",
-					"pitch"
-				],
-				"controller_outputs": [
-					"roll",
 					"pitch",
-					"throttle"
+					"rpm"
 				]
 			}
 		}

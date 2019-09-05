@@ -1,6 +1,6 @@
 <launch>
 	<node name="autopilot_interface_node" pkg="autopilot_interface" type="autopilot_interface_node" output="screen">
-		<param name="config_path" value="$(find autopilot_interface)/config/cessna_simon.json" />
+		<param name="config_path" value="$(find autopilot_interface)/config/cessna-simon.json" />
 	</node>
 	<node name="radio_comm_node" pkg="radio_comm" type="radio_comm_node" output="screen">
 		<param name="config_path" value="$(find radio_comm)/config/tnt.json" />

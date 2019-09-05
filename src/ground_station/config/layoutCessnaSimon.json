@@ -1,7 +1,7 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna_simon/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna_simon/mission_control.json",
+		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna-simon/flight_control.json",
+		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna-simon/mission_control.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -9,24 +9,26 @@
 				"map_center": {
 					"lat": 40.008878,
 					"lon": -88.558397
+				},
+				"map_nw_corner": {
+					"lat": 40.041283557243602,
+					"lon": -88.389129638671903
+				},
+				"map_se_corner": {
+					"lat": 39.981329382870399,
+					"lon": -88.292999267578097
 				}
 			},
 			"maneuver_planner": {
 				"local_planner": [
-					"position_x",
-					"position_y",
 					"position_z",
 					"heading",
 					"velocity"
 				],
-				"controller_targets": [
-					"velocity",
-					"yaw_rate",
-					"climb_angle"
-				],
 				"pids": [
 					"roll",
-					"pitch"
+					"pitch",
+					"rpm"
 				]
 			}
 		}
@@ -42,7 +44,17 @@
 							"type": "maneuver_planner"
 						},
 						{
-							"type": "steady_state_analysis"
+							"type": "vertical_layout",
+							"config": {
+								"items": [
+									{
+										"type": "local_frame"
+									},
+									{
+										"type": "trim_analysis"
+									}
+								]
+							}
 						},
 						{
 							"type": "overhead_map"

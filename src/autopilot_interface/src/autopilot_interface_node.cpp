@@ -34,7 +34,7 @@
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::TRACE);
+	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("AutopilotInterface");
 
 	ros::init(argc, argv, "autopilot_interface_node");
