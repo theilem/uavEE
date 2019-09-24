@@ -40,7 +40,14 @@ DirectInterface::create(const Configuration& config)
 bool
 DirectInterface::configure(const Configuration& config)
 {
-	return true;
+	PropertyMapper<Configuration> pm(config);
+
+	Configuration apiConfig;
+	pm.add("api", apiConfig, true);
+
+	uavapAPI_.configure(apiConfig);
+
+	return pm.map();
 }
 
 boost::signals2::connection

@@ -1,7 +1,13 @@
 {
 	"autopilot_interface":
 	{
-		"type":"direct"
+		"type":"direct",
+		"api":
+		{
+			"data_presentation":{
+				"compress_double":true
+			}
+		}
 	},
 	"ros_interface":
 	{
@@ -9,6 +15,6 @@
 	"autopilot_launcher":
 	{
 		"watchdog_binary":"/usr/local/bin/uavAP/Watchdog",
-		"watchdog_config":"/home/sim/devel/uavEE/src/autopilot_interface/config/cessna/watchdog.json"
+		"watchdog_config":"/home/mirco/devel/uavEE/src/autopilot_interface/config/cessna/watchdog.json"
 	}
 }

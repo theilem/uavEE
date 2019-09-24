@@ -56,8 +56,10 @@ AutopilotLauncher::~AutopilotLauncher()
 {
 	if (watchdogProcess_.running())
 	{
+		APLOG_DEBUG << "Killing watchdog.";
 		kill(watchdogProcess_.id(), SIGINT);
 		watchdogProcess_.join();
+		APLOG_DEBUG << "Watchdog joined.";
 	}
 }
 

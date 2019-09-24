@@ -10,6 +10,6 @@
 		}
 	},
 	"data_presentation": {
-		"compress_double": false
+		"compress_double": true
 	}
 }
