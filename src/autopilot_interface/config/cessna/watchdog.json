@@ -3,20 +3,20 @@
     	"config_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/cessna/",
 	"processes":
 	{
-		"flight_control":
+		"communication":
 		{
-			"binary":"FlightControl",
-			"config":"flight_control.json"
+			"binary":"Communication",
+			"config":"communication.json"
 		},
 		"mission_control":
 		{
             		"binary":"MissionControl",
 			"config":"mission_control.json"
 		},
-		"communication":
+		"flight_control":
 		{
-			"binary":"Communication",
-			"config":"communication.json"
+			"binary":"FlightControl",
+			"config":"flight_control.json"
 		},
 		"flight_analysis":
 		{

@@ -40,6 +40,7 @@
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
+#include <uavAP/Core/Object/SignalHandler.h>
 #include <simulation_interface/sensor_data.h>
 #include <simulation_interface/actuation.h>
 #include <radio_comm/pidstati.h>
@@ -130,7 +131,11 @@ main(int argc, char** argv)
 	SimpleRunner run(aggregator);
 
 	auto sched = aggregator.getOne<IScheduler>();
-	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(50));
+	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(1));
+
+	auto sh = aggregator.getOne<SignalHandler>();
+
+	sh->subscribeOnSigint(std::bind(QApplication::quit));
 
 	if (run.runAllStages())
 	{
@@ -140,11 +145,7 @@ main(int argc, char** argv)
 
 	app.exec();
 
-	ros::Rate loopRate(1000);
-	while (ros::ok())
-	{
-		ros::spinOnce();
-		loopRate.sleep();
-	}
+
+	aggregator.cleanUp();
 	return 0;
 }

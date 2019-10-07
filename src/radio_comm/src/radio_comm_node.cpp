@@ -44,18 +44,29 @@ main(int argc, char** argv)
 	Aggregator aggregator = helper.createAggregation(config);
 	SimpleRunner run(aggregator);
 
+	auto sched = aggregator.getOne<IScheduler>();
+	sched->setMainThread();
+
 	if (run.runAllStages())
 	{
 		APLOG_ERROR << "Run all stages failed.";
 		return 1;
 	}
 
-	ros::Rate loopRate(1000);
-	while (ros::ok())
-	{
-		ros::spinOnce();
-		loopRate.sleep();
-	}
+	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(1));
+
+//	ros::Rate loopRate(1000);
+//	while (ros::ok())
+//	{
+//		ros::spinOnce();
+//		loopRate.sleep();
+//	}
+
+	sched->startSchedule();
+
+
+	//Terminated -> Cleanup
+	aggregator.cleanUp();
 	return 0;
 
 }
