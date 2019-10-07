@@ -54,8 +54,9 @@ DataManager::setMission(const radio_comm::serialized_object& mission)
 void
 DataManager::setPath(const radio_comm::serialized_object& traj)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(traj.serialized);
-	Trajectory t = dp::deserialize<Trajectory>(packet);
+	Trajectory t = dp->deserialize<Trajectory>(packet);
 
 	mapLogic_.get()->setPath(t);
 	emit onTrajectory(t);
@@ -85,8 +86,9 @@ DataManager::onPredictedPower(const power_modeling::power_info& power)
 void
 DataManager::addOverride(const radio_comm::serialized_object& override)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(override.serialized);
-	Override t = dp::deserialize<Override>(packet);
+	Override t = dp->deserialize<Override>(packet);
 
 	emit onOverride(t);
 }
@@ -94,8 +96,9 @@ DataManager::addOverride(const radio_comm::serialized_object& override)
 void
 DataManager::addControllerOutputTrim(const radio_comm::serialized_object& trim)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(trim.serialized);
-	ControllerOutput t = dp::deserialize<ControllerOutput>(packet);
+	ControllerOutput t = dp->deserialize<ControllerOutput>(packet);
 
 	emit onControllerOutputTrim(t);
 }
@@ -109,8 +112,9 @@ DataManager::addPIDStati(const radio_comm::pidstati &stati)
 void
 DataManager::addInspectingMetrics(const radio_comm::serialized_object& inspectingMetrics)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(inspectingMetrics.serialized);
-	SteadyStateMetrics t = dp::deserialize<SteadyStateMetrics>(packet);
+	SteadyStateMetrics t = dp->deserialize<SteadyStateMetrics>(packet);
 
 	emit onInspectingMetrics(t);
 }
@@ -119,14 +123,16 @@ void
 DataManager::notifyAggregationOnUpdate(const Aggregator &agg)
 {
 	mapLogic_.setFromAggregationIfNotSet(agg);
+	dataPresentation_.setFromAggregationIfNotSet(agg);
 }
 
 void
 DataManager::setSafetyBounds(const std_msgs::String& bounds)
 {
+	auto dp = dataPresentation_.get();
 	Packet p(bounds.data);
 
-	Rectanguloid rect = dp::deserialize<Rectanguloid>(p);
+	Rectanguloid rect = dp->deserialize<Rectanguloid>(p);
 	auto ml = mapLogic_.get();
 
 	if (!ml)
@@ -141,8 +147,9 @@ DataManager::setSafetyBounds(const std_msgs::String& bounds)
 void
 DataManager::setLocalFrame(const radio_comm::serialized_object& localFrame)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(localFrame.serialized);
-	VehicleOneFrame frame = dp::deserialize<VehicleOneFrame>(packet);
+	VehicleOneFrame frame = dp->deserialize<VehicleOneFrame>(packet);
 
 	mapLogic_.get()->setLocalFrame(frame);
 	emit onLocalFrame(frame);

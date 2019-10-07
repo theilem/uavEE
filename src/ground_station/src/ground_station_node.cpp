@@ -23,6 +23,7 @@
  *      Author: mircot
  */
 
+#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 #include <string>
 #include <functional>
@@ -48,6 +49,7 @@
 
 #include "ground_station/GroundStationHelper.h"
 
+
 Q_DECLARE_METATYPE(simulation_interface::sensor_data)
 Q_DECLARE_METATYPE(simulation_interface::actuation)
 Q_DECLARE_METATYPE(radio_comm::pidstati)
@@ -65,11 +67,11 @@ main(int argc, char** argv)
 	APLogger::instance()->setModuleName("GroundStation");
 	ros::init(argc, argv, "ground_station_node");
 	ros::NodeHandle node;
-	std::string resourcePath, confPath;
+	std::string resourcePath, layoutPath, configPath;
 	//requires Qt>=5.6, which not all lab machines have
 	//QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QApplication app(argc, argv);
-	if (!node.getParam("/ground_station_node/config_path", confPath))
+	if (!node.getParam("/ground_station_node/layout_path", layoutPath))
 	{
 		QFileDialog dialog;
 		dialog.setWindowTitle("Open Configuration");
@@ -77,7 +79,7 @@ main(int argc, char** argv)
 		dialog.setAcceptMode(QFileDialog::AcceptOpen);
 		if (dialog.exec())
 		{
-			confPath = dialog.selectedFiles().front().toStdString();
+			layoutPath = dialog.selectedFiles().front().toStdString();
 		}
 		else
 		{
@@ -96,6 +98,9 @@ main(int argc, char** argv)
 			resourcePath = dialog.selectedFiles().front().toStdString() + "/";
 	}
 
+
+	node.getParam("/ground_station_node/config_path", configPath);
+
 	QFile f(QString::fromStdString(resourcePath + "qdarkstyle/style.qss"));
 	if (f.exists())
 	{
@@ -110,8 +115,9 @@ main(int argc, char** argv)
 	}
 
 	Configuration config;
+	boost::property_tree::read_json(configPath, config);
 	Configuration configManagerConfig;
-	configManagerConfig.add("ground_station_config_path", confPath);
+	configManagerConfig.add("ground_station_config_path", layoutPath);
 	configManagerConfig.add("ground_station_resource_path", resourcePath);
 	config.add_child("config_manager", configManagerConfig);
 

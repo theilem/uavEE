@@ -45,6 +45,7 @@
 
 class MapLogic;
 class ConfigManager;
+class DataPresentation;
 
 /**
  * @brief   The DataManager class manages all data going through the ground station.
@@ -212,6 +213,8 @@ private:
 
 	///! reference to MapLogic for map widgets to have latest data
 	ObjectHandle<MapLogic> mapLogic_;
+
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	///! subscription to incoming ROS sensor data messages
 	ros::Subscriber sensorDataSubscriptionRos_;

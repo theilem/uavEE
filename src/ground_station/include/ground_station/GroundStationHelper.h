@@ -31,6 +31,7 @@
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 #include "ground_station/ConfigManager.h"
 #include "ground_station/DataManager.h"
@@ -44,6 +45,7 @@ public:
 	{
 		addCreator<ConfigManager>();
 		addCreator<DataHandling>();
+		addDefaultCreator<DataPresentation>();
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();

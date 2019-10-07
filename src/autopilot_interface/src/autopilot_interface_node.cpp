@@ -29,6 +29,7 @@
 #include <boost/process.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/Object/SignalHandler.h>
 #include <uavAP/Core/Runner/SimpleRunner.h>
 
 int
@@ -52,20 +53,28 @@ main(int argc, char** argv)
 	APRosInterface apInterface;
 	ros::Rate loopRate(10000);
 
-	Aggregator agg = helper.createAggregation(config);
-	SimpleRunner runner(agg);
+	Aggregator aggregator = helper.createAggregation(config);
+	SimpleRunner run(aggregator);
 
-	if (runner.runAllStages())
+	auto sh = aggregator.getOne<SignalHandler>();
+
+	if (run.runAllStages())
 	{
-		APLOG_ERROR << "Run stages failed";
+		APLOG_ERROR << "Run all stages failed.";
 		return 2;
 	}
+
+	sh->subscribeOnSigint(std::bind(ros::shutdown));
 
 	while (ros::ok())
 	{
 		ros::spinOnce();
 		loopRate.sleep();
 	}
+
+	//Terminated -> Cleanup
+	aggregator.cleanUp();
+	return 0;
 
 	return 0;
 }

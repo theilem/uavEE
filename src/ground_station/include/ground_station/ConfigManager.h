@@ -41,6 +41,7 @@
 #include "IPIDConfigurator.h"
 
 class LayoutGenerator;
+class DataPresentation;
 
 /**
  * @brief   The Mode enum is used to symbolize what type of aircraft is being
@@ -51,6 +52,7 @@ enum Mode
 {
 	AIRPLANE, HELICOPTER, UNDEFINED
 };
+
 
 /**
  * @brief   The ConfigManager class manages configuration data. It gives configs
@@ -179,6 +181,8 @@ private:
 	 */
 	void
 	setPIDMap(const std::string& path);
+
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	///! property tree representing json configuration for ground station
 	Configuration gsConfig_;

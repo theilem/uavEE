@@ -36,6 +36,7 @@
 #include <radio_comm/serialized_service.h>
 #include <radio_comm/tune_pid.h>
 #include <radio_comm/tune_generic.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 #include "ground_station/LayoutGenerator.h"
 #include "ground_station/ConfigManager.h"
@@ -123,8 +124,9 @@ ConfigManager::getAlvoloConfig() const
 }
 
 void
-ConfigManager::notifyAggregationOnUpdate(const Aggregator&)
+ConfigManager::notifyAggregationOnUpdate(const Aggregator& agg)
 {
+	dataPresentation_.setFromAggregationIfNotSet(agg);
 }
 
 const std::string&
@@ -232,16 +234,18 @@ ConfigManager::tunePID(const PIDTuning& tunePID)
 bool
 ConfigManager::sendOverride(const Override& override)
 {
+	auto dp = dataPresentation_.get();
 	radio_comm::serialized_service ser;
-	ser.request.serialized = dp::serialize(override).getBuffer();
+	ser.request.serialized = dp->serialize(override).getBuffer();
 	return overrideService_.call(ser);
 }
 
 bool
 ConfigManager::sendControllerOutputOffset(const ControllerOutput& offset)
 {
+	auto dp = dataPresentation_.get();
 	radio_comm::serialized_service ser;
-	ser.request.serialized = dp::serialize(offset).getBuffer();
+	ser.request.serialized = dp->serialize(offset).getBuffer();
 	return controllerOutputOffsetService_.call(ser);
 }
 
@@ -264,8 +268,9 @@ ConfigManager::sendMission(const std::string& mission)
 bool
 ConfigManager::sendInspectingMetrics(const InspectingMetricsPair& pair)
 {
+	auto dp = dataPresentation_.get();
 	radio_comm::serialized_service ser;
-	ser.request.serialized = dp::serialize(pair).getBuffer();
+	ser.request.serialized = dp->serialize(pair).getBuffer();
 	return selectInspectingMetricsService_.call(ser);
 }
 
@@ -299,8 +304,9 @@ ConfigManager::sendAdvancedControl(
 bool
 ConfigManager::sendLocalFrame(const VehicleOneFrame& frame)
 {
+	auto dp = dataPresentation_.get();
 	radio_comm::serialized_service ser;
-	ser.request.serialized = dp::serialize(frame).getBuffer();
+	ser.request.serialized = dp->serialize(frame).getBuffer();
 	return localFrameService_.call(ser);
 }
 

@@ -23,6 +23,8 @@
  *      Author: mircot
  */
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
+#include <uavAP/Core/Object/SignalHandler.h>
 #include <uavAP/Core/Runner/SimpleRunner.h>
 
 #include "radio_comm/RadioCommHelper.h"
@@ -44,8 +46,7 @@ main(int argc, char** argv)
 	Aggregator aggregator = helper.createAggregation(config);
 	SimpleRunner run(aggregator);
 
-	auto sched = aggregator.getOne<IScheduler>();
-	sched->setMainThread();
+	auto sh = aggregator.getOne<SignalHandler>();
 
 	if (run.runAllStages())
 	{
@@ -53,17 +54,15 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(1));
+	sh->subscribeOnSigint(std::bind(ros::shutdown));
 
-//	ros::Rate loopRate(1000);
-//	while (ros::ok())
-//	{
-//		ros::spinOnce();
-//		loopRate.sleep();
-//	}
 
-	sched->startSchedule();
-
+	ros::Rate loopRate(1000);
+	while (ros::ok())
+	{
+		ros::spinOnce();
+		loopRate.sleep();
+	}
 
 	//Terminated -> Cleanup
 	aggregator.cleanUp();
