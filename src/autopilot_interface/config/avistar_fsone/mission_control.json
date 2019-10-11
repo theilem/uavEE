@@ -1,15 +1,27 @@
 {
+	"emergency_geofencing_planner": {
+		"roll_max": 45,
+		"evaluation_threshold": 150,
+		"distance_threshold": 10,
+		"period": 50
+	},
+	"geofencing_model": {
+		"type": "const_roll_rate",
+		"roll_rate": 18,
+		"roll_max": 45,
+		"precision": 32
+	},
+	"global_planner": {
+		"type": "spline",
+		"tau": 0.6
+	},
 	"local_frame": {
 		"origin": [
 			367836.57,
 			4435383.06,
 			168
 		],
-		"yaw": 0
-	},
-	"global_planner": {
-		"type": "fillet",
-		"fillet_radius": 75.0
+		"yaw": 47
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
@@ -26,7 +38,7 @@
 		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": false,
+		"use_safety_bounds": true,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
@@ -66,120 +78,6 @@
 					"condition": {
 						"type": "duration",
 						"duration": 10000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				}
-			],
-			"control_surface_test": [
-				{
-					"override": {
-						"controller_outputs/roll": 1.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": -1.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 1.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": -1.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 1.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": -1.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 1.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": -1.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 1000
 					},
 					"analyze_maneuver": true,
 					"analyze_trim": true

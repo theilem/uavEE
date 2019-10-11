@@ -1,6 +1,6 @@
 {
 	"binary_path": "/usr/local/bin/uavAP/",
-    "config_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna-simon/",
+    "config_path": "/home/sim/devel/uavEE/src/autopilot_interface/config/cessna_sim/",
 	"processes":
 	{
 		"flight_control":

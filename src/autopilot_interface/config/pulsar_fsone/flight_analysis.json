@@ -1,0 +1,20 @@
+﻿{
+	"steady_state_analysis": {
+		"tolerance": {
+			"local_planner/velocity": 1.0,
+			"pids/climb_angle": 1.0,
+			"pids/roll": 1.0
+		},
+		"in_tolerance_duration": 3000
+	},
+	"maneuver_analysis": {
+		"log_path": "/home/simonyu/Downloads/",
+		"maneuver": "advanced_control"
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"fa_data_handling": {
+		"period": 200
+	}
+}

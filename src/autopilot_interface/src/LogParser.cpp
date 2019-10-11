@@ -125,7 +125,7 @@ void
 LogParser::initializeSample()
 {
 	dataSample_.imu_sample = new imu_sample_t;
-	dataSample_.int_imu_sample = new int_imu_sample_t;
+	dataSample_.int_imu_sample = new imu_sample_t;
 	dataSample_.pic_sample = new pic_sample_t;
 	dataSample_.airs_sample = new airs_sample_t;
 }

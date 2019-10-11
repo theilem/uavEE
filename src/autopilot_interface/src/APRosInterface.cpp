@@ -115,8 +115,8 @@ APRosInterface::run(RunStage stage)
 
 		ros::NodeHandle nh;
 
-		actuationPublisherRos_ = nh.advertise<simulation_interface::actuation>("actuation", 20);
-		sensorDataSubscriptionRos_ = nh.subscribe("sensor_data", 20, &APRosInterface::onSensorData,
+		actuationPublisherRos_ = nh.advertise<simulation_interface::actuation>("/autopilot_interface/actuation", 20);
+		sensorDataSubscriptionRos_ = nh.subscribe("/x_plane_interface/sensor_data", 20, &APRosInterface::onSensorData,
 				this);
 		powerModelSubscriptionRos_ = nh.subscribe("power_model/thrust_power", 20,
 				&APRosInterface::onThrustPower, this);

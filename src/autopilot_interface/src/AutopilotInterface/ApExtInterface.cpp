@@ -97,7 +97,7 @@ ApExtInterface::run(RunStage stage)
 	{
 		//Setup dataSample
 		if (internalImu_)
-			dataSample_.int_imu_sample = new int_imu_sample_t;
+			dataSample_.int_imu_sample = new imu_sample_t;
 		else
 			dataSample_.imu_sample = new imu_sample_t;
 

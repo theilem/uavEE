@@ -27,12 +27,11 @@
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_UAVAPCONVERSIONS_H_
 
 #include <ros/time.h>
-
-#include "uavAP/Core/SensorData.h"
-#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
-#include "simulation_interface/sensor_data.h"
-#include "radio_comm/pidstati.h"
-#include "radio_comm/velocity_body.h"
+#include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <radio_comm/pidstati.h>
+#include <radio_comm/velocity_body.h>
+#include <simulation_interface/sensor_data.h>
 
 template<typename XYZType>
 inline XYZType
@@ -57,24 +56,26 @@ apToRos(const SensorData& sd)
 {
 	simulation_interface::sensor_data data;
 
+//	data.header.stamp = ros::Time::fromBoost(sd.timestamp);
+	data.header.stamp = ros::Time::now(); // Quick hack
 	data.position = Vector3ToXYZType<geometry_msgs::Point>(sd.position);
-	data.attitude = Vector3ToXYZType<geometry_msgs::Vector3>(sd.attitude);
 	data.velocity.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.velocity);
 	data.velocity.angular = Vector3ToXYZType<geometry_msgs::Vector3>(sd.angularRate);
 	data.acceleration.linear = Vector3ToXYZType<geometry_msgs::Vector3>(sd.acceleration);
-
+	data.attitude = Vector3ToXYZType<geometry_msgs::Vector3>(sd.attitude);
 	data.air_speed = sd.airSpeed;
 	data.ground_speed = sd.groundSpeed;
-
-	data.header.stamp = ros::Time::now(); //Quick hack
-
+	data.gps_fix = sd.hasGPSFix;
+	data.autopilot_active = sd.autopilotActive;
+	data.angle_of_attack = sd.angleOfAttack;
+	data.angle_of_sideslip = sd.angleOfSideslip;
 	data.battery_voltage = sd.batteryVoltage;
 	data.battery_current = sd.batteryCurrent;
-	data.aileron = sd.aileron;
-	data.elevator = sd.elevator;
-	data.rudder = sd.rudder;
-	data.throttle = sd.throttle;
-	data.rpm = sd.rpm;
+	data.aileron_level = sd.aileron;
+	data.elevator_level = sd.elevator;
+	data.rudder_level = sd.rudder;
+	data.throttle_level = sd.throttle;
+	data.motor_speed = sd.rpm;
 
 	return data;
 }
@@ -85,25 +86,25 @@ rosToAp(const simulation_interface::sensor_data& sd)
 	SensorData data;
 
 	data.position = xyzTypeToVector3(sd.position);
-	data.attitude = xyzTypeToVector3(sd.attitude);
 	data.velocity = xyzTypeToVector3(sd.velocity.linear);
-	data.angularRate = xyzTypeToVector3(sd.velocity.angular);
 	data.acceleration = xyzTypeToVector3(sd.acceleration.linear);
-
-	data.groundSpeed = sd.ground_speed;
+	data.attitude = xyzTypeToVector3(sd.attitude);
+	data.angularRate = xyzTypeToVector3(sd.velocity.angular);
+//	data.timestamp = sd.header.stamp.toBoost();
+	data.timestamp = Clock::now(); // Quick hack
 	data.airSpeed = sd.air_speed;
-
-	data.timestamp = Clock::now(); //Quick hack//sd.header.stamp.toBoost();
-	data.hasGPSFix = true;
-	data.autopilotActive = true;
-
+	data.groundSpeed = sd.ground_speed;
+	data.hasGPSFix = sd.gps_fix;
+	data.autopilotActive = sd.autopilot_active;
+	data.angleOfAttack = sd.angle_of_attack;
+	data.angleOfSideslip = sd.angle_of_sideslip;
 	data.batteryVoltage = sd.battery_voltage;
 	data.batteryCurrent = sd.battery_current;
-	data.aileron = sd.aileron;
-	data.elevator = sd.elevator;
-	data.rudder = sd.rudder;
-	data.throttle = sd.throttle;
-	data.rpm = sd.rpm;
+	data.aileron = sd.aileron_level;
+	data.elevator = sd.elevator_level;
+	data.rudder = sd.rudder_level;
+	data.throttle = sd.throttle_level;
+	data.rpm = sd.motor_speed;
 
 	return data;
 }

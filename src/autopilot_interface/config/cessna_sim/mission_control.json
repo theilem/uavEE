@@ -3,24 +3,27 @@
 		"origin": [
 			366990.057,
 			4429905.681,
-			424
+			224
 		],
 		"yaw": 0
 	},
 	"global_planner": {
 		"type": "spline",
-		"tau": 0.6,
-		"orbit_radius": 600.0
+		"tau": 0.6
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
-			"center": [0, 0, 250],
+			"center": {
+				"north": 0,
+				"east": 0,
+				"up": 250
+			},
 			"major_side_length": 8000,
 			"minor_side_length": 4000,
 			"major_side_orientation": 0,
 			"height": 250
 		},
-		"return_velocity": 50,
+		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
 		"use_safety_bounds": false,
@@ -66,60 +69,6 @@
 					},
 					"analyze_maneuver": true,
 					"analyze_trim": true
-				}
-			],
-			"motor_testing": [
-				{
-					"override": {
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0,
-						"pids/rpm": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0,
-						"pids/rpm": 700.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0,
-						"pids/rpm": 1000.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"pids/roll": 0.0,
-						"pids/pitch": 0.0,
-						"pids/rpm": 1500.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analyze_maneuver": false,
-					"analyze_trim": false
 				}
 			],
 			"stall_speed": [
@@ -947,9 +896,8 @@
 		"type": "custom",
 		"use_approach": false,
 		"default_velocity": 50,
-		"default_altitude": 200,
 		"missions": {
-			"simple_mission": {
+			"simple": {
 				"velocity": 50,
 				"infinite": true,
 				"offset": {
@@ -980,7 +928,7 @@
 					}
 				]
 			},
-			"validation_mission": {
+			"validation": {
 				"velocity": 50,
 				"infinite": true,
 				"offset": {
@@ -1034,6 +982,6 @@
 		}
 	},
 	"data_presentation": {
-		"compress_double": false
+		"compress_double": true
 	}
 }
