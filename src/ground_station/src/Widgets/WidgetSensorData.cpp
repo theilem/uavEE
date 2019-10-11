@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+#include <boost/date_time/posix_time/time_formatters.hpp>
 #include <autopilot_interface/detail/uavAPConversions.h>
 #include "ground_station/Widgets/WidgetSensorData.h"
 #include "ui_WidgetSensorData.h"
@@ -76,7 +77,7 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 		changeFrame(localFrame_, InertialFrame(), sd);
 	}
 
-	t = QString::fromStdString(boost::posix_time::to_simple_string(sd.timestamp));
+	t = QString::fromStdString(boost::posix_time::to_simple_string(data.header.stamp.toBoost()));
 	ui->timeValue->setText(t);
 
 	t.sprintf("%10.5f", sd.position.x());

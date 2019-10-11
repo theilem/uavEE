@@ -166,13 +166,13 @@ XPlaneRosNode::engineStart()
 	int ignitionKey[] =
 	{ ignitionKeyValue, ignitionKeyValue, ignitionKeyValue, ignitionKeyValue, ignitionKeyValue,
 			ignitionKeyValue, ignitionKeyValue, ignitionKeyValue };
-	TimePoint timestampStart = boost::posix_time::second_clock::local_time();
-	TimePoint timestampCurrent = boost::posix_time::second_clock::local_time();
+	TimePoint timestampStart = Clock::now();
+	TimePoint timestampCurrent = Clock::now();
 
 	while (timestampCurrent - timestampStart <= Seconds(2))
 	{
 		setDataRef(ignitionKeyRef_, ignitionKey, 8);
-		timestampCurrent = boost::posix_time::second_clock::local_time();
+		timestampCurrent = Clock::now();
 	}
 }
 
@@ -181,8 +181,15 @@ XPlaneRosNode::engine(radio_comm::engine::Request& request, radio_comm::engine::
 {
 	if (request.start)
 	{
-		std::thread engineStartThread(&XPlaneRosNode::engineStart, this);
-		engineStartThread.detach();
+		auto scheduler = scheduler_.get();
+
+		if (!scheduler)
+		{
+			APLOG_ERROR << "XPlaneRosNode: Scheduler Missing.";
+			return false;
+		}
+
+		scheduler->schedule(std::bind(&XPlaneRosNode::engineStart, this), Milliseconds(0));
 	}
 	else
 	{

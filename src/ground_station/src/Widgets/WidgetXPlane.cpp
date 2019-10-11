@@ -18,6 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <ctime>
+#include <boost/date_time/posix_time/time_formatters.hpp>
 #include <uavAP/Core/Frames/InertialFrame.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/Logging/APLogger.h>

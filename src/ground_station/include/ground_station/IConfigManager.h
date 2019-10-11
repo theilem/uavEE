@@ -34,7 +34,6 @@
 #ifndef ICONFIGMANAGER_H
 #define ICONFIGMANAGER_H
 
-class LocalPlannerParams;
 class ManeuverPlannerParams;
 struct Override;
 
@@ -152,9 +151,6 @@ public:
 
 	virtual void
 	publishGroundStationSensorData(const simulation_interface::sensor_data& sensorData) = 0;
-
-	virtual bool
-	tuneLocalPlanner(const LocalPlannerParams& params) = 0;
 
 	virtual bool
 	tuneManeuverPlanner(const ManeuverPlannerParams& params) = 0;
