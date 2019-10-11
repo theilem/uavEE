@@ -43,7 +43,8 @@
 				"controller_constraints": [
 					"roll",
 					"pitch",
-					"yaw"
+					"roll_rate",
+					"pitch_rate"
 				]
 			}
 		}

@@ -313,7 +313,7 @@ RadioComm::selectInspectingMetrics(radio_comm::serialized_service::Request& req,
 		return false;
 	}
 
-	InspectingMetricsPair pair = dp::deserialize<InspectingMetricsPair>(req.serialized);
+	InspectingMetricsPair pair = dp->deserialize<InspectingMetricsPair>(req.serialized);
 
 	auto packet = dp->serialize(pair);
 	dp->addHeader(packet, Content::SELECT_INSPECTING_METRICS);
@@ -438,7 +438,7 @@ RadioComm::sendOverride(radio_comm::serialized_service::Request& req,
 		return false;
 	}
 
-	Override override = dp::deserialize<Override>(req.serialized);
+	Override override = dp->deserialize<Override>(req.serialized);
 
 	auto packet = dp->serialize(override);
 	dp->addHeader(packet, Content::OVERRIDE);
@@ -461,7 +461,7 @@ RadioComm::sendControllerOutputOffset(radio_comm::serialized_service::Request& r
 		return false;
 	}
 
-	ControllerOutput offset = dp::deserialize<ControllerOutput>(req.serialized);
+	ControllerOutput offset = dp->deserialize<ControllerOutput>(req.serialized);
 
 	auto packet = dp->serialize(offset);
 	dp->addHeader(packet, Content::CONTROLLER_OUTPUT_OFFSET);
@@ -542,7 +542,7 @@ RadioComm::sendLocalFrame(radio_comm::serialized_service::Request& req,
 		return false;
 	}
 
-	VehicleOneFrame frame = dp::deserialize<VehicleOneFrame>(req.serialized);
+	VehicleOneFrame frame = dp->deserialize<VehicleOneFrame>(req.serialized);
 
 	auto packet = dp->serialize(frame);
 	dp->addHeader(packet, Content::LOCAL_FRAME);

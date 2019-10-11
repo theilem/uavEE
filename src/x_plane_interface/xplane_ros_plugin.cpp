@@ -78,6 +78,11 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 PLUGIN_API void
 XPluginStop(void)
 {
+	if (aggregator)
+	{
+		aggregator->cleanUp();
+		delete aggregator;
+	}
 }
 
 PLUGIN_API void
