@@ -66,6 +66,7 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
    FILES
+   engine.srv
    serialized_service.srv
    send_advanced_control.srv
    select_mission.srv
