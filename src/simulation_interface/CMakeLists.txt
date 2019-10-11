@@ -54,6 +54,7 @@ link_directories(	${UAVAP_LIB_DIR}
 ## Generate messages in the 'msg' folder
 add_message_files(
     FILES
+    wind_layer.msg
     actuation.msg
     sensor_data.msg
 #   Message2.msg
