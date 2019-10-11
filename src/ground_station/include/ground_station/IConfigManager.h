@@ -29,6 +29,7 @@
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <radio_comm/send_advanced_control.h>
+#include <simulation_interface/sensor_data.h>
 
 #ifndef ICONFIGMANAGER_H
 #define ICONFIGMANAGER_H
@@ -145,6 +146,15 @@ public:
 
 	virtual bool
 	sendLocalFrame(const VehicleOneFrame& frame) = 0;
+
+	virtual bool
+	engine(const bool& start) = 0;
+
+	virtual void
+	publishGroundStationSensorData(const simulation_interface::sensor_data& sensorData) = 0;
+
+	virtual bool
+	tuneLocalPlanner(const LocalPlannerParams& params) = 0;
 
 	virtual bool
 	tuneManeuverPlanner(const ManeuverPlannerParams& params) = 0;

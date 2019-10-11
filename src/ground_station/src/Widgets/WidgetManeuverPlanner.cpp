@@ -94,38 +94,38 @@ WidgetManeuverPlanner::on_apply_clicked()
 
 	for (const auto& it : localPlannerTargets_)
 	{
-		if (!it.second->isEmpty())
-			override.localPlanner.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.localPlanner.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	for (const auto& it : controllerTargets_)
 	{
-		if (!it.second->isEmpty())
-			override.controllerTarget.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.controllerTarget.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	for (const auto& it : pids_)
 	{
-		if (!it.second->isEmpty())
-			override.pid.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.pid.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	for (const auto& it : controllerOutputs_)
 	{
-		if (!it.second->isEmpty())
-			override.output.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.output.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	for (const auto& it : controllerConstraints_)
 	{
-		if (!it.second->isEmpty())
-			override.constraint.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.constraint.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	for (const auto& it : custom_)
 	{
-		if (!it.second->isEmpty())
-			override.custom.insert(std::make_pair(it.first, it.second->getDouble()));
+		if (!it.second->text().isEmpty())
+			override.custom.insert(std::make_pair(it.first, it.second->text().toDouble()));
 	}
 
 	degreeToRadian(override);
@@ -163,6 +163,8 @@ WidgetManeuverPlanner::configure(const Configuration& config)
 	std::vector<CustomOverrideIDs> custom;
 
 	std::string overrideGroup;
+
+	unsigned counter = 0;
 
 	for (const auto& it : config)
 	{
@@ -213,85 +215,15 @@ WidgetManeuverPlanner::configure(const Configuration& config)
 		}
 	}
 
-	QVBoxLayout* layoutLP = new QVBoxLayout;
-	layoutLP->setMargin(2);
-	layoutLP->setSpacing(0);
-	for (const auto& it : lp)
-	{
-		if (it == LocalPlannerTargets::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<LocalPlannerTargets>::convert(it),
-				ui->localPlannerGroup);
-		localPlannerTargets_.insert(std::make_pair(it, edit));
-		layoutLP->addWidget(edit);
-	}
-	ui->localPlannerGroup->setLayout(layoutLP);
+	ui->verticalLayout_2->setMargin(0);
+	ui->verticalLayout_2->setSpacing(0);
 
-	QVBoxLayout* layoutCT = new QVBoxLayout;
-	layoutCT->setMargin(2);
-	layoutCT->setSpacing(0);
-	for (const auto& it : ct)
-	{
-		if (it == ControllerTargets::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<ControllerTargets>::convert(it),
-				ui->controllerTargetsGroup);
-		controllerTargets_.insert(std::make_pair(it, edit));
-		layoutCT->addWidget(edit);
-	}
-	ui->controllerTargetsGroup->setLayout(layoutCT);
-
-	QVBoxLayout* layoutPid = new QVBoxLayout;
-	layoutPid->setMargin(2);
-	layoutPid->setSpacing(0);
-	for (const auto& it : pids)
-	{
-		if (it == PIDs::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<PIDs>::convert(it), ui->pidsGroup);
-		pids_.insert(std::make_pair(it, edit));
-		layoutPid->addWidget(edit);
-	}
-	ui->pidsGroup->setLayout(layoutPid);
-
-	QVBoxLayout* layoutOut = new QVBoxLayout;
-	layoutOut->setMargin(2);
-	layoutOut->setSpacing(0);
-	for (const auto& it : out)
-	{
-		if (it == ControllerOutputs::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<ControllerOutputs>::convert(it), ui->outputsGroup);
-		controllerOutputs_.insert(std::make_pair(it, edit));
-		layoutOut->addWidget(edit);
-	}
-	ui->outputsGroup->setLayout(layoutOut);
-
-	QVBoxLayout* layoutConstraints = new QVBoxLayout;
-	layoutConstraints->setMargin(2);
-	layoutConstraints->setSpacing(0);
-	for (const auto& it : constraints)
-	{
-		if (it == ControllerConstraints::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<ControllerConstraints>::convert(it), ui->constraintsGroup);
-		controllerConstraints_.insert(std::make_pair(it, edit));
-		layoutConstraints->addWidget(edit);
-	}
-	ui->constraintsGroup->setLayout(layoutConstraints);
-
-	QVBoxLayout* layoutCustom = new QVBoxLayout;
-	layoutCustom->setMargin(2);
-	layoutCustom->setSpacing(0);
-	for (const auto& it : custom)
-	{
-		if (it == CustomOverrideIDs::INVALID)
-			continue;
-		auto edit = new NamedLineEdit(EnumMap<CustomOverrideIDs>::convert(it), ui->customGroup);
-		custom_.insert(std::make_pair(it, edit));
-		layoutCustom->addWidget(edit);
-	}
-	ui->customGroup->setLayout(layoutCustom);
+	createOverrideWidget(lp, ui->localPlannerGroup, localPlannerTargets_);
+	createOverrideWidget(ct, ui->controllerTargetsGroup, controllerTargets_);
+	createOverrideWidget(pids, ui->pidsGroup, pids_);
+	createOverrideWidget(out, ui->outputsGroup, controllerOutputs_);
+	createOverrideWidget(constraints, ui->constraintsGroup, controllerConstraints_);
+	createOverrideWidget(custom, ui->customGroup, custom_);
 
 	return pm.map();
 }

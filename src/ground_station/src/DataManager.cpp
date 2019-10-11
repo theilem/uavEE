@@ -44,8 +44,9 @@ DataManager::create(const Configuration&)
 void
 DataManager::setMission(const radio_comm::serialized_object& mission)
 {
+	auto dp = dataPresentation_.get();
 	Packet packet(mission.serialized);
-	Mission t = dp::deserialize<Mission>(packet);
+	Mission t = dp->deserialize<Mission>(packet);
 
 	mapLogic_.get()->setMission(t);
 	emit onMission(t);
@@ -70,6 +71,12 @@ DataManager::addSensorData(const simulation_interface::sensor_data &sd)
 	mapLogic_.get()->sensorData_ = sd;
 
 	emit onSensorData(sd);
+}
+
+void
+DataManager::addXPlaneSensorData(const simulation_interface::sensor_data &sd)
+{
+	emit onXPlaneSensorData(sd);
 }
 
 void
@@ -161,6 +168,8 @@ DataManager::subscribeOnRos()
 	ros::NodeHandle nh;
 	sensorDataSubscriptionRos_ = nh.subscribe("radio_comm/sensor_data", 20,
 			&DataManager::addSensorData, this);
+	sensorDataSubscriptionXPlane_ = nh.subscribe("/x_plane_interface/sensor_data", 20,
+			&DataManager::addXPlaneSensorData, this);
 	trajectorySubscriptionRos_ = nh.subscribe("radio_comm/trajectory", 20, &DataManager::setPath,
 			this);
 	missionSubscriptionRos_ = nh.subscribe("radio_comm/mission", 20, &DataManager::setMission,

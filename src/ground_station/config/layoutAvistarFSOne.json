@@ -1,8 +1,8 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/sim/devel/uavAP/src/config/sailplane/flight_control.json",
-		"mission_control_path": "/home/sim/devel/uavAP/src/config/sailplane/mission_control.json",
-		"alvolo_path": "/home/sim/devel/uavAP/src/config/sailplane/alvolo.json",
+		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar_fsone/flight_control.json",
+		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar_fsone/mission_control.json",
+		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavAP/src/config/avistar/alvolo.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -22,14 +22,24 @@
 			},
 			"maneuver_planner": {
 				"local_planner": [
+					"position_x",
+					"position_y",
 					"position_z",
 					"heading",
 					"velocity"
 				],
 				"pids": [
 					"roll",
+					"pitch"
+				],
+				"controller_outputs": [
+					"roll",
 					"pitch",
-					"rpm"
+					"throttle"
+				],
+				"controller_constraints": [
+					"pitch",
+					"pitch_rate"
 				]
 			}
 		}
@@ -53,6 +63,9 @@
 									},
 									{
 										"type": "advanced_control"
+									},
+									{
+										"type": "trim_analysis"
 									}
 								]
 							}

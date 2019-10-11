@@ -71,12 +71,12 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 
 	SensorData sd = rosToAp(data);
 
-	if (ui->earthFrameCheckBox->isChecked())
+	if (ui->frameEarthRadioButton->isChecked())
 	{
 		changeFrame(localFrame_, InertialFrame(), sd);
 	}
 
-	t = QString::fromStdString("N/A");
+	t = QString::fromStdString(boost::posix_time::to_simple_string(sd.timestamp));
 	ui->timeValue->setText(t);
 
 	t.sprintf("%10.5f", sd.position.x());
@@ -121,6 +121,12 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 	t.sprintf("%10.5f", sd.attitude.z() * 180 / M_PI);
 	ui->yawValue->setText(t);
 
+	t.sprintf("%10.5f", sd.angleOfAttack * 180 / M_PI);
+	ui->alphaValue->setText(t);
+
+	t.sprintf("%10.5f", sd.angleOfSideslip * 180 / M_PI);
+	ui->betaValue->setText(t);
+
 	t.sprintf("%10.5f", sd.angularRate.x() * 180 / M_PI);
 	ui->rollrValue->setText(t);
 
@@ -129,6 +135,28 @@ WidgetSensorData::onSensorData(const simulation_interface::sensor_data& data)
 
 	t.sprintf("%10.5f", sd.angularRate.z() * 180 / M_PI);
 	ui->yawrValue->setText(t);
+
+	if (sd.hasGPSFix)
+	{
+		t.sprintf("      True");
+	}
+	else
+	{
+		t.sprintf("      False");
+	}
+
+	ui->gpsFixValue->setText(t);
+
+	if (sd.autopilotActive)
+	{
+		t.sprintf("      True");
+	}
+	else
+	{
+		t.sprintf("      False");
+	}
+
+	ui->apActiveValue->setText(t);
 
 	t.sprintf("%10.5f", sd.batteryVoltage);
 	ui->voltValue->setText(t);

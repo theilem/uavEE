@@ -19,11 +19,13 @@
 #ifndef WIDGETMANEUVERPLANNER_H
 #define WIDGETMANEUVERPLANNER_H
 
+#include <QWidget>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QHBoxLayout>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
-#include "ground_station/Widgets/GenericProto/NamedLineEdit.h"
 #include "ground_station/ConfigManager.h"
-#include <QWidget>
 
 namespace Ui
 {
@@ -53,7 +55,7 @@ public:
 	}
 
 	bool
-	configure(const Configuration& config);
+	configure(const boost::property_tree::ptree& config);
 
 private slots:
 	void
@@ -71,15 +73,67 @@ private slots:
 private:
 	void
 	connectInterface(std::shared_ptr<IWidgetInterface> interface);
+
+	template<typename TYPE>
+	void
+	createOverrideWidget(const std::vector<TYPE>& override, QGroupBox*& topGroupBox,
+			std::map<TYPE, QLineEdit*>& overrideMap);
+
 	ObjectHandle<IConfigManager> configManager_;
 	Ui::WidgetManeuverPlanner* ui;
 
-	std::map<LocalPlannerTargets, NamedLineEdit*> localPlannerTargets_;
-	std::map<ControllerTargets, NamedLineEdit*> controllerTargets_;
-	std::map<PIDs, NamedLineEdit*> pids_;
-	std::map<ControllerOutputs, NamedLineEdit*> controllerOutputs_;
-	std::map<ControllerConstraints, NamedLineEdit*> controllerConstraints_;
-	std::map<CustomOverrideIDs, NamedLineEdit*> custom_;
+	std::map<LocalPlannerTargets, QLineEdit*> localPlannerTargets_;
+	std::map<ControllerTargets, QLineEdit*> controllerTargets_;
+	std::map<PIDs, QLineEdit*> pids_;
+	std::map<ControllerOutputs, QLineEdit*> controllerOutputs_;
+	std::map<ControllerConstraints, QLineEdit*> controllerConstraints_;
+	std::map<CustomOverrideIDs, QLineEdit*> custom_;
 };
+
+template<typename TYPE>
+inline void
+WidgetManeuverPlanner::createOverrideWidget(const std::vector<TYPE>& override,
+		QGroupBox*& topGroupBox, std::map<TYPE, QLineEdit*>& overrideMap)
+{
+	unsigned overrideCounter = 0;
+	QHBoxLayout* topLayout = new QHBoxLayout;
+
+	topLayout->setMargin(2);
+	topLayout->setSpacing(0);
+
+	for (const auto& it : override)
+	{
+		if (it == TYPE::INVALID)
+		{
+			continue;
+		}
+
+		QGroupBox* overrideGroupBox = new QGroupBox(QString(EnumMap<TYPE>::convert(it).c_str()));
+		QGridLayout* overrideLayout = new QGridLayout;
+		QLineEdit* overrideLineEdit = new QLineEdit;
+
+		overrideLayout->setMargin(10);
+		overrideLayout->setSpacing(0);
+		overrideLayout->addWidget(overrideLineEdit);
+
+		overrideGroupBox->setAlignment(Qt::AlignHCenter);
+		overrideGroupBox->setLayout(overrideLayout);
+
+		overrideMap.insert(std::make_pair(it, overrideLineEdit));
+		topLayout->addWidget(overrideGroupBox);
+
+		overrideCounter++;
+	}
+
+	if (overrideCounter == 0)
+	{
+		delete topLayout;
+		topGroupBox->setHidden(true);
+	}
+	else
+	{
+		topGroupBox->setLayout(topLayout);
+	}
+}
 
 #endif // WIDGETMANEUVERPLANNER_H

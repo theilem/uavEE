@@ -178,6 +178,8 @@ void
 LayoutGenerator::changeLayout(WidgetLoader *wid, const QString &type, int rows, int cols)
 {
 	QGridLayout* grid = wid->getLayoutHandle(); //TODO get rid of layout handle and look at parent instead
+	grid->setMargin(0);
+	grid->setSpacing(0);
 	if (type == "grid_layout")
 	{
 		QGridLayout* ngrid = new QGridLayout();
@@ -282,6 +284,8 @@ LayoutGenerator::createLayout(const Configuration& json, QWidget* parent)
 				return new QWidget(parent);
 			}
 			QHBoxLayout* hbox = new QHBoxLayout(wHBox);
+			hbox->setMargin(0);
+			hbox->setSpacing(0);
 			for (auto item : items)
 			{
 				//QJsonObject item = items.at(i).toObject();
@@ -302,6 +306,8 @@ LayoutGenerator::createLayout(const Configuration& json, QWidget* parent)
 				return new QWidget(parent);
 			}
 			QVBoxLayout* vbox = new QVBoxLayout(wVBox);
+			vbox->setMargin(0);
+			vbox->setSpacing(0);
 			for (auto item : items)
 			{
 				//QJsonObject item = items.at(i).toObject();
@@ -318,6 +324,8 @@ LayoutGenerator::createLayout(const Configuration& json, QWidget* parent)
 			QWidget* wGrid = new QWidget(parent);
 			QGridLayout* grid(new QGridLayout(wGrid));
 			QWidget* wNW, *wNE, *wSW, *wSE;
+			grid->setMargin(0);
+			grid->setSpacing(0);
 			if (config_pm.add("nw", nw, true))
 			{
 				wNW = createLayout(nw, wGrid);
@@ -455,6 +463,8 @@ LayoutGenerator::addWidget()
 	QGridLayout* grid(new QGridLayout());
 	QMainWindow* win(new QMainWindow);
 	WidgetLoader* wl(new WidgetLoader());
+	grid->setMargin(0);
+	grid->setSpacing(0);
 	wl->linkLayoutGenerator(
 			std::bind(&LayoutGenerator::changeWidget, this, std::placeholders::_1,
 					std::placeholders::_2),
@@ -477,6 +487,8 @@ LayoutGenerator::addCustomWin()
 {
 	QGridLayout* grid = new QGridLayout();
 	QWidget* wGrid = new QWidget();
+	grid->setMargin(0);
+	grid->setSpacing(0);
 	for (int x = 0; x < 2; x++)
 	{
 		for (int y = 0; y < 2; y++)

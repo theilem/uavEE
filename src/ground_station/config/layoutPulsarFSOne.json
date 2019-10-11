@@ -1,8 +1,8 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar/mission_control.json",
-		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar/alvolo.json",
+		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar_fsone/flight_control.json",
+		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar_fsone/mission_control.json",
+		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/pulsar_fsone/alvolo.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {

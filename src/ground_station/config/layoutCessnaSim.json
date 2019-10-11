@@ -1,7 +1,7 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna-simon/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna-simon/mission_control.json",
+		"flight_control_path": "/home/sim/devel/uavEE/src/autopilot_interface/config/cessna_sim/flight_control.json",
+		"mission_control_path": "/home/sim/devel/uavEE/src/autopilot_interface/config/cessna_sim/mission_control.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -21,14 +21,28 @@
 			},
 			"maneuver_planner": {
 				"local_planner": [
+					"position_x",
+					"position_y",
 					"position_z",
+					"velocity",
 					"heading",
-					"velocity"
+					"climb_rate",
+					"slope"
 				],
 				"pids": [
+					"velocity",
+					"climb_angle"
+				],
+				"controller_outputs": [
 					"roll",
 					"pitch",
-					"rpm"
+					"yaw",
+					"throttle"
+				],
+				"controller_constraints": [
+					"roll",
+					"pitch",
+					"yaw"
 				]
 			}
 		}

@@ -123,10 +123,5 @@ WidgetPFD::on_hasNewSample(const simulation_interface::sensor_data& s)
 void
 WidgetPFD::setupUi()
 {
-	m_layoutSq = new LayoutSquare(this);
-
-	m_layoutSq->setContentsMargins(0, 0, 0, 0);
-	m_layoutSq->addWidget(m_ui->framePFD);
-
-	this->setLayout(m_layoutSq);
+	QWidget::setFixedWidth(QWidget::height());
 }

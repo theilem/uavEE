@@ -53,7 +53,6 @@ enum Mode
 	AIRPLANE, HELICOPTER, UNDEFINED
 };
 
-
 /**
  * @brief   The ConfigManager class manages configuration data. It gives configs
  *          to widgets and sends configs to the aircraft
@@ -142,6 +141,12 @@ public:
 
 	bool
 	sendMission(const std::string& mission) override;
+
+	bool
+	engine(const bool& start) override;
+
+	void
+	publishGroundStationSensorData(const simulation_interface::sensor_data& sensorData) override;
 
 	/**
 	 * @brief   startFDAQ starts autopilot data logging
@@ -232,6 +237,12 @@ private:
 
 	///! ROS service called to request a local frame
 	ros::ServiceClient localFrameService_;
+
+	///! ROS service called to start or stop aircraft engine in X-Plane
+	ros::ServiceClient engineService_;
+
+	///! publication for ground station sensor data
+	ros::Publisher sensorDataPublisherGroundStation_;
 };
 
 #endif // CONFIGMANAGER_H

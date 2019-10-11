@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>341</width>
-    <height>171</height>
+    <height>203</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,19 +20,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="grid_layout">
-   <item row="8" column="1">
-    <widget class="QPushButton" name="widgetButton">
-     <property name="text">
-      <string>Select Widget</string>
-     </property>
-     <property name="autoDefault">
-      <bool>true</bool>
-     </property>
-     <property name="default">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0">
     <widget class="QComboBox" name="widgetSelector">
      <property name="minimumSize">
@@ -46,6 +33,26 @@
        <string>blank</string>
       </property>
      </item>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="layoutButton">
+     <property name="text">
+      <string>Select Layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QPushButton" name="widgetButton">
+     <property name="text">
+      <string>Select Widget</string>
+     </property>
+     <property name="autoDefault">
+      <bool>true</bool>
+     </property>
+     <property name="default">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="0">
@@ -157,13 +164,6 @@
       </layout>
      </item>
     </layout>
-   </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="layoutButton">
-     <property name="text">
-      <string>Select Layout</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

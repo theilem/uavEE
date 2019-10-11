@@ -1,15 +1,14 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar-rate/mission_control.json",
-		"alvolo_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavAP/src/config/avistar/alvolo.json",
+		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar/flight_control.json",
+		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar/mission_control.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
 				"aircraft_image": "airplane.png",
 				"map_center": {
-					"lat": 40.059375,
-					"lon": -88.551382
+					"lat": 40.008878,
+					"lon": -88.558397
 				},
 				"map_nw_corner": {
 					"lat": 40.041283557243602,
@@ -25,20 +24,31 @@
 					"position_x",
 					"position_y",
 					"position_z",
+					"velocity",
 					"heading",
-					"velocity"
+					"climb_rate",
+					"slope"
 				],
 				"pids": [
+					"velocity",
+					"rudder",
+					"climb_angle",
+					"pitch",
+					"pitch_rate",
 					"roll",
-					"pitch"
+					"roll_rate"
 				],
 				"controller_outputs": [
 					"roll",
 					"pitch",
+					"yaw",
 					"throttle"
 				],
 				"controller_constraints": [
+					"roll",
 					"pitch",
+					"yaw",
+					"roll_rate",
 					"pitch_rate"
 				]
 			}
@@ -60,9 +70,6 @@
 								"items": [
 									{
 										"type": "local_frame"
-									},
-									{
-										"type": "advanced_control"
 									},
 									{
 										"type": "trim_analysis"

@@ -1,7 +1,8 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar-geo/flight_control.json",
-		"mission_control_path": "/home/mircot/devel/uavEE/src/autopilot_interface/config/avistar-geo/mission_control.json",
+		"flight_control_path": "/home/sim/devel/uavAP/src/config/pulsar/flight_control.json",
+		"mission_control_path": "/home/sim/devel/uavAP/src/config/pulsar/mission_control.json",
+		"alvolo_path": "/home/sim/devel/uavAP/src/config/pulsar/alvolo.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -28,13 +29,16 @@
 					"velocity"
 				],
 				"controller_targets": [
-					"velocity",
-					"yaw_rate",
 					"climb_angle"
 				],
 				"pids": [
 					"roll",
 					"pitch"
+				],
+				"controller_outputs": [
+					"roll",
+					"pitch",
+					"throttle"
 				]
 			}
 		}
@@ -50,7 +54,17 @@
 							"type": "maneuver_planner"
 						},
 						{
-							"type": "steady_state_analysis"
+							"type": "vertical_layout",
+							"config": {
+								"items": [
+									{
+										"type": "local_frame"
+									},
+									{
+										"type": "advanced_control"
+									}
+								]
+							}
 						},
 						{
 							"type": "overhead_map"

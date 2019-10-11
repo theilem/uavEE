@@ -23,7 +23,10 @@
  *      Author: mircot
  */
 
-#include "uavAP/Core/Logging/APLogger.h"
+#include <uavAP/Core/Logging/APLogger.h>
+
+#include "ground_station/IWidgetInterface.h"
+#include "ground_station/GSWidgetFactory.h"
 #include "ground_station/Widgets/WidgetSteadyStateAnalysis.h"
 #include "ground_station/Widgets/QFlightInstruments/WidgetSix.h"
 #include "ground_station/Widgets/WidgetSensorData.h"
@@ -35,9 +38,7 @@
 #include "ground_station/Widgets/QFlightInstruments/WidgetPFD.h"
 #include "ground_station/Widgets/WidgetLocalFrame.h"
 #include "ground_station/Widgets/WidgetTrimAnalysis.h"
-#include "ground_station/GSWidgetFactory.h"
-#include "ground_station/IWidgetInterface.h"
-#include "ground_station/Widgets/WidgetManualWind.h"
+#include "ground_station/Widgets/WidgetXPlane.h"
 
 GSWidgetFactory::GSWidgetFactory()
 {
@@ -54,7 +55,7 @@ GSWidgetFactory::GSWidgetFactory()
 	addWidget<WidgetAdvancedControl>();
 	addWidget<WidgetLocalFrame>();
 	addWidget<WidgetTrimAnalysis>();
-	addWidget<WidgetManualWind>();
+	addWidget<WidgetXPlane>();
 }
 
 QWidget*

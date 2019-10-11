@@ -181,6 +181,12 @@ public:
 		m_pfd->setClimbRate(climbRate);
 	}
 
+	inline void
+	resizeEvent(QResizeEvent *event) override
+	{
+		QWidget::setFixedWidth(QWidget::height());
+	}
+
 private slots:
 	void
 	on_hasNewSample(const simulation_interface::sensor_data& s);

@@ -70,6 +70,12 @@ signals:
 	onSensorData(const simulation_interface::sensor_data&) = 0;
 
 	/**
+	 * @brief onSensorData signal is called when new X-Plane sensor data is received
+	 */
+	virtual void
+	onXPlaneSensorData(const simulation_interface::sensor_data&) = 0;
+
+	/**
 	 * @brief onMission signal is called when new Mission is received
 	 */
 	virtual void
