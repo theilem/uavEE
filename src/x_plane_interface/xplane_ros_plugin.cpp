@@ -59,13 +59,15 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	id = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, rosInterfaceHandler, NULL);
 
 	XPLMAppendMenuItem(id, "Start ROS Node", (void*) "STARTROS", 1);
+	XPLMAppendMenuItem(id, "Enable Joystick", (void*) "ENABLEJS", 1);
+	XPLMAppendMenuItem(id, "Disable Joystick", (void*) "DISABLEJS", 1);
 	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
 	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
 
 	if (!aggregator)
 	{
 		XPlaneHelper helper;
-		Configuration config;
+		boost::property_tree::ptree config;
 		aggregator = new Aggregator;
 		*aggregator = helper.createAggregation(config);
 	}
@@ -109,6 +111,37 @@ rosInterfaceHandler(void* mRef, void* iRef)
 			}
 		}
 	}
+
+	if (!strcmp((char*) iRef, "ENABLEJS"))
+	{
+		if (aggregator)
+		{
+			auto node = aggregator->getOne<XPlaneRosNode>();
+
+			if (!node)
+			{
+				return;
+			}
+
+			node->enableJoystick();
+		}
+	}
+
+	if (!strcmp((char*) iRef, "DISABLEJS"))
+	{
+		if (aggregator)
+		{
+			auto node = aggregator->getOne<XPlaneRosNode>();
+
+			if (!node)
+			{
+				return;
+			}
+
+			node->disableJoystick();
+		}
+	}
+
 	if (!strcmp((char*) iRef, "ENABLEAP"))
 	{
 		if (aggregator)
@@ -123,6 +156,7 @@ rosInterfaceHandler(void* mRef, void* iRef)
 			node->enableAutopilot();
 		}
 	}
+
 	if (!strcmp((char*) iRef, "DISABLEAP"))
 	{
 		if (aggregator)
