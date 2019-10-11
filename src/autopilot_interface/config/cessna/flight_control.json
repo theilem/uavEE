@@ -1,238 +1,88 @@
 {
 	"controller": {
-		"type": "l1",
-		"adaptive_controllers": {
-			"roll": {
-				"input_trim": [
-					[0.000000000000000]
-				],
-				"output_trim": [
-					[0.000000000000000]
-				],
-				"input_gain": [
-					[0.000000000000000]
-				],
-				"target_gain": [
-					[0.125000000000000]
-				],
-				"predictor_gain": [
-					[2.000000000000000]
-				],
-				"adaptive_gain": [
-					[-49.875104166623331]
-				],
-				"control_law_matrix_a": [
-					[0.960594699840620, -0.019603973466135],
-					[0.019603973466135, 0.999802646772890]
-				],
-				"control_law_matrix_b": [
-					[0.009801986733068],
-					[0.000098676613555]
-				],
-				"control_law_matrix_c": [
-					[0.000000000000000, 1.005012520859401]
-				],
-				"control_law_matrix_d": [
-					[0.000000000000000]
-				],
-				"control_law_state": [
-					[0.000000000000000],
-					[0.000000000000000]
-				],
-				"predictor_matrix_a": [
-					[0.995012479192682]
-				],
-				"predictor_matrix_b": [
-					[0.009975041614635]
-				],
-				"predictor_matrix_c": [
-					[2.000000000000000]
-				],
-				"predictor_matrix_d": [
-					[0.000000000000000]
-				],
-				"predictor_state": [
-					[0.000000000000000]
-				]
+		"type": "rate",
+		"hard_roll_constraint": 45.0,
+		"hard_roll_rate_constraint": 100.0,
+		"hard_pitch_constraint": 45.0,
+		"hard_pitch_rate_constraint": 1000.0,
+		"roll_constraint": 45.0,
+		"roll_rate_constraint": 30.0,
+		"pitch_constraint": 20.0,
+		"pitch_rate_constraint": 1000.0,
+		"pids": {
+			"climb_angle": {
+				"ff": 1,
+				"imax": 0.2,
+				"kd": 0,
+				"ki": 0.1,
+				"kp": 0.5
 			},
 			"pitch": {
-				"input_trim": [
-					[0.000000000000000]
-				],
-				"output_trim": [
-					[0.000000000000000]
-				],
-				"input_gain": [
-					[0.000000000000000]
-				],
-				"target_gain": [
-					[0.333333333333333]
-				],
-				"predictor_gain": [
-					[1.000000000000000]
-				],
-				"adaptive_gain": [
-					[-60.439546717095091]
-				],
-				"control_law_matrix_a": [
-					[0.960594699840620, -0.019603973466135],
-					[0.019603973466135, 0.999802646772890]
-				],
-				"control_law_matrix_b": [
-					[0.019603973466135],
-					[0.000197353227110]
-				],
-				"control_law_matrix_c": [
-					[0.000000000000000, 1.005515152767336]
-				],
-				"control_law_matrix_d": [
-					[0.000000000000000]
-				],
-				"control_law_state": [
-					[0.000000000000000],
-					[0.000000000000000]
-				],
-				"predictor_matrix_a": [
-					[0.994515097308919]
-				],
-				"predictor_matrix_b": [
-					[0.009972550347420]
-				],
-				"predictor_matrix_c": [
-					[1.650000000000000]
-				],
-				"predictor_matrix_d": [
-					[0.000000000000000]
-				],
-				"predictor_state": [
-					[0.000000000000000]
-				]
-			},
-			"yaw": {
-				"input_trim": [
-					[0.000000000000000]
-				],
-				"output_trim": [
-					[0.000000000000000]
-				],
-				"input_gain": [
-					[0.000000000000000]
-				],
-				"target_gain": [
-					[0.333333333333333]
-				],
-				"predictor_gain": [
-					[1.000000000000000]
-				],
-				"adaptive_gain": [
-					[-60.439546717095091]
-				],
-				"control_law_matrix_a": [
-					[0.960594699840620, -0.019603973466135],
-					[0.019603973466135, 0.999802646772890]
-				],
-				"control_law_matrix_b": [
-					[0.019603973466135],
-					[0.000197353227110]
-				],
-				"control_law_matrix_c": [
-					[0.000000000000000, 1.005515152767336]
-				],
-				"control_law_matrix_d": [
-					[0.000000000000000]
-				],
-				"control_law_state": [
-					[0.000000000000000],
-					[0.000000000000000]
-				],
-				"predictor_matrix_a": [
-					[0.994515097308919]
-				],
-				"predictor_matrix_b": [
-					[0.009972550347420]
-				],
-				"predictor_matrix_c": [
-					[1.650000000000000]
-				],
-				"predictor_matrix_d": [
-					[0.000000000000000]
-				],
-				"predictor_state": [
-					[0.000000000000000]
-				]
-			}
-		},
-		"pid_controllers": {
-			"climb_angle": {
 				"ff": 0,
-				"imax": 1,
-				"kd": 0,
-				"ki": 0.11,
-				"kp": 0.4
+				"imax": 0.4,
+				"kd": 0.1,
+				"ki": 0.4,
+				"kp": 1.2
 			},
-			"velocity": {
-				"ff": 0,
-				"imax": 10,
+			"pitch_rate": {
+				"ff": 1,
+				"imax": 0,
 				"kd": 0,
-				"ki": 0.2,
-				"kp": 1
+				"ki": 0,
+				"kp": 0
+			},
+			"roll": {
+				"ff": 0,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 3
+			},
+			"roll_rate": {
+				"ff": 0.3,
+				"imax": 0.2,
+				"kd": 0,
+				"ki": 0.1,
+				"kp": 0.1
 			},
 			"rudder": {
 				"ff": 0,
 				"imax": 1,
 				"kd": 0,
 				"ki": 0,
-				"kp": 3
-			}
-		},
-		"controller_deflections": {
-			"roll": 15.0,
-			"pitch": 15.0,
-			"yaw": 15.0,
-			"throttle": 1.0
-		},
-		"controller_saturations": {
-			"roll": {
-				"hard": 45.0,
-				"soft": 30.0
+				"kp": 0.2
 			},
-			"pitch": {
-				"hard": 45.0,
-				"soft": 10.0
+			"velocity": {
+				"ff": 0.04,
+				"imax": 0.4,
+				"kd": 0,
+				"ki": 0.4,
+				"kp": 0.4
 			},
-			"yaw": {
-				"hard": 45.0,
-				"soft": 30.0
-			},
-			"roll_output": {
-				"hard": 1.0,
-				"soft": 1.0
-			},
-			"pitch_output": {
-				"hard": 1.0,
-				"soft": 1.0
-			},
-			"yaw_output": {
-				"hard": 1.0,
-				"soft": 1.0
-			},
-			"throttle_output": {
-				"hard": 1.0,
-				"soft": 1.0
+			"rpm": {
+				"ff": 0,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 0
 			}
 		}
 	},
 	"local_planner": {
 		"type": "maneuver",
 		"period": 0,
-		"safety_velocity": 15,
-		"k_altitude": 1.0,
+		"safety_velocity": 50,
+		"k_altitude": 2.0,
 		"k_convergence": 0.002,
-		"k_yaw_rate": 0.3
+		"k_yaw_rate": 0.5
 	},
-	"fc_data_handling": {
-		"compress_sensor_data": true,
-		"period": 100
+	"data_handling": {
+		"period": 100,
+		"target": "flight_control"
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
 	},
 	"data_presentation": {
 		"compress_double": true

@@ -28,6 +28,10 @@
 		"log_path": "/home/simonyu/Downloads/",
 		"maneuver": "flight_testing"
 	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
+	},
 	"data_presentation": {
 		"compress_double": true
 	}

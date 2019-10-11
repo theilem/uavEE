@@ -1,38 +1,4 @@
 {
-	"emergency_landing_planner": {
-		"landing_sites": {
-			"default": {
-				"planning": {
-					"acceleration": 0.15,
-					"climb_rate": 0.3,
-					"yaw_rate": 5,
-					"gliding_velocity": 36,
-					"gliding_climb_angle": -5,
-					"period": 3000
-				},
-				"searching": {
-					"acceleration": 1,
-					"climb_rate": 0.25,
-					"yaw_rate": 5,
-					"cruise_radius": 1100,
-					"loiter_radius": 1015,
-					"loiter_radius_offset": 6.5,
-					"loiter_lambda": 23,
-					"approach_altitude": 850,
-					"line_distance": 760,
-					"line_delta": 350
-				},
-				"approaching": {
-					"velocity": 30,
-					"climb_angle": -3,
-					"yaw_angle": 270,
-					"yaw_rate": 5,
-					"sideslip_angle": 0,
-					"position": [0, 0, 0]
-				}
-			}
-		}
-	},
 	"local_frame": {
 		"origin": [
 			366990.057,
@@ -43,7 +9,8 @@
 	},
 	"global_planner": {
 		"type": "spline",
-		"tau": 0.6
+		"tau": 0.6,
+		"orbit_radius": 300.0
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
@@ -57,7 +24,7 @@
 			"major_side_orientation": 0,
 			"height": 250
 		},
-		"return_velocity": 20,
+		"return_velocity": 50,
 		"manual_restart": false,
 		"maneuver_restart": false,
 		"use_safety_bounds": false,
@@ -111,6 +78,7 @@
 		"type": "custom",
 		"use_approach": false,
 		"default_velocity": 50,
+		"default_altitude": 200,
 		"missions": {
 			"simple": {
 				"velocity": 50,
@@ -195,6 +163,10 @@
 				]
 			}
 		}
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
 	},
 	"data_presentation": {
 		"compress_double": true
