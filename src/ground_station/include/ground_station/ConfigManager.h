@@ -39,6 +39,8 @@
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "IConfigManager.h"
 #include "IPIDConfigurator.h"
+#include <ros/subscriber.h>
+#include <std_msgs/String.h>
 
 class LayoutGenerator;
 class DataPresentation;
@@ -162,6 +164,9 @@ public:
 	bool
 	stopFDAQ() const;
 
+	void
+	requestPIDParams() override;
+
 private:
 	/**
 	 * @brief   getWidgetConfigs is a private helper function to specifically get
@@ -186,6 +191,12 @@ private:
 	 */
 	void
 	setPIDMap(const std::string& path);
+
+	void
+	setPIDMap(const PIDParams& pidParams);
+
+	void
+	onPIDParams(const std_msgs::String& string);
 
 	ObjectHandle<DataPresentation> dataPresentation_;
 
@@ -241,8 +252,13 @@ private:
 	///! ROS service called to start or stop aircraft engine in X-Plane
 	ros::ServiceClient engineService_;
 
+	ros::ServiceClient requestDataService_;
+
+	ros::Subscriber pidParamsSub_;
+
 	///! publication for ground station sensor data
 	ros::Publisher sensorDataPublisherGroundStation_;
 };
+
 
 #endif // CONFIGMANAGER_H

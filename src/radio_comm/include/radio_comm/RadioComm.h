@@ -135,6 +135,7 @@ private:
 	ros::Publisher localFramePublisher_;
 	ros::Publisher safetyBoundsPublisher_;
 	ros::Publisher localPlannerStatusPublisher_;
+	ros::Publisher pidParamsPublisher_;
 
 	ros::ServiceServer selectMissionService_;
 	ros::ServiceServer selectManeuverService_;

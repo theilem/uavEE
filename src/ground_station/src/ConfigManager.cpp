@@ -37,6 +37,7 @@
 #include <radio_comm/serialized_service.h>
 #include <radio_comm/tune_pid.h>
 #include <radio_comm/tune_generic.h>
+#include <radio_comm/request_data.h>
 #include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 #include "ground_station/LayoutGenerator.h"
@@ -209,9 +210,17 @@ ConfigManager::run(RunStage stage)
 				"/radio_comm/send_advanced_control");
 		localFrameService_ = nh.serviceClient<radio_comm::serialized_service>(
 				"/radio_comm/send_local_frame");
+
+		requestDataService_ = nh.serviceClient<radio_comm::request_data>(
+				"/radio_comm/request_data");
 		engineService_ = nh.serviceClient<radio_comm::engine>("/x_plane_interface/engine");
 		sensorDataPublisherGroundStation_ = nh.advertise<simulation_interface::sensor_data>(
 				"/ground_station/sensor_data", 20);
+
+		pidParamsSub_ = nh.subscribe("radio_comm/pid_params", 20,
+				&ConfigManager::onPIDParams, this);
+
+
 		break;
 	}
 	case RunStage::FINAL:
@@ -221,6 +230,17 @@ ConfigManager::run(RunStage stage)
 	}
 	return false;
 }
+
+void
+ConfigManager::onPIDParams(const std_msgs::String& string)
+{
+	auto dp = dataPresentation_.get();
+	Packet p(string.data);
+
+	PIDParams params = dp->deserialize<PIDParams>(p);
+	setPIDMap(params);
+}
+
 
 bool
 ConfigManager::tunePID(const PIDTuning& tunePID)
@@ -360,8 +380,29 @@ ConfigManager::setPIDMap(const std::string& path)
 	}
 }
 
+void
+ConfigManager::setPIDMap(const PIDParams& pidParams)
+{
+
+	pidParams_.clear();
+	for (const auto& pid : pidParams)
+	{
+		PIDInfo info(EnumMap<PIDs>::convert(pid.first), pid.second);
+		pidParams_.insert(std::make_pair((int) pid.first, info));
+	}
+
+}
+
 const PIDParametersMap&
 ConfigManager::getPIDMap() const
 {
 	return pidParams_;
+}
+
+void
+ConfigManager::requestPIDParams()
+{
+	radio_comm::request_data req;
+	req.request.data_request_id = static_cast<int32_t>(DataRequest::PID_PARAMS);
+	requestDataService_.call(req);
 }

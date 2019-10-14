@@ -33,7 +33,7 @@ class IWidgetInterface;
 
 class WidgetCPGrid: public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
 
@@ -60,13 +60,20 @@ public slots:
 	on_saveGains_clicked();
 	void
 	on_loadGains_clicked();
+	void
+	on_requestParams_clicked();
 
 private:
+
+	void
+	drawPlots();
+
 	void
 	connectInterface(std::shared_ptr<IWidgetInterface> interface);
 	QString title;
 	Ui::WidgetCPGrid* ui;
 	std::map<int, std::shared_ptr<PIDConfigPlot>> plots;
+	std::shared_ptr<IPIDConfigurator> configurator_;
 };
 
 #endif // WIDGETCPGRID_H

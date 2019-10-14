@@ -1,7 +1,7 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/cessna/mission_control.json",
+		"flight_control_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/cessna/flight_control.json",
+		"mission_control_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/cessna/mission_control.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {

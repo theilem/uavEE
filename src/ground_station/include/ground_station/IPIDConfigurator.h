@@ -71,6 +71,9 @@ public:
 	 */
 	virtual const PIDParametersMap&
 	getPIDMap() const = 0;
+
+	virtual void
+	requestPIDParams() = 0;
 };
 
 #endif // IPIDCONFIGURATOR_H

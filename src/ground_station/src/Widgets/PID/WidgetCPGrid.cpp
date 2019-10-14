@@ -46,26 +46,17 @@ WidgetCPGrid::connectInterface(std::shared_ptr<IWidgetInterface> interface)
 	else
 		APLOG_ERROR << "Cannot connect WidgetCPGrid to PIDStati. IDataSignals missing.";
 
-	if (auto cm = interface->getPIDConfigurator().get())
-	{
-		int count = 0;
-		for (auto& it : cm->getPIDMap())
-		{
-			auto cp = std::make_shared<PIDConfigPlot>(this, it.first, it.second.name,
-					it.second.params);
-			ui->gridLayout->addWidget(cp.get(), 0, count);
-			cp->connect(cm);
-			plots.insert(std::make_pair(it.first, cp));
-			++count;
-		}
-	}
-	else
-		APLOG_ERROR << "Cannot connect WidgetCPGrid to PIDMap. ConfigManager missing.";
+	configurator_ = interface->getPIDConfigurator().get();
+	drawPlots();
 }
 
 void
 WidgetCPGrid::onPIDStati(const radio_comm::pidstati& stati)
 {
+	if (plots.empty())
+	{
+		drawPlots();
+	}
 	for (auto& it : stati.stati)
 	{
 		auto plot = plots.find(it.id);
@@ -163,12 +154,40 @@ WidgetCPGrid::on_loadGains_clicked()
 }
 
 void
+WidgetCPGrid::on_requestParams_clicked()
+{
+	configurator_->requestPIDParams();
+	plots.clear();
+}
+
+void
 WidgetCPGrid::on_sendAllParams_clicked()
 {
 	for (auto& it : plots)
 	{
 		it.second->sendData();
 	}
+}
+
+void
+WidgetCPGrid::drawPlots()
+{
+	plots.clear();
+	if (configurator_)
+	{
+		int count = 0;
+		for (auto& it : configurator_->getPIDMap())
+		{
+			auto cp = std::make_shared<PIDConfigPlot>(this, it.first, it.second.name,
+					it.second.params);
+			ui->gridLayout->addWidget(cp.get(), 0, count);
+			cp->connect(configurator_);
+			plots.insert(std::make_pair(it.first, cp));
+			++count;
+		}
+	}
+	else
+		APLOG_ERROR << "Cannot connect WidgetCPGrid to PIDMap. ConfigManager missing.";
 }
 
 WidgetCPGrid::~WidgetCPGrid()

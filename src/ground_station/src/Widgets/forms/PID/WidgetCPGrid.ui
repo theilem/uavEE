@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
-    <height>95</height>
+    <width>419</width>
+    <height>99</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -63,6 +63,13 @@
            <widget class="QPushButton" name="sendAllParams">
             <property name="text">
              <string>Apply All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="requestParams">
+            <property name="text">
+             <string>Request Params</string>
             </property>
            </widget>
           </item>
