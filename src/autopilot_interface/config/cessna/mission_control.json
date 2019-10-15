@@ -1,4 +1,17 @@
 {
+	"geofencing":{
+		"roll_max":45,
+		"evaluation_threshold":1000,
+		"distance_threshold":20,
+		"period":50
+	},
+	"geofencing_model":{
+		"type":"roll_rate",
+		"roll_max":45,
+		"roll_rate":30,
+		"precision":32,
+		"g":9.81
+	},
 	"local_frame": {
 		"origin": [
 			366990.057,
@@ -27,51 +40,9 @@
 		"return_velocity": 50,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": false,
+		"use_safety_bounds": true,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
-			"default": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 50.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 8000000
-					},
-					"analyze_maneuver": true
-				}
-			],
-			"trim_analysis": [
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 40.0,
-						"local_planner/heading": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"local_planner/position_z": 200.0,
-						"local_planner/velocity": 40.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": true
-				}
-			]
 		}
 	},
 	"mission_planner": {

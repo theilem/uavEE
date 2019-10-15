@@ -137,7 +137,7 @@ main(int argc, char** argv)
 	SimpleRunner run(aggregator);
 
 	auto sched = aggregator.getOne<IScheduler>();
-	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(1));
+	sched->schedule(ros::spinOnce, Milliseconds(0), Milliseconds(5));
 
 	auto sh = aggregator.getOne<SignalHandler>();
 
