@@ -1,7 +1,7 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar/flight_control.json",
-		"mission_control_path": "/home/simonyu/Documents/Repositories/Git/RTSL/uavEE/src/autopilot_interface/config/avistar/mission_control.json",
+		"flight_control_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/avistar/flight_control.json",
+		"mission_control_path": "/home/mirco/devel/uavEE/src/autopilot_interface/config/avistar/mission_control.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
@@ -31,25 +31,10 @@
 				],
 				"pids": [
 					"velocity",
-					"rudder",
 					"climb_angle",
 					"pitch",
-					"pitch_rate",
 					"roll",
 					"roll_rate"
-				],
-				"controller_outputs": [
-					"roll",
-					"pitch",
-					"yaw",
-					"throttle"
-				],
-				"controller_constraints": [
-					"roll",
-					"pitch",
-					"yaw",
-					"roll_rate",
-					"pitch_rate"
 				]
 			}
 		}

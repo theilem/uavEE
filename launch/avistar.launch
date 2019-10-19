@@ -1,16 +1,10 @@
 <launch>
-	<node name="autopilot_interface_node" pkg="autopilot_interface" type="autopilot_interface_node" output="screen">
-		<param name="config_path" value="$(find autopilot_interface)/config/avistar.json" />
-	</node>
 	<node name="radio_comm_node" pkg="radio_comm" type="radio_comm_node" output="screen">
-		<param name="config_path" value="$(find radio_comm)/config/tnt.json" />
+		<param name="config_path" value="$(find radio_comm)/config/tty.json" />
 	</node>
 	<node name="ground_station_node" pkg="ground_station" type="ground_station_node" output="screen">
 		<param name="layout_path" value="$(find ground_station)/config/layoutAvistar.json" />
 		<param name="resource_path" value="$(find ground_station)/resources/" />
 		<param name="config_path" value="$(find ground_station)/config/avistar.json" />
-	</node>
-	<node name="simulation_interface_node" pkg="simulation_interface" type="simulation_interface_node" output="screen">
-		<param name="config_path" value="$(find simulation_interface)/config/fsone.json" />
 	</node>
 </launch>

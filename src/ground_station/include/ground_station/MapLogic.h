@@ -99,7 +99,12 @@ public:
 	std::string
 	getIconPath() const;
 
+	void
+	setCriticalPoints(const std::vector<Waypoint>& crit);
 
+
+	const std::vector<Waypoint>&
+	getCriticalPoints() const;
 
 private:
 
@@ -117,6 +122,7 @@ private:
 	ObjectHandle<IScheduler> scheduler_;
 	Mission waypoints_;
 	Trajectory pathSections_;
+	std::vector<Waypoint> criticalPoints_;
 	int currentPath_;
 	std::vector<MapLocation> pathHistory_;
 	ControllerTarget controllerTarget_;

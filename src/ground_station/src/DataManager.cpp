@@ -191,6 +191,27 @@ DataManager::subscribeOnRos()
 
 	safetyBoundsSubscriptionRos_ = nh.subscribe("radio_comm/safety_bounds", 20,
 			&DataManager::setSafetyBounds, this);
+
+	criticalPointsSubscriptionRos_ = nh.subscribe("radio_comm/critical_points", 20,
+			&DataManager::onCriticalPoints, this);
+}
+
+void
+DataManager::onCriticalPoints(const std_msgs::String& points)
+{
+	auto dp = dataPresentation_.get();
+	Packet p(points.data);
+
+	auto crit = dp->deserialize<std::vector<Waypoint>>(p);
+	auto ml = mapLogic_.get();
+
+	if (!ml)
+	{
+		APLOG_ERROR << "DataManager: Map Logic Missing.";
+		return;
+	}
+
+	ml->setCriticalPoints(crit);
 }
 
 bool

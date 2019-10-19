@@ -217,6 +217,9 @@ private:
 	void
 	setSafetyBounds(const std_msgs::String& bounds);
 
+	void
+	onCriticalPoints(const std_msgs::String& points);
+
 	/**
 	 * @brief subscribeOnRos is an initializer function that initializes
 	 */
@@ -263,6 +266,9 @@ private:
 
 	///! subscription to incoming ROS safety bounds messages
 	ros::Subscriber safetyBoundsSubscriptionRos_;
+
+	///! subscription to incoming ROS safety bounds messages
+	ros::Subscriber criticalPointsSubscriptionRos_;
 };
 
 #endif // DATAMANAGER_H

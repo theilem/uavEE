@@ -47,7 +47,7 @@ public:
 		addDefaultCreator<IDC>();
 		addDefault<TimeProviderFactory>();
 		addConfigurable<DataPresentation>();
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addFactory<NetworkFactory>();
 	}
 };

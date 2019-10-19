@@ -113,6 +113,7 @@ RadioComm::run(RunStage stage)
 				"/radio_comm/local_planner_status", 20);
 		safetyBoundsPublisher_ = nh.advertise<std_msgs::String>("/radio_comm/safety_bounds", 20);
 		pidParamsPublisher_ = nh.advertise<std_msgs::String>("/radio_comm/pid_params", 20);
+		criticalPointsPublisher_ = nh.advertise<std_msgs::String>("/radio_comm/critical_points", 20);
 
 		selectMissionService_ = nh.advertiseService("/radio_comm/select_mission",
 				&RadioComm::selectMission, this);
@@ -229,6 +230,13 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 			std_msgs::String msg;
 			msg.data = p.getBuffer();
 			pidParamsPublisher_.publish(msg);
+			break;
+		}
+		case Content::CRITICAL_POINTS:
+		{
+			std_msgs::String msg;
+			msg.data = p.getBuffer();
+			criticalPointsPublisher_.publish(msg);
 			break;
 		}
 		case Content::TRAJECTORY:
