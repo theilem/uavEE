@@ -26,6 +26,7 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <radio_comm/send_advanced_control.h>
@@ -112,6 +113,14 @@ public:
 	 */
 	virtual bool
 	sendControllerOutputOffset(const ControllerOutput& offset) = 0;
+
+	/**
+	 * @brief   write sends a wind analysis status to the aircraft
+	 * @param   windAnalysisStatus a ros service request containing wind analysis status
+	 * @return  true if request was received
+	 */
+	virtual bool
+	sendWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus) = 0;
 
 	/**
 	 * @brief   writeManeuver sends a maneuver command telling the aircraft what

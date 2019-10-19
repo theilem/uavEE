@@ -118,6 +118,9 @@ signals:
 	onControllerOutputTrim(const ControllerOutput&) override;
 
 	void
+	onWindAnalysisStatus(const WindAnalysisStatus&) override;
+
+	void
 	onPIDStati(const radio_comm::pidstati&) override;
 
 	void
@@ -199,6 +202,14 @@ private:
 	addControllerOutputTrim(const radio_comm::serialized_object& trim);
 
 	/**
+	 * @brief addWindAnalysisStatus handles onWindAnalysisStatus. It signals all widgets
+	 * subscribed to onWindAnalysisStatus
+	 * @param windAnalysisStatus the windAnalysisStatus received
+	 */
+	void
+	addWindAnalysisStatus(const radio_comm::serialized_object& windAnalysisStatus);
+
+	/**
 	 * @brief addPIDStati handles onPIDStati. It signals all connected widgets
 	 * that there is new PIDStati
 	 * @param stati
@@ -245,6 +256,9 @@ private:
 
 	///! subscription to incoming ROS controller output trim messages
 	ros::Subscriber controllerOutputTrimSubscriptionRos_;
+
+	///! subscription to incoming ROS wind analysis status messages
+	ros::Subscriber windAnalysisStatusSubscriptionRos_;
 
 	///! subscription to incoming ROS local frame messages
 	ros::Subscriber localFrameSubscriptionRos_;

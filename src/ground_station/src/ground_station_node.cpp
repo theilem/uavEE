@@ -37,6 +37,7 @@
 #include <uavAP/Core/Time.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysis.h>
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
@@ -59,6 +60,7 @@ Q_DECLARE_METATYPE(Override)
 Q_DECLARE_METATYPE(Mission)
 Q_DECLARE_METATYPE(Trajectory)
 Q_DECLARE_METATYPE(ControllerOutput)
+Q_DECLARE_METATYPE(WindAnalysisStatus)
 
 int
 main(int argc, char** argv)
@@ -130,6 +132,7 @@ main(int argc, char** argv)
 	qRegisterMetaType<Mission>();
 	qRegisterMetaType<Trajectory>();
 	qRegisterMetaType<ControllerOutput>();
+	qRegisterMetaType<WindAnalysisStatus>();
 
 	GroundStationHelper helper;
 

@@ -129,6 +129,9 @@ public:
 	sendControllerOutputOffset(const ControllerOutput& offset) override;
 
 	bool
+	sendWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus) override;
+
+	bool
 	sendAdvancedControl(const radio_comm::send_advanced_control::Request& maneuverOverride)
 			override;
 
@@ -242,6 +245,9 @@ private:
 
 	///! ROS service called to request a controller output offset
 	ros::ServiceClient controllerOutputOffsetService_;
+
+	///! ROS service called to request a wind analysis status
+	ros::ServiceClient windAnalysisStatusService_;
 
 	///! ROS service called to request an advanced control
 	ros::ServiceClient advancedControlService_;

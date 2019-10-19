@@ -29,6 +29,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <uavAP/Core/DataPresentation/Content.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <radio_comm/engine.h>
@@ -206,6 +207,8 @@ ConfigManager::run(RunStage stage)
 				"/radio_comm/send_override");
 		controllerOutputOffsetService_ = nh.serviceClient<radio_comm::serialized_service>(
 				"/radio_comm/send_controller_output_offset");
+		windAnalysisStatusService_ = nh.serviceClient<radio_comm::serialized_service>(
+				"/radio_comm/send_wind_analysis_status");
 		advancedControlService_ = nh.serviceClient<radio_comm::send_advanced_control>(
 				"/radio_comm/send_advanced_control");
 		localFrameService_ = nh.serviceClient<radio_comm::serialized_service>(
@@ -271,6 +274,15 @@ ConfigManager::sendControllerOutputOffset(const ControllerOutput& offset)
 	radio_comm::serialized_service ser;
 	ser.request.serialized = dp->serialize(offset).getBuffer();
 	return controllerOutputOffsetService_.call(ser);
+}
+
+bool
+ConfigManager::sendWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus)
+{
+	auto dp = dataPresentation_.get();
+	radio_comm::serialized_service ser;
+	ser.request.serialized = dp->serialize(windAnalysisStatus).getBuffer();
+	return windAnalysisStatusService_.call(ser);
 }
 
 bool

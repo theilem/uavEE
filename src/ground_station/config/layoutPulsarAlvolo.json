@@ -61,7 +61,7 @@
 										"type": "local_frame"
 									},
 									{
-										"type": "advanced_control"
+										"type": "wind_analysis"
 									}
 								]
 							}

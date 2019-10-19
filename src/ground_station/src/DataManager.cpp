@@ -111,6 +111,16 @@ DataManager::addControllerOutputTrim(const radio_comm::serialized_object& trim)
 }
 
 void
+DataManager::addWindAnalysisStatus(const radio_comm::serialized_object& windAnalysisStatus)
+{
+	auto dp = dataPresentation_.get();
+	Packet packet(windAnalysisStatus.serialized);
+	WindAnalysisStatus t = dp->deserialize<WindAnalysisStatus>(packet);
+
+	emit onWindAnalysisStatus(t);
+}
+
+void
 DataManager::addPIDStati(const radio_comm::pidstati &stati)
 {
 	emit onPIDStati(stati);
@@ -178,6 +188,8 @@ DataManager::subscribeOnRos()
 				&DataManager::addOverride, this);
 	controllerOutputTrimSubscriptionRos_ = nh.subscribe("radio_comm/controller_output_trim", 20,
 				&DataManager::addControllerOutputTrim, this);
+	windAnalysisStatusSubscriptionRos_ = nh.subscribe("radio_comm/wind_analysis_status", 20,
+				&DataManager::addWindAnalysisStatus, this);
 	localFrameSubscriptionRos_ = nh.subscribe("radio_comm/local_frame", 20,
 			&DataManager::setLocalFrame, this);
 	localPlannerDataSubscriptionRos_ = nh.subscribe("radio_comm/local_planner_status", 20,

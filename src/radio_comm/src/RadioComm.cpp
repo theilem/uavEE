@@ -30,6 +30,7 @@
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
@@ -107,6 +108,8 @@ RadioComm::run(RunStage stage)
 				20);
 		controllerOutputTrimPublisher_ = nh.advertise<radio_comm::serialized_object>(
 				"/radio_comm/controller_output_trim", 20);
+		windAnalysisStatusPublisher_ = nh.advertise<radio_comm::serialized_object>(
+				"/radio_comm/wind_analysis_status", 20);
 		localFramePublisher_ = nh.advertise<radio_comm::serialized_object>(
 				"/radio_comm/local_frame", 20);
 		localPlannerStatusPublisher_ = nh.advertise<radio_comm::serialized_proto>(
@@ -130,6 +133,8 @@ RadioComm::run(RunStage stage)
 		sendControllerOutputOffsetService_ = nh.advertiseService(
 				"/radio_comm/send_controller_output_offset", &RadioComm::sendControllerOutputOffset,
 				this);
+		sendWindAnalysisStatusService_ = nh.advertiseService(
+				"/radio_comm/send_wind_analysis_status", &RadioComm::sendWindAnalysisStatus, this);
 		sendAdvancedControlService_ = nh.advertiseService("/radio_comm/send_advanced_control",
 				&RadioComm::sendAdvancedControl, this);
 		sendLocalFrameService_ = nh.advertiseService("/radio_comm/send_local_frame",
@@ -264,6 +269,13 @@ RadioComm::onAutopilotPacket(const Packet& packet)
 			radio_comm::serialized_object trim;
 			trim.serialized = p.getBuffer();
 			controllerOutputTrimPublisher_.publish(trim);
+			break;
+		}
+		case Content::WIND_ANALYSIS_STATUS:
+		{
+			radio_comm::serialized_object windAnalysisStatus;
+			windAnalysisStatus.serialized = p.getBuffer();
+			windAnalysisStatusPublisher_.publish(windAnalysisStatus);
 			break;
 		}
 		default:
@@ -476,6 +488,29 @@ RadioComm::sendControllerOutputOffset(radio_comm::serialized_service::Request& r
 
 	auto packet = dp->serialize(offset);
 	dp->addHeader(packet, Content::CONTROLLER_OUTPUT_OFFSET);
+	dp->addHeader(packet, Target::MISSION_CONTROL);
+
+	resp.valid = true;
+
+	return sendPacket(packet);
+}
+
+bool
+RadioComm::sendWindAnalysisStatus(radio_comm::serialized_service::Request& req,
+		radio_comm::serialized_service::Response& resp)
+{
+	auto dp = dataPresentation_.get();
+
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing.";
+		return false;
+	}
+
+	WindAnalysisStatus windAnalysisStatus = dp->deserialize<WindAnalysisStatus>(req.serialized);
+
+	auto packet = dp->serialize(windAnalysisStatus);
+	dp->addHeader(packet, Content::WIND_ANALYSIS_STATUS);
 	dp->addHeader(packet, Target::MISSION_CONTROL);
 
 	resp.valid = true;

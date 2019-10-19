@@ -28,8 +28,9 @@
 
 #include <QtCore/QObject>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/FlightAnalysis/StateAnalysis/Metrics.h>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 #include <simulation_interface/sensor_data.h>
 #include <simulation_interface/actuation.h>
@@ -116,6 +117,12 @@ signals:
 	 */
 	virtual void
 	onControllerOutputTrim(const ControllerOutput&) = 0;
+
+	/**
+	 * @brief onWindAnalysisStatus is called whenever new wind analysis status is received
+	 */
+	virtual void
+	onWindAnalysisStatus(const WindAnalysisStatus&) = 0;
 
 	/**
 	 * @brief onPIDStati is called whenever new PID stati is received
