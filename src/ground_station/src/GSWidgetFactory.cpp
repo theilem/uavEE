@@ -39,6 +39,7 @@
 #include "ground_station/Widgets/WidgetLocalFrame.h"
 #include "ground_station/Widgets/WidgetTrimAnalysis.h"
 #include "ground_station/Widgets/WidgetXPlane.h"
+#include <ground_station/Widgets/WidgetWindAnalysis.h>
 
 GSWidgetFactory::GSWidgetFactory()
 {
@@ -56,6 +57,7 @@ GSWidgetFactory::GSWidgetFactory()
 	addWidget<WidgetLocalFrame>();
 	addWidget<WidgetTrimAnalysis>();
 	addWidget<WidgetXPlane>();
+	addWidget<WidgetWindAnalysis>();
 }
 
 QWidget*

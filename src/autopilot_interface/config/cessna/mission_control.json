@@ -5,6 +5,8 @@
 		"distance_threshold":50,
 		"period":50
 	},
+	"wind_analysis":{
+	},
 	"geofencing_model":{
 		"type":"roll_rate",
 		"roll_max":45,
