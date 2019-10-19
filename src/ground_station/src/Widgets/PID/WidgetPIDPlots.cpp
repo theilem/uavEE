@@ -125,6 +125,8 @@ WidgetPIDPlots::on_numCols_valueChanged(int)
 void
 WidgetPIDPlots::onPIDStati(const radio_comm::pidstati& stati)
 {
+	if (plots.empty())
+		return;
 	for (auto& it : stati.stati)
 	{
 		auto plot = plots.find(it.id);

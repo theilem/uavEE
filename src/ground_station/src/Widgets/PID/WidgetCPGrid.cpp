@@ -57,6 +57,8 @@ WidgetCPGrid::onPIDStati(const radio_comm::pidstati& stati)
 	{
 		drawPlots();
 	}
+	if (plots.empty())
+		return;
 	for (auto& it : stati.stati)
 	{
 		auto plot = plots.find(it.id);

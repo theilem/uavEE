@@ -2,7 +2,7 @@
 	"geofencing":{
 		"roll_max":45,
 		"evaluation_threshold":1000,
-		"distance_threshold":20,
+		"distance_threshold":50,
 		"period":50
 	},
 	"geofencing_model":{

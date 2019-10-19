@@ -224,3 +224,15 @@ MapLogic::setLocalFrame(const VehicleOneFrame& frame)
 {
 	localFrame_ = frame;
 }
+
+void
+MapLogic::setCriticalPoints(const std::vector<Waypoint>& crit)
+{
+	criticalPoints_ = crit;
+}
+
+const std::vector<Waypoint>&
+MapLogic::getCriticalPoints() const
+{
+	return criticalPoints_;
+}

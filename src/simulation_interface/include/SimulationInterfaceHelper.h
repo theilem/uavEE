@@ -46,7 +46,7 @@ public:
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IDC>();
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addDefaultCreator<DataPresentation>();
 		addFactory<NetworkFactory>();
 	}

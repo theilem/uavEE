@@ -119,6 +119,9 @@ private:
 	drawMission(QPainter *painter);
 
 	void
+	drawCriticalPoints(QPainter *painter);
+
+	void
 	drawPathHistory(QPainter *painter);
 
 	void

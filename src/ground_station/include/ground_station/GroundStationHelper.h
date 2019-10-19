@@ -44,7 +44,7 @@ public:
 	GroundStationHelper()
 	{
 		addCreator<ConfigManager>();
-		addCreator<DataHandling>();
+		addConfigurable<DataHandling>();
 		addDefaultCreator<DataPresentation>();
 
 		addDefault<SchedulerFactory>();
