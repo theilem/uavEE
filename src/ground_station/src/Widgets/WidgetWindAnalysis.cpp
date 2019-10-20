@@ -60,7 +60,12 @@ WidgetWindAnalysis::onWindAnalysisStatus(const WindAnalysisStatus& windAnalysisS
 	string.replace(" ", "");
 	ui->upDisplay->setText(string);
 
-	string.sprintf("%10.5f", windAnalysisStatus.direction);
+	string.sprintf("%10.5f", windAnalysisStatus.speed);
+	string = string.simplified();
+	string.replace(" ", "");
+	ui->speedDisplay->setText(string);
+
+	string.sprintf("%10.5f", radToDeg(windAnalysisStatus.direction));
 	string = string.simplified();
 	string.replace(" ", "");
 	ui->directionDisplay->setText(string);
@@ -77,10 +82,22 @@ WidgetWindAnalysis::on_autoButton_clicked()
 	}
 	else
 	{
-		windAnalysisStatus.direction = ui->directionValue->text().toDouble();
+		windAnalysisStatus.direction = degToRad(ui->directionValue->text().toDouble());
 	}
 
+	windAnalysisStatus.manual = false;
+
 	configManager_.get()->sendWindAnalysisStatus(windAnalysisStatus);
+}
+
+void
+WidgetWindAnalysis::on_clearButton_clicked()
+{
+	ui->eastValue->clear();
+	ui->northValue->clear();
+	ui->upValue->clear();
+	ui->speedValue->clear();
+	ui->directionValue->clear();
 }
 
 void
@@ -136,7 +153,7 @@ WidgetWindAnalysis::on_manualButton_clicked()
 		}
 		else
 		{
-			windAnalysisStatus.direction = ui->directionValue->text().toDouble();
+			windAnalysisStatus.direction = degToRad(ui->directionValue->text().toDouble());
 		}
 	}
 	else

@@ -65,6 +65,9 @@ private slots:
 	on_autoButton_clicked();
 
 	void
+	on_clearButton_clicked();
+
+	void
 	on_manualButton_clicked();
 
 private:
