@@ -39,7 +39,7 @@
 #include "ground_station/Widgets/WidgetLocalFrame.h"
 #include "ground_station/Widgets/WidgetTrimAnalysis.h"
 #include "ground_station/Widgets/WidgetXPlane.h"
-#include <ground_station/Widgets/WidgetWindAnalysis.h>
+#include "ground_station/Widgets/WidgetWindAnalysis.h"
 
 GSWidgetFactory::GSWidgetFactory()
 {
