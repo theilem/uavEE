@@ -1,0 +1,147 @@
+{
+	"geofencing":{
+		"roll_max":45,
+		"evaluation_threshold":1000,
+		"distance_threshold":50,
+		"period":50
+	},
+	"wind_analysis":{
+	},
+	"geofencing_model":{
+		"type":"roll_rate",
+		"roll_max":45,
+		"roll_rate":30,
+		"precision":32,
+		"g":9.81
+	},
+	"local_frame": {
+		"origin": [
+			366990.057,
+			4429905.681,
+			224
+		],
+		"yaw": 0
+	},
+	"global_planner": {
+		"type": "spline",
+		"tau": 0.6,
+		"orbit_radius": 300.0
+	},
+	"maneuver_planner": {
+		"safety_bounds": {
+			"center": {
+				"north": 0,
+				"east": 0,
+				"up": 250
+			},
+			"major_side_length": 8000,
+			"minor_side_length": 4000,
+			"major_side_orientation": 0,
+			"height": 250
+		},
+		"return_velocity": 50,
+		"manual_restart": false,
+		"maneuver_restart": false,
+		"use_safety_bounds": true,
+		"perform_in_safety_bounds": true,
+		"maneuvers": {
+		}
+	},
+	"mission_planner": {
+		"type": "custom",
+		"use_approach": false,
+		"default_velocity": 50,
+		"default_altitude": 200,
+		"missions": {
+			"simple": {
+				"velocity": 50,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 200
+				},
+				"waypoints": [
+					{
+						"e": 2000,
+						"n": 1000,
+						"u": 0
+					},
+					{
+						"e": 2000,
+						"n": -1000,
+						"u": 0
+					},
+					{
+						"e": -2000,
+						"n": -1000,
+						"u": 0
+					},
+					{
+						"e": -2000,
+						"n": 1000,
+						"u": 0
+					}
+				]
+			},
+			"validation": {
+				"velocity": 50,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 200
+				},
+				"waypoints": [
+					{
+						"e": 3000,
+						"n": 1500,
+						"u": 0
+					},
+					{
+						"e": 3000,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": 1500,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": -1500,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": -1500,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": 1500,
+						"n": 1500,
+						"u": 0
+					}
+				]
+			}
+		}
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

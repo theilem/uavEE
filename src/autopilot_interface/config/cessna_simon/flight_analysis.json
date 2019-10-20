@@ -1,0 +1,38 @@
+﻿{
+	"steady_state_analysis": {
+		"tolerance": {
+			"local_planner/position_x": 5.0,
+			"local_planner/position_y": 5.0,
+			"local_planner/position_z": 5.0,
+			"local_planner/velocity": 0.5,
+			"local_planner/heading": 0.5,
+			"local_planner/climb_rate": 0.5,
+			"controller_targets/velocity": 0.5,
+			"controller_targets/yaw_rate": 0.5,
+			"controller_targets/climb_angle": 0.5,
+			"pids/velocity": 0.5,
+			"pids/velocity_x": 0.5,
+			"pids/velocity_y": 0.5,
+			"pids/rudder": 0.5,
+			"pids/climb_angle": 0.5,
+			"pids/climb_rate": 0.5,
+			"pids/pitch": 0.5,
+			"pids/pitch_rate": 0.5,
+			"pids/yaw_rate": 0.5,
+			"pids/roll": 0.5,
+			"pids/roll_rate": 0.5
+		},
+		"in_tolerance_duration": 5000
+	},
+	"maneuver_analysis": {
+		"log_path": "/home/simonyu/Downloads/",
+		"maneuver": "flight_testing"
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}
