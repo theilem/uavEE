@@ -47,7 +47,7 @@
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="eastLabel">
+           <widget class="QLabel" name="velocityELabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -73,12 +73,12 @@
              </size>
             </property>
             <property name="text">
-             <string>East:</string>
+             <string>Velocity E:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="eastDisplay">
+           <widget class="QLabel" name="velocityEDisplay">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -117,7 +117,7 @@
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QLineEdit" name="eastValue">
+           <widget class="QLineEdit" name="velocityEValue">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="northLabel">
+           <widget class="QLabel" name="velocityNLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -174,12 +174,12 @@
              </size>
             </property>
             <property name="text">
-             <string>North:</string>
+             <string>Velocity N:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="northDisplay">
+           <widget class="QLabel" name="velocityNDisplay">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -218,7 +218,7 @@
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QLineEdit" name="northValue">
+           <widget class="QLineEdit" name="velocityNValue">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -249,7 +249,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="upLabel">
+           <widget class="QLabel" name="velocityULabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -275,12 +275,12 @@
              </size>
             </property>
             <property name="text">
-             <string>Up:</string>
+             <string>Velocity U:</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="upDisplay">
+           <widget class="QLabel" name="velocityUDisplay">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -319,7 +319,7 @@
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="QLineEdit" name="upValue">
+           <widget class="QLineEdit" name="velocityUValue">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>

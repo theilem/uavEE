@@ -48,17 +48,17 @@ WidgetWindAnalysis::onWindAnalysisStatus(const WindAnalysisStatus& windAnalysisS
 	string.sprintf("%10.5f", windAnalysisStatus.velocity.x());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->eastDisplay->setText(string);
+	ui->velocityEDisplay->setText(string);
 
 	string.sprintf("%10.5f", windAnalysisStatus.velocity.y());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->northDisplay->setText(string);
+	ui->velocityNDisplay->setText(string);
 
 	string.sprintf("%10.5f", windAnalysisStatus.velocity.z());
 	string = string.simplified();
 	string.replace(" ", "");
-	ui->upDisplay->setText(string);
+	ui->velocityUDisplay->setText(string);
 
 	string.sprintf("%10.5f", windAnalysisStatus.speed);
 	string = string.simplified();
@@ -84,9 +84,9 @@ WidgetWindAnalysis::on_autoButton_clicked()
 void
 WidgetWindAnalysis::on_clearButton_clicked()
 {
-	ui->eastValue->clear();
-	ui->northValue->clear();
-	ui->upValue->clear();
+	ui->velocityEValue->clear();
+	ui->velocityNValue->clear();
+	ui->velocityUValue->clear();
 	ui->speedValue->clear();
 	ui->directionValue->clear();
 }
@@ -97,34 +97,34 @@ WidgetWindAnalysis::on_manualButton_clicked()
 	WindAnalysisStatus windAnalysisStatus;
 	bool velocityValid = true;
 
-	if (ui->eastValue->text().isEmpty())
+	if (ui->velocityEValue->text().isEmpty())
 	{
 		windAnalysisStatus.velocity.x() = std::numeric_limits<double>::quiet_NaN();
 		velocityValid = false;
 	}
 	else
 	{
-		windAnalysisStatus.velocity.x() = ui->eastValue->text().toDouble();
+		windAnalysisStatus.velocity.x() = ui->velocityEValue->text().toDouble();
 	}
 
-	if (ui->northValue->text().isEmpty())
+	if (ui->velocityNValue->text().isEmpty())
 	{
 		windAnalysisStatus.velocity.y() = std::numeric_limits<double>::quiet_NaN();
 		velocityValid = false;
 	}
 	else
 	{
-		windAnalysisStatus.velocity.y() = ui->northValue->text().toDouble();
+		windAnalysisStatus.velocity.y() = ui->velocityNValue->text().toDouble();
 	}
 
-	if (ui->upValue->text().isEmpty())
+	if (ui->velocityUValue->text().isEmpty())
 	{
 		windAnalysisStatus.velocity.z() = std::numeric_limits<double>::quiet_NaN();
 		velocityValid = false;
 	}
 	else
 	{
-		windAnalysisStatus.velocity.z() = ui->upValue->text().toDouble();
+		windAnalysisStatus.velocity.z() = ui->velocityUValue->text().toDouble();
 	}
 
 	if (!velocityValid)
