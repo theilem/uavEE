@@ -1,8 +1,8 @@
 {
 	"main_config": {
-		"flight_control_path": "/home/sim/devel/uavAP/src/config/avistar/flight_control.json",
-		"mission_control_path": "/home/sim/devel/uavAP/src/config/avistar/mission_control.json",
-		"alvolo_path": "/home/sim/devel/uavAP/src/config/avistar/alvolo.json",
+		"flight_control_path": "/home/mirco/devel/uavAP/src/config/avistar/flight_control.json",
+		"mission_control_path": "/home/mirco/devel/uavAP/src/config/avistar/mission_control.json",
+		"alvolo_path": "/home/mirco/devel/uavAP/src/config/avistar/alvolo.json",
 		"mode": "airplane",
 		"widget_configs": {
 			"overhead_map": {
