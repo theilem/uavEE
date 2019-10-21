@@ -1,18 +1,20 @@
 {
-	"geofencing":{
-		"roll_max":45,
-		"evaluation_threshold":1000,
-		"distance_threshold":50,
-		"period":50
+	"geofencing": {
+		"roll_max": 45,
+		"evaluation_threshold": 1000,
+		"distance_threshold": 50,
+		"period": 50
 	},
-	"wind_analysis":{
+	"geofencing_model": {
+		"type": "roll_rate",
+		"roll_max": 45,
+		"roll_rate": 30,
+		"precision": 32,
+		"g": 9.81
 	},
-	"geofencing_model":{
-		"type":"roll_rate",
-		"roll_max":45,
-		"roll_rate":30,
-		"precision":32,
-		"g":9.81
+	"wind_analysis": {
+		"use_alpha": false,
+		"use_beta": false
 	},
 	"local_frame": {
 		"origin": [
