@@ -10,4 +10,6 @@
 		<param name="resource_path" value="$(find ground_station)/resources/" />
 		<param name="config_path" value="$(find ground_station)/config/cessna.json" />
 	</node>
+	<node name="camera_simulation_node" pkg="camera_simulation" type="camera_simulation_node" output="screen">
+	</node>
 </launch>
