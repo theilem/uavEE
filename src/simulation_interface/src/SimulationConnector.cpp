@@ -67,9 +67,9 @@ SimulationConnector::run(RunStage stage)
 			return true;
 		}
 		ros::NodeHandle nh;
-		sensorPublisher_ = nh.advertise<simulation_interface::sensor_data>("sensor_data", 20);
+		sensorPublisher_ = nh.advertise<simulation_interface::sensor_data>("/x_plane_interface/sensor_data", 20);
 		delayPublisher_ = nh.advertise<std_msgs::Int32>("roundtrip_delay_micros", 20);
-		actuationSubscriber_ = nh.subscribe("actuation", 20, &SimulationConnector::actuate, this);
+		actuationSubscriber_ = nh.subscribe("/autopilot_interface/actuation", 20, &SimulationConnector::actuate, this);
 		break;
 	}
 	case RunStage::NORMAL:
@@ -150,6 +150,8 @@ SimulationConnector::sense(const Packet& packet)
 
 	sd.ground_speed = velocityLinear.norm();
 	sd.air_speed = sd.ground_speed;
+
+	sd.gps_fix = true;
 
 	lastSequenceNr_++;
 	sd.sequenceNr = lastSequenceNr_;
