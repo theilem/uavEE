@@ -31,10 +31,17 @@
 				],
 				"pids": [
 					"velocity",
-					"climb_angle",
-					"pitch",
+					"climb_angle"
+				],
+				"controller_outputs": [
 					"roll",
-					"roll_rate"
+					"pitch",
+					"yaw",
+					"throttle"
+				],
+				"controller_constraints": [
+					"roll",
+					"pitch"
 				]
 			}
 		}

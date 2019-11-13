@@ -25,21 +25,24 @@
 					"position_x",
 					"position_y",
 					"position_z",
+					"velocity",
 					"heading",
-					"velocity"
+					"climb_rate",
+					"slope"
 				],
 				"pids": [
-					"roll",
-					"pitch"
+					"velocity",
+					"climb_angle"
 				],
 				"controller_outputs": [
 					"roll",
 					"pitch",
+					"yaw",
 					"throttle"
 				],
 				"controller_constraints": [
-					"pitch",
-					"pitch_rate"
+					"roll",
+					"pitch"
 				]
 			}
 		}

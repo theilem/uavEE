@@ -1,16 +1,4 @@
 {
-	"emergency_geofencing_planner": {
-		"roll_max": 45,
-		"evaluation_threshold": 150,
-		"distance_threshold": 10,
-		"period": 50
-	},
-	"geofencing_model": {
-		"type": "const_roll_rate",
-		"roll_rate": 18,
-		"roll_max": 45,
-		"precision": 32
-	},
 	"global_planner": {
 		"type": "spline",
 		"tau": 0.6
@@ -38,7 +26,7 @@
 		"return_velocity": 20,
 		"manual_restart": false,
 		"maneuver_restart": false,
-		"use_safety_bounds": true,
+		"use_safety_bounds": false,
 		"perform_in_safety_bounds": true,
 		"maneuvers": {
 			"default": [
@@ -60,13 +48,13 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
 						"steady_state": true
 					},
-					"analyze_maneuver": false,
+					"analyze_maneuver": true,
 					"analyze_trim": false
 				},
 				{
@@ -88,7 +76,7 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0
+						"local_planner/heading": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -100,7 +88,9 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch": 45.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -121,7 +111,9 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"pids/roll": 0.0,
-						"controller_outputs/throttle": -1.0
+						"controller_outputs/throttle": -1.0,
+						"controller_constraints/pitch": 45.0,
+						"controller_constraints/pitch_rate": 100.0
 					},
 					"condition": {
 						"type": "sensor_data",
@@ -2133,6 +2125,7 @@
 		"type": "custom",
 		"use_approach": false,
 		"default_velocity": 20,
+		"default_altitude": 150,
 		"missions": {
 			"simple": {
 				"velocity": 20,
@@ -2248,6 +2241,10 @@
 				]
 			}
 		}
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
 	},
 	"data_presentation": {
 		"compress_double": true

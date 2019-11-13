@@ -41,8 +41,7 @@
 				],
 				"controller_constraints": [
 					"roll",
-					"pitch",
-					"yaw"
+					"pitch"
 				]
 			}
 		}
