@@ -65,7 +65,7 @@
 										"type": "local_frame"
 									},
 									{
-										"type": "wind_analysis"
+										"type": "trim_analysis"
 									}
 								]
 							}
