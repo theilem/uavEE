@@ -9,7 +9,9 @@ callback(const simulation_interface::sensor_data& sd)
 {
 	SensorData sensorData = rosToAp(sd);
 	APLOG_DEBUG << "Sensor Data Timestamp ROS: " << to_simple_string(sd.header.stamp.toBoost());
-	APLOG_DEBUG << "Sensor Data Position E uavAP: " << sensorData.position.x();
+	APLOG_DEBUG << "Sensor Data Position X uavAP: " << sensorData.position.x();
+	APLOG_DEBUG << "Sensor Data Position Y uavAP: " << sensorData.position.y();
+	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 }
 
 int
