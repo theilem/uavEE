@@ -3,6 +3,9 @@
 #include <ros/ros.h>
 #include <simulation_interface/sensor_data.h>
 #include <autopilot_interface/detail/uavAPConversions.h>
+#include "image_cropper.hpp"
+
+const string map_image = "image.jpg";
 
 void
 callback(const simulation_interface::sensor_data& sd)
@@ -12,6 +15,9 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position X uavAP: " << sensorData.position.x();
 	APLOG_DEBUG << "Sensor Data Position Y uavAP: " << sensorData.position.y();
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
+
+	string result_image = "results/" + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
+	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), 100);
 }
 
 int
