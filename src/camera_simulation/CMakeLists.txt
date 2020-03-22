@@ -4,6 +4,8 @@ project(camera_simulation)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+set(OpenCV_DIR "/usr/local/share/OpenCV")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -11,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   simulation_interface
   autopilot_interface
+  OpenCV REQUIRED
 )
 
 ## System dependencies are found with CMake's conventions
@@ -126,6 +129,7 @@ include_directories(
   	${EIGEN_INCLUDE_DIR}
   	${UAVAP_INCLUDE_DIR}
   	${BOOST_INCLUDE_DIR}
+	${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -140,7 +144,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/camera_simulation_node.cpp)
+add_executable(${PROJECT_NAME}_node src/camera_simulation_node.cpp src/image_cropper.hpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -159,6 +163,7 @@ target_link_libraries(${PROJECT_NAME}_node
    	boost_thread
    	pthread
    	rt
+	${OpenCV_LIBS}
 )
 
 #############

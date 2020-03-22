@@ -5,7 +5,8 @@
 #include <autopilot_interface/detail/uavAPConversions.h>
 #include "image_cropper.hpp"
 
-const string map_image = "image.jpg";
+const string map_image = "/home/pure/devel/uavEE/src/camera_simulation/image.jpg";
+const string result_folder = "/home/pure/devel/uavEE/build/test_results/camera_results/";
 
 void
 callback(const simulation_interface::sensor_data& sd)
@@ -16,7 +17,7 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position Y uavAP: " << sensorData.position.y();
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 
-	string result_image = "results/" + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
+	string result_image = result_folder + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
 	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), 100);
 }
 

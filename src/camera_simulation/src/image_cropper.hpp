@@ -21,10 +21,10 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     Mat image;
     image = imread(imageName.c_str(), IMREAD_COLOR);
     if (image.empty()) {
-      cout <<  "Could not open or find the image" << std::endl ;
+      APLOG_DEBUG <<  "Could not open or find the image";
       return -1;
     }
-    cout << "Initial image dimension: " << image.cols << " X " << image.rows << endl;
+    APLOG_DEBUG << "Initial image dimension: " << image.cols << " X " << image.rows;
 
     double ratio_x = image.cols / udp_length;
     double ratio_y = image.rows / udp_height;
@@ -34,7 +34,7 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     double pixel_radius_x = udp_radius * ratio_x;
     double pixel_radius_y = udp_radius * ratio_y;
 
-    cout << "pixel_x: " << pixel_x << "   pixel_y: " << pixel_y << endl;
+    APLOG_DEBUG << "pixel_x: " << pixel_x << "   pixel_y: " << pixel_y;
 
     // pixel_x: x_coordinates of the ROI center in pixel_level, top left corner is (0, 0)
     double x = pixel_x - pixel_radius_x;
@@ -44,7 +44,7 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     if (y < 0) y = 0;
 
     if (x > image.cols || y > image.rows) {
-      cout << "no image is produced, exceed image boundary, x: " << x << "   y: " << y << endl;
+      APLOG_DEBUG << "no image is produced, exceed image boundary, x: " << x << "   y: " << y;
       return 1;
     }
 
@@ -58,7 +58,8 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     const Rect roi(x, y, width, height);
     image = image(roi).clone();
 
-    cout << "Cropped image dimension: " << image.cols << " X " << image.rows << endl;
+    APLOG_DEBUG << "Cropped image dimension: " << image.cols << " X " << image.rows;
+    APLOG_DEBUG << resultImage;
 
     imwrite( resultImage, image);
     return 0;
