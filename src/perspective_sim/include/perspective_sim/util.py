@@ -1,9 +1,7 @@
-import random
+from skimage import io
+import numpy as np
 
 
-def getName():
-    return "Hello!"
-
-
-def getStatus():
-    return random.choice(["happy", "awesome"])
+def load_image(path: str):
+    data = io.imread(path)
+    return np.array(data)

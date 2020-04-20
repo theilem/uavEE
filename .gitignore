@@ -7,3 +7,5 @@ src/ground_station/resources/map_tiles/
 
 # Ignoring Qt User Profiles
 *.user
+
+*.pyc

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+
+# Dummy class used as an example of how to do inter-node communication
+
 import rospy
-from perspective_sim import util
 from std_msgs.msg import String
 
 # Initialize the node with rospy
@@ -12,11 +14,9 @@ publisher = rospy.Publisher("~topic", String, queue_size=1)
 # Define Timer callback
 def callback(event):
     msg = String()
-    publisher.publish(util.getName())
+    publisher.publish("hi")
 
 
-
-num = 0
 # Read parameter
 pub_period = rospy.get_param("~pub_period", 1.0)
 # Create timer
