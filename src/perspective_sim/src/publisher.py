@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+from perspective_sim import util
 from std_msgs.msg import String
 
 # Initialize the node with rospy
@@ -11,7 +12,8 @@ publisher = rospy.Publisher("~topic", String, queue_size=1)
 # Define Timer callback
 def callback(event):
     msg = String()
-    publisher.publish("Hello!")
+    publisher.publish(util.getName())
+
 
 
 num = 0
