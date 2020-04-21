@@ -5,8 +5,14 @@
 #include <autopilot_interface/detail/uavAPConversions.h>
 #include "image_cropper.hpp"
 
-const string map_image = "/home/pure/devel/uavEE/src/camera_simulation/image.jpg";
-const string result_folder = "/home/pure/devel/uavEE/build/test_results/camera_results/";
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+static string map_image = "/home/pure/devel/uavEE/src/camera_simulation/image.jpg";
+static string result_folder = "/home/pure/devel/uavEE/build/test_results/camera_results/";
+static double convert_ratio = 1;
 
 void
 callback(const simulation_interface::sensor_data& sd)
@@ -18,12 +24,42 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 
 	string result_image = result_folder + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
-	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), 100);
+	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), 100, convert_ratio);
+}
+
+void init(int argc, char** argv)
+{
+	int c;
+
+	// -p picture_location -s save_location -r ratio -h display help info
+	while ((c = getopt (argc, argv, "p:s:r:h")) != -1) {
+		switch (c) {
+			case 'p':
+				map_image = optarg;
+				break;
+			case 's':
+				result_folder = optarg;
+				break;
+			case 'r':
+				convert_ratio = std::stod(optarg);
+				break;
+			case 'h':
+				APLOG_DEBUG << "options: -p picture_location -s save_location -r ratio";
+				break;
+			case '?':
+				return;
+			default:
+				abort ();
+      	}
+	}
+
+	APLOG_DEBUG << "image_location: " << map_image << " save_location: " << result_folder << " ratio: " << convert_ratio;
 }
 
 int
 main(int argc, char** argv)
 {
+	init(argc, argv);
 	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("CameraSimulation");
 	ros::init(argc, argv, "camera_simulation");

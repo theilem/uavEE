@@ -12,7 +12,7 @@ const double udp_height = 350*2;
 const double udp_origin_x = -850; // local udp coordinates of the top left corner of the image
 const double udp_origin_y = 350;  // in opencv, top left is (0, 0)
 
-int cropper(string target_image, string result_image, double udp_x, double udp_y, double udp_radius) {
+int cropper(string target_image, string result_image, double udp_x, double udp_y, double udp_radius, double convert_ratio) {
     string imageName("image.jpg"); // by default
     imageName = target_image;
     string resultImage("crop_img.jpg");
@@ -26,8 +26,11 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     }
     APLOG_DEBUG << "Initial image dimension: " << image.cols << " X " << image.rows;
 
-    double ratio_x = image.cols / udp_length;
-    double ratio_y = image.rows / udp_height;
+    // double ratio_x = image.cols / udp_length;
+    // double ratio_y = image.rows / udp_height;
+
+    double ratio_x = convert_ratio;
+    double ratio_y = convert_ratio;
 
     double pixel_x = ratio_x * abs(udp_x - udp_origin_x);
     double pixel_y = ratio_y * abs(udp_y - udp_origin_y);
@@ -40,10 +43,10 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     double x = pixel_x - pixel_radius_x;
     double y = pixel_y - pixel_radius_y;
     // int offset = pixel_radius * 2;
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
+    // if (x < 0) x = 0;
+    // if (y < 0) y = 0;
 
-    if (x > image.cols || y > image.rows) {
+    if (x > image.cols || y > image.rows || x < 0 || y < 0) {
       APLOG_DEBUG << "no image is produced, exceed image boundary, x: " << x << "   y: " << y;
       return 1;
     }
