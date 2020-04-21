@@ -11,6 +11,7 @@ const double udp_length = 850*2;
 const double udp_height = 350*2;
 const double udp_origin_x = -850; // local udp coordinates of the top left corner of the image
 const double udp_origin_y = 350;  // in opencv, top left is (0, 0)
+static VideoWriter output_video; 
 
 int cropper(string target_image, string result_image, double udp_x, double udp_y, double udp_radius, double convert_ratio) {
     string imageName("image.jpg"); // by default
@@ -64,6 +65,9 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     APLOG_DEBUG << "Cropped image dimension: " << image.cols << " X " << image.rows;
     APLOG_DEBUG << resultImage;
 
-    imwrite( resultImage, image);
+    // imwrite( resultImage, image);
+    // VideoWriter out_capture("/home/pure/devel/uavEE/build/test_results/camera_results/output.avi", CV_FOURCC('M','J','P','G'), 30, Size(width,height));
+    output_video.write(image);
+    imshow( "Frame", image );
     return 0;
 }

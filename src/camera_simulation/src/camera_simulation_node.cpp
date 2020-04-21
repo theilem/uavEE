@@ -13,6 +13,7 @@
 static string map_image = "/home/pure/devel/uavEE/src/camera_simulation/image.jpg";
 static string result_folder = "/home/pure/devel/uavEE/build/test_results/camera_results/";
 static double convert_ratio = 1;
+static double udp_radius = 100;
 
 void
 callback(const simulation_interface::sensor_data& sd)
@@ -24,7 +25,7 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 
 	string result_image = result_folder + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
-	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), 100, convert_ratio);
+	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), udp_radius, convert_ratio);
 }
 
 void init(int argc, char** argv)
@@ -54,6 +55,9 @@ void init(int argc, char** argv)
 	}
 
 	APLOG_DEBUG << "image_location: " << map_image << " save_location: " << result_folder << " ratio: " << convert_ratio;
+
+	output_video = VideoWriter("/home/pure/devel/uavEE/build/test_results/camera_results/output.avi", CV_FOURCC('M','J','P','G'), 30, 
+	Size(udp_radius * convert_ratio * 2, udp_radius * convert_ratio * 2));
 }
 
 int
@@ -78,6 +82,8 @@ main(int argc, char** argv)
 		ros::spinOnce();
 		loopRate.sleep();
 	}
+
+	output_video.release();
 
 	return 0;
 }
