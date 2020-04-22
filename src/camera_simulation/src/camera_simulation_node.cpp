@@ -10,10 +10,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static string map_image = "/home/pure/devel/uavEE/src/camera_simulation/image.jpg";
-static string result_folder = "/home/pure/devel/uavEE/build/test_results/camera_results/";
-static double convert_ratio = 1;
-static double udp_radius = 100;
+static string base_img_path;
+static string output_path;
+static double convert_ratio;
+static double udp_radius;
 
 void
 callback(const simulation_interface::sensor_data& sd)
@@ -24,37 +24,21 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position Y uavAP: " << sensorData.position.y();
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 
-	string result_image = result_folder + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
-	cropper(map_image, result_image, sensorData.position.x(), sensorData.position.y(), udp_radius, convert_ratio);
+	// string result_image = output_path + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
+	cropper(base_img_path, sensorData.position.x(), sensorData.position.y(), udp_radius, convert_ratio);
 }
 
-void init(int argc, char** argv)
+void init(ros::NodeHandle nh)
 {
-	int c;
+	nh.getParam("/camera_simulation_node/base_img_path", base_img_path);
+	nh.getParam("/camera_simulation_node/output_path", output_path);
+	nh.getParam("/camera_simulation_node/convert_ratio", convert_ratio);
+	nh.getParam("/camera_simulation_node/udp_radius", udp_radius);
+	nh.getParam("/camera_simulation_node/udp_origin_x", udp_origin_x);
+	nh.getParam("/camera_simulation_node/udp_origin_y", udp_origin_y);
 
-	// -p picture_location -s save_location -r ratio -h display help info
-	while ((c = getopt (argc, argv, "p:s:r:h")) != -1) {
-		switch (c) {
-			case 'p':
-				map_image = optarg;
-				break;
-			case 's':
-				result_folder = optarg;
-				break;
-			case 'r':
-				convert_ratio = std::stod(optarg);
-				break;
-			case 'h':
-				APLOG_DEBUG << "options: -p picture_location -s save_location -r ratio";
-				break;
-			case '?':
-				return;
-			default:
-				abort ();
-      	}
-	}
-
-	APLOG_DEBUG << "image_location: " << map_image << " save_location: " << result_folder << " ratio: " << convert_ratio;
+	APLOG_DEBUG << "image_location: " << base_img_path << " save_location: " << output_path << " ratio: " << convert_ratio;
+	APLOG_DEBUG << base_img_path << output_path << convert_ratio << udp_radius << udp_origin_x << udp_origin_y;
 
 	output_video = VideoWriter("/home/pure/devel/uavEE/build/test_results/camera_results/output.avi", CV_FOURCC('M','J','P','G'), 30, 
 	Size(udp_radius * convert_ratio * 2, udp_radius * convert_ratio * 2));
@@ -63,7 +47,6 @@ void init(int argc, char** argv)
 int
 main(int argc, char** argv)
 {
-	init(argc, argv);
 	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("CameraSimulation");
 	ros::init(argc, argv, "camera_simulation");
@@ -72,6 +55,8 @@ main(int argc, char** argv)
 
 	std::string config;
 	nh.getParam("/camera_simulation_node/config_path", config);
+
+	init(nh);
 
 	ros::Subscriber sensorDataSubscriptionRos = nh.subscribe("radio_comm/sensor_data", 20,
 			callback);

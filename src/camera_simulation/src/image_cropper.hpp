@@ -7,17 +7,17 @@
 using namespace cv;
 using namespace std;
 
-const double udp_length = 850*2;
-const double udp_height = 350*2;
-const double udp_origin_x = -850; // local udp coordinates of the top left corner of the image
-const double udp_origin_y = 350;  // in opencv, top left is (0, 0)
-static VideoWriter output_video; 
+// const double udp_length = 850*2;
+// const double udp_height = 350*2;
+static double udp_origin_x; // local udp coordinates of the top left corner of the image
+static double udp_origin_y;  // in opencv, top left is (0, 0)
+static VideoWriter output_video;
 
-int cropper(string target_image, string result_image, double udp_x, double udp_y, double udp_radius, double convert_ratio) {
+int cropper(string target_image, double udp_x, double udp_y, double udp_radius, double convert_ratio) {
     string imageName("image.jpg"); // by default
     imageName = target_image;
-    string resultImage("crop_img.jpg");
-    resultImage = result_image;
+    // string resultImage("crop_img.jpg");
+    // resultImage = result_image;
 
     Mat image;
     image = imread(imageName.c_str(), IMREAD_COLOR);
@@ -60,14 +60,18 @@ int cropper(string target_image, string result_image, double udp_x, double udp_y
     if ((y + height) > image.rows) height = image.rows - y;
 
     const Rect roi(x, y, width, height);
-    image = image(roi).clone();
+    Mat frame = image(roi).clone();
 
-    APLOG_DEBUG << "Cropped image dimension: " << image.cols << " X " << image.rows;
-    APLOG_DEBUG << resultImage;
+    APLOG_DEBUG << "Cropped image dimension: " << frame.cols << " X " << frame.rows;
+    // APLOG_DEBUG << resultImage;
 
     // imwrite( resultImage, image);
     // VideoWriter out_capture("/home/pure/devel/uavEE/build/test_results/camera_results/output.avi", CV_FOURCC('M','J','P','G'), 30, Size(width,height));
-    output_video.write(image);
-    imshow( "Frame", image );
+    output_video.write(frame);
+
+    if (!frame.empty()) {
+			imshow( "Frame", frame );
+			waitKey(10);
+		}
     return 0;
 }
