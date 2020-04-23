@@ -24,7 +24,6 @@ callback(const simulation_interface::sensor_data& sd)
 	APLOG_DEBUG << "Sensor Data Position Y uavAP: " << sensorData.position.y();
 	APLOG_DEBUG << "Sensor Data Position Z uavAP: " << sensorData.position.z();
 
-	// string result_image = output_path + to_simple_string(sd.header.stamp.toBoost()) + ".jpg";
 	cropper(base_img_path, sensorData.position.x(), sensorData.position.y(), udp_radius, convert_ratio);
 }
 
