@@ -54,8 +54,8 @@ int cropper(string target_image, double udp_x, double udp_y, double udp_radius, 
     output_video.write(frame);
 
     if (!frame.empty()) {
-			imshow( "Frame", frame );
-			waitKey(10);
-		}
+      imshow( "Frame", frame );
+      waitKey(10);
+    }
     return 0;
 }
