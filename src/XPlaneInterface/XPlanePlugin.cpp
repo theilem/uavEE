@@ -18,7 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * @file xplane_ros_plugin.cpp
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.edu
+ * @author Richard Nai, richard.nai@tum.de
  * @date [DD.MM.YYYY] 26.3.2018
  * @brief
  */
@@ -32,23 +33,27 @@
 #define LIN
 #endif
 
+#include <cpsCore/Synchronization/SimpleRunner.h>
+
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
-#include "xPlane/CHeaders/XPLM/XPLMPlugin.h"
-#include "xPlane/CHeaders/XPLM/XPLMDisplay.h"
-#include "xPlane/CHeaders/XPLM/XPLMGraphics.h"
-#include "xPlane/CHeaders/Widgets/XPWidgets.h"
-#include "xPlane/CHeaders/Widgets/XPStandardWidgets.h"
 #include "xPlane/CHeaders/XPLM/XPLMMenus.h"
-#include "xPlane/CHeaders/XPLM/XPLMUtilities.h"
-#include "uavEE/XPlaneInterface/XPlaneNode.h"
+
+
+#include "uavEE/XPlaneInterface/XPlaneInterface.h"
+#include "uavEE/XPlaneInterface/XPlaneInterfaceHelper.h"
 
 
 void
 handler(void* mRef, void* iRef);
 
+Aggregator agg;
+bool runBegan;
+
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
 {
+	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
+	CPSLOG_WARN << "Begin XPlanePlugin";
 	strcpy(outName, "uavEE");
 	strcpy(outSig, "uavee");
 	strcpy(outDesc, "uavEE X-Plane Simulation Interface");
@@ -61,10 +66,10 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	id = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
 
 	XPLMAppendMenuItem(id, "Start Node", (void*) "STARTNODE", 1);
-	XPLMAppendMenuItem(id, "Stop Node", (void*) "STOPNODE", 1);
 	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
 	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
 
+	CPSLOG_WARN << "End XPlanePlugin";
 	return 1;
 }
 
@@ -96,62 +101,34 @@ handler(void* mRef, void* iRef)
 	if (!strcmp((char*) iRef, "STARTNODE"))
 	{
 		CPSLOG_DEBUG << "STARTNODE\n";
-//		if (aggregator)
-//		{
-//			SimpleRunner runner(*aggregator);
-//			if (runner.runAllStages())
-//			{
-//				APLOG_ERROR << "Running all stages failed.";
-//				return;
-//			}
-//		}
-	}
-	else if (!strcmp((char*) iRef, "STOPNODE"))
-	{
-		CPSLOG_DEBUG << "STOPNODE\n";
-//		if (aggregator)
-//		{
-//			SimpleRunner runner(*aggregator);
-//			if (runner.runAllStages())
-//			{
-//				APLOG_ERROR << "Running all stages failed.";
-//				return;
-//			}
-//		}
+		if (!runBegan)
+		{
+			Configuration c;
+			agg = XPlaneInterfaceHelper::createAggregation(c);
+			SimpleRunner runner(agg);
+			if (runner.runAllStages())
+			{
+				CPSLOG_ERROR << "Running all stages failed.";
+				return;
+			}
+			runBegan = true;
+		}
 	}
 	else if (!strcmp((char*) iRef, "ENABLEAP"))
 	{
 		CPSLOG_DEBUG << "ENABLEAP\n";
-//		if (aggregator)
-//		{
-//			auto node = aggregator->getOne<XPlaneRosNode>();
-//
-//			if (!node)
-//			{
-//				return;
-//			}
-//
-//			node->enableAutopilot();
-//		}
+		auto node = agg.getOne<XPlaneInterface>();
+		node->enableAutopilot();
 	}
 	else if (!strcmp((char*) iRef, "DISABLEAP"))
 	{
 		CPSLOG_DEBUG << "DISABLEAP\n";
-//		if (aggregator)
-//		{
-//			auto node = aggregator->getOne<XPlaneRosNode>();
-//
-//			if (!node)
-//			{
-//				return;
-//			}
-//
-//			node->disableAutopilot();
-//		}
+		auto node = agg.getOne<XPlaneInterface>();
+		node->disableAutopilot();
 	}
 	else
 	{
-		CPSLOG_WARN << "Unknown iRef in XPlanePlugin " << __FUNCTION__  << ". Line:" << __LINE__ << "\n";
-		CPSLOG_WARN << "iRef was: " << (char*) iRef << "\n";
+		CPSLOG_WARN << "Unknown iRef in XPlanePlugin " << __FUNCTION__ << ". Line:" << __LINE__;
+		CPSLOG_WARN << "iRef was: " << (char*) iRef;
 	}
 }

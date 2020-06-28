@@ -3,12 +3,15 @@
 //
 
 #include <uavAP/API/ap_ext/latLongToUTM.h>
+#include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
-#include "uavEE/XPlaneInterface/XPlaneNode.h"
+#include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
 #define DEG2RAD (M_PI / 180.0)
 
-XPlaneNode::XPlaneNode() :
+XPlaneInterface::XPlaneInterface() :
 		sensorFrequency_(100)
 {
 	positionRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/latitude");
@@ -55,22 +58,16 @@ XPlaneNode::XPlaneNode() :
 	sensorData_.autopilotActive = false;
 }
 
-std::shared_ptr<XPlaneNode>
-XPlaneNode::create(const Configuration& config)
-{
-	return std::shared_ptr<XPlaneNode>();
-}
-
 bool
-XPlaneNode::run(RunStage stage)
+XPlaneInterface::run(RunStage stage)
 {
 	switch (stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<IScheduler>())
+			if (!checkIsSet<IScheduler, AggregatableAutopilotAPI>())
 			{
-				CPSLOG_ERROR << "Scheduler not set.";
+				CPSLOG_ERROR << "Missing Dependencies.";
 				return true;
 			}
 			break;
@@ -80,6 +77,8 @@ XPlaneNode::run(RunStage stage)
 			sensorDataEvent_ = get<IScheduler>()->schedule([this]
 														   { processData(); }, Milliseconds(0),
 														   Milliseconds(1000 / sensorFrequency_));
+			get<AggregatableAutopilotAPI>()->subscribeOnControllerOut(
+					std::bind(&XPlaneInterface::actuate, this, std::placeholders::_1));
 			break;
 		}
 		default:
@@ -90,7 +89,7 @@ XPlaneNode::run(RunStage stage)
 }
 
 void
-XPlaneNode::enableAutopilot()
+XPlaneInterface::enableAutopilot()
 {
 	if (!sensorData_.autopilotActive)
 	{
@@ -101,7 +100,7 @@ XPlaneNode::enableAutopilot()
 }
 
 void
-XPlaneNode::disableAutopilot()
+XPlaneInterface::disableAutopilot()
 {
 	if (sensorData_.autopilotActive)
 	{
@@ -112,7 +111,7 @@ XPlaneNode::disableAutopilot()
 }
 
 void
-XPlaneNode::processData()
+XPlaneInterface::processData()
 {
 	//Process SensorData
 	double lat = XPLMGetDatad(positionRefs_[0]);
@@ -159,9 +158,13 @@ XPlaneNode::processData()
 
 	sensorData_.acceleration = m * accelerationInertial;
 
+	get<AggregatableAutopilotAPI>()->setSensorData(sensorData_);
+
 	//Process Power Data
 	powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
 	powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
+
+	get<AggregatableAutopilotAPI>()->setPowerData(powerData_);
 
 	//Process Servo Data
 	servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
@@ -183,20 +186,22 @@ XPlaneNode::processData()
 	powerData_.timestamp = currTime;
 	servoData_.timestamp = currTime;
 
-	//TODO publish sensor, power, and actuation data
+	get<AggregatableAutopilotAPI>()->setServoData(servoData_);
 }
 
 void
-XPlaneNode::actuate(const ServoData& act)
+XPlaneInterface::actuate(const ControllerOutput& out)
 {
+	CPSLOG_TRACE << "Begin Actuate\n";
 	if (!sensorData_.autopilotActive)
 		return;
 
-	float throt = (static_cast<float>(act.throttle) + 1) / 2;
+	float throt = (static_cast<float>(out.throttleOutput) + 1) / 2;
 	float throttle[] =
-			{ throt, throt, throt, throt, throt, throt, throt, throt };
+			{throt, throt, throt, throt, throt, throt, throt, throt};
 	XPLMSetDatavf(throttleRef_, throttle, 0, 8);
-	XPLMSetDataf(joystickAttitudeRef_[0], act.aileron);
-	XPLMSetDataf(joystickAttitudeRef_[1], act.elevator);
-	XPLMSetDataf(joystickAttitudeRef_[2], act.rudder);
+	XPLMSetDataf(joystickAttitudeRef_[0], out.rollOutput);
+	XPLMSetDataf(joystickAttitudeRef_[1], out.pitchOutput);
+	XPLMSetDataf(joystickAttitudeRef_[2], out.yawOutput);
+	CPSLOG_TRACE << "End Actuate\n";
 }
