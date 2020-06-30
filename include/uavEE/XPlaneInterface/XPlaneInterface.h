@@ -41,31 +41,30 @@ private:
 	int sensorFrequency_;
 	XPLMDataRef positionRefs_[3];
 	XPLMDataRef velocityRefs_[3];
-	XPLMDataRef trueAirSpeedRef_;
+	XPLMDataRef airSpeedRef_;
 	XPLMDataRef accelerationRefs_[3];
 	XPLMDataRef attitudeRefs_[3];
+	XPLMDataRef angleOfAttackRef_;
+	XPLMDataRef angleOfSideslipRef_;
 	XPLMDataRef angularRateRefs_[3];
-
-	XPLMDataRef overridesRef_[2];
-	XPLMDataRef joystickAttitudeRef_[3];
-
+	XPLMDataRef gpsFixRef_;
+	XPLMDataRef batteryVoltageRef_;
+	XPLMDataRef batteryCurrentRef_;
 	XPLMDataRef aileronRef_;
 	XPLMDataRef elevatorRef_;
 	XPLMDataRef rudderRef_;
 	XPLMDataRef throttleRef_;
 	XPLMDataRef rpmRef_;
-
-	XPLMDataRef batteryVoltageRef_;
-	XPLMDataRef batteryCurrentRef_;
+	XPLMDataRef joystickOverrideRef_[2];
+	XPLMDataRef joystickAttitudeRef_[3];
+	//TODO update scheduling based on sim speed
+	XPLMDataRef simSpeed_;
 
 	ServoData servoData_;
 	SensorData sensorData_;
 	PowerData powerData_;
 
-	//TODO update scheduling based on sim speed
-	XPLMDataRef simSpeed_;
 	Event sensorDataEvent_;
 };
-
 
 #endif //UAVEE_XPLANEINTERFACE_H

@@ -53,7 +53,7 @@ PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
 {
 	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
-	CPSLOG_WARN << "Begin XPlanePlugin";
+	CPSLOG_TRACE << "Begin XPlanePlugin";
 	strcpy(outName, "uavEE");
 	strcpy(outSig, "uavee");
 	strcpy(outDesc, "uavEE X-Plane Simulation Interface");
@@ -69,7 +69,7 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
 	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
 
-	CPSLOG_WARN << "End XPlanePlugin";
+	CPSLOG_TRACE << "End XPlanePlugin";
 	return 1;
 }
 

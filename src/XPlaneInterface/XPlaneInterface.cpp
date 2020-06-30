@@ -9,8 +9,6 @@
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
-#define DEG2RAD (M_PI / 180.0)
-
 XPlaneInterface::XPlaneInterface() :
 		sensorFrequency_(100)
 {
@@ -22,7 +20,7 @@ XPlaneInterface::XPlaneInterface() :
 	velocityRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_vy");
 	velocityRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/local_vz");
 
-	trueAirSpeedRef_ = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
+	airSpeedRef_ = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
 
 	accelerationRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/local_ax");
 	accelerationRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_ay");
@@ -32,16 +30,17 @@ XPlaneInterface::XPlaneInterface() :
 	attitudeRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/theta");
 	attitudeRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/psi");
 
+	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
+	angleOfSideslipRef_ = XPLMFindDataRef("sim/flightmodel/position/beta");
+
 	angularRateRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/P");
 	angularRateRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/Q");
 	angularRateRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/R");
 
-	overridesRef_[0] = XPLMFindDataRef("sim/operation/override/override_joystick");
-	overridesRef_[1] = XPLMFindDataRef("sim/operation/override/override_throttles");
+	gpsFixRef_ = XPLMFindDataRef("sim/cockpit2/radios/actuators/gps_power");
 
-	joystickAttitudeRef_[0] = XPLMFindDataRef("sim/joystick/yoke_roll_ratio");
-	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
-	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
+	batteryVoltageRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt");
+	batteryCurrentRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp");
 
 	aileronRef_ = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
 	elevatorRef_ = XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def");
@@ -49,8 +48,12 @@ XPlaneInterface::XPlaneInterface() :
 	throttleRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use");
 	rpmRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad");
 
-	batteryVoltageRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt");
-	batteryCurrentRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp");
+	joystickOverrideRef_[0] = XPLMFindDataRef("sim/operation/override/override_joystick");
+	joystickOverrideRef_[1] = XPLMFindDataRef("sim/operation/override/override_throttles");
+
+	joystickAttitudeRef_[0] = XPLMFindDataRef("sim/joystick/yoke_roll_ratio");
+	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
+	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
 
 	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
 
@@ -94,8 +97,8 @@ XPlaneInterface::enableAutopilot()
 	if (!sensorData_.autopilotActive)
 	{
 		sensorData_.autopilotActive = true;
-		XPLMSetDatai(overridesRef_[0], 1);
-		XPLMSetDatai(overridesRef_[1], 1);
+		XPLMSetDatai(joystickOverrideRef_[0], 1);
+		XPLMSetDatai(joystickOverrideRef_[1], 1);
 	}
 }
 
@@ -105,8 +108,8 @@ XPlaneInterface::disableAutopilot()
 	if (sensorData_.autopilotActive)
 	{
 		sensorData_.autopilotActive = false;
-		XPLMSetDatai(overridesRef_[0], 0);
-		XPLMSetDatai(overridesRef_[1], 0);
+		XPLMSetDatai(joystickOverrideRef_[0], 0);
+		XPLMSetDatai(joystickOverrideRef_[1], 0);
 	}
 }
 
@@ -116,35 +119,24 @@ XPlaneInterface::processData()
 	//Process SensorData
 	double lat = XPLMGetDatad(positionRefs_[0]);
 	double lon = XPLMGetDatad(positionRefs_[1]);
-	double alt = XPLMGetDatad(positionRefs_[2]);
 
-	double north = 0;
-	double east = 0;
-	int zone = 0;
-	char hemi = 'N';
+	double north;
+	double east;
+	int zone;
+	char hemi;
 
 	latLongToUTM(lat, lon, north, east, zone, hemi);
 
 	sensorData_.position[0] = east;
 	sensorData_.position[1] = north;
-	sensorData_.position[2] = alt;
-
-	sensorData_.attitude[0] = static_cast<double>(XPLMGetDataf(attitudeRefs_[0])) * DEG2RAD;
-	sensorData_.attitude[1] = static_cast<double>(XPLMGetDataf(attitudeRefs_[1])) * DEG2RAD;
-
-	double yaw = static_cast<double>(XPLMGetDataf(attitudeRefs_[2])) * DEG2RAD;
-	sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
+	sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
 
 	sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
 	sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
 	sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
 
 	sensorData_.groundSpeed = sensorData_.velocity.norm();
-	sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(trueAirSpeedRef_));
-
-	sensorData_.angularRate[0] = static_cast<double>(XPLMGetDataf(angularRateRefs_[0])) * DEG2RAD;
-	sensorData_.angularRate[1] = -static_cast<double>(XPLMGetDataf(angularRateRefs_[1])) * DEG2RAD;
-	sensorData_.angularRate[2] = static_cast<double>(XPLMGetDataf(angularRateRefs_[2])) * DEG2RAD;
+	sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
 
 	Vector3 accelerationInertial;
 	accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
@@ -157,6 +149,22 @@ XPlaneInterface::processData()
 		* Eigen::AngleAxisd(-sensorData_.attitude[2], Vector3::UnitZ());
 
 	sensorData_.acceleration = m * accelerationInertial;
+
+
+	sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
+	sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
+
+	double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+	sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
+
+	sensorData_.angleOfAttack = degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
+	sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
+
+	sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
+	sensorData_.angularRate[1] = degToRad(-static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
+	sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+
+	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
 	get<AggregatableAutopilotAPI>()->setSensorData(sensorData_);
 
