@@ -99,25 +99,11 @@ XPlaneInterface::run(RunStage stage)
 }
 
 void
-XPlaneInterface::enableAutopilot()
+XPlaneInterface::setAutopilotActive(bool active)
 {
-	if (!sensorData_.autopilotActive)
-	{
-		sensorData_.autopilotActive = true;
-		XPLMSetDatai(joystickOverrideRef_[0], 1);
-		XPLMSetDatai(joystickOverrideRef_[1], 1);
-	}
-}
-
-void
-XPlaneInterface::disableAutopilot()
-{
-	if (sensorData_.autopilotActive)
-	{
-		sensorData_.autopilotActive = false;
-		XPLMSetDatai(joystickOverrideRef_[0], 0);
-		XPLMSetDatai(joystickOverrideRef_[1], 0);
-	}
+	sensorData_.autopilotActive = active;
+	XPLMSetDatai(joystickOverrideRef_[0], active);
+	XPLMSetDatai(joystickOverrideRef_[1], active);
 }
 
 void

@@ -31,10 +31,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	enableAutopilot();
-
-	void
-	disableAutopilot();
+	setAutopilotActive(bool active);
 
 private:
 
