@@ -1,2 +1,3 @@
 add_subdirectory(XPlaneInterface)
+add_subdirectory(RemoteAutopilotInterface)
 

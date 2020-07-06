@@ -2,10 +2,14 @@
 // Created by seedship on 6/19/20.
 //
 
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+
 #include <uavAP/API/ap_ext/latLongToUTM.h>
+#include <uavAP/API/IAutopilotAPI.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
+
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
@@ -68,7 +72,7 @@ XPlaneInterface::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<IScheduler, AggregatableAutopilotAPI>())
+			if (!checkIsSet<IScheduler>())
 			{
 				CPSLOG_ERROR << "Missing Dependencies.";
 				return true;
@@ -80,8 +84,12 @@ XPlaneInterface::run(RunStage stage)
 			sensorDataEvent_ = get<IScheduler>()->schedule([this]
 														   { processData(); }, Milliseconds(0),
 														   Milliseconds(1000 / sensorFrequency_));
-			get<AggregatableAutopilotAPI>()->subscribeOnControllerOut(
-					std::bind(&XPlaneInterface::actuate, this, std::placeholders::_1));
+
+			if (auto autopilotAPI = get<IAutopilotAPI>())
+			{
+				autopilotAPI->subscribeOnControllerOut(
+						std::bind(&XPlaneInterface::actuate, this, std::placeholders::_1));
+			}
 			break;
 		}
 		default:
@@ -166,13 +174,13 @@ XPlaneInterface::processData()
 
 	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
-	get<AggregatableAutopilotAPI>()->setSensorData(sensorData_);
+	get<IAutopilotAPI>()->setSensorData(sensorData_);
 
 	//Process Power Data
 	powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
 	powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
 
-	get<AggregatableAutopilotAPI>()->setPowerData(powerData_);
+	get<IAutopilotAPI>()->setPowerData(powerData_);
 
 	//Process Servo Data
 	servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
@@ -194,7 +202,7 @@ XPlaneInterface::processData()
 	powerData_.timestamp = currTime;
 	servoData_.timestamp = currTime;
 
-	get<AggregatableAutopilotAPI>()->setServoData(servoData_);
+	get<IAutopilotAPI>()->setServoData(servoData_);
 }
 
 void
