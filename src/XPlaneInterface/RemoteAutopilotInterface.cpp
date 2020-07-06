@@ -5,7 +5,7 @@
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
-#include "uavEE/RemoteAutopilotInterface/RemoteAutopilotInterface.h"
+#include "uavEE/XPlaneInterface/RemoteAutopilotInterface.h"
 
 #include <cpsCore/Utilities/IDC/IDC.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
@@ -53,6 +53,14 @@ boost::signals2::connection
 RemoteAutopilotInterface::subscribeOnControllerOut(const OnControllerOut::slot_type& slot)
 {
 	return onControllerOut_.connect(slot);
+}
+
+boost::signals2::connection
+RemoteAutopilotInterface::subscribeOnAdvancedControl(
+		const boost::signals2::slot<void(const AdvancedControl&), boost::function<void(const AdvancedControl&)>>& slot)
+{
+	CPSLOG_ERROR << "Not Implemented!";
+	return boost::signals2::connection();
 }
 
 bool

@@ -13,13 +13,15 @@
 #include <uavAP/API/AggregatableAutopilotAPI.h>
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
+#include "uavEE/XPlaneInterface/RemoteAutopilotInterface.h"
 
 using XPlaneInterfaceDefaultHelper = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
 		IPC,
 		DataPresentation,
 		AggregatableAutopilotAPI,
-		XPlaneInterface>;
+		XPlaneInterface,
+		RemoteAutopilotInterface>;
 
 using XPlaneInterfaceHelper = StaticHelper<XPlaneInterfaceDefaultHelper>;
 

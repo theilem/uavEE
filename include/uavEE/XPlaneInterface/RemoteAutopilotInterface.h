@@ -19,17 +19,23 @@ class RemoteAutopilotInterface
 		  public IAutopilotAPI
 {
 public:
-	void
-	setSensorData(const SensorData& sd);
+
+	static constexpr auto typeId = "remote_autopilot_api";
 
 	void
-	setServoData(const ServoData& sd);
+	setSensorData(const SensorData& sd) override;
 
 	void
-	setPowerData(const PowerData& pd);
+	setServoData(const ServoData& sd) override;
+
+	void
+	setPowerData(const PowerData& pd) override;
 
 	boost::signals2::connection
-	subscribeOnControllerOut(const OnControllerOut::slot_type& slot);
+	subscribeOnControllerOut(const OnControllerOut::slot_type& slot) override;
+
+	virtual boost::signals2::connection
+	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot) override;
 
 	bool
 	run(RunStage stage) override;

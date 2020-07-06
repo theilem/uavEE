@@ -6,7 +6,6 @@
 
 #include <uavAP/API/ap_ext/latLongToUTM.h>
 #include <uavAP/API/IAutopilotAPI.h>
-#include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
@@ -72,7 +71,7 @@ XPlaneInterface::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<IScheduler>())
+			if (!checkIsSetAll())
 			{
 				CPSLOG_ERROR << "Missing Dependencies.";
 				return true;
@@ -124,85 +123,92 @@ XPlaneInterface::disableAutopilot()
 void
 XPlaneInterface::processData()
 {
-	//Process SensorData
-	double lat = XPLMGetDatad(positionRefs_[0]);
-	double lon = XPLMGetDatad(positionRefs_[1]);
+	if (auto api = get<IAutopilotAPI>())
+	{
+		//Process SensorData
+		double lat = XPLMGetDatad(positionRefs_[0]);
+		double lon = XPLMGetDatad(positionRefs_[1]);
 
-	double north;
-	double east;
-	int zone;
-	char hemi;
+		double north;
+		double east;
+		int zone;
+		char hemi;
 
-	latLongToUTM(lat, lon, north, east, zone, hemi);
+		latLongToUTM(lat, lon, north, east, zone, hemi);
 
-	sensorData_.position[0] = east;
-	sensorData_.position[1] = north;
-	sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
+		sensorData_.position[0] = east;
+		sensorData_.position[1] = north;
+		sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
 
-	sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
-	sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
-	sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
+		sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
+		sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
+		sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
 
-	sensorData_.groundSpeed = sensorData_.velocity.norm();
-	sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
+		sensorData_.groundSpeed = sensorData_.velocity.norm();
+		sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
 
-	Vector3 accelerationInertial;
-	accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-	accelerationInertial[1] = static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
-	accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
+		Vector3 accelerationInertial;
+		accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
+		accelerationInertial[1] = static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
+		accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-sensorData_.attitude[0], Vector3::UnitX())
-		* Eigen::AngleAxisd(-sensorData_.attitude[1], Vector3::UnitY())
-		* Eigen::AngleAxisd(-sensorData_.attitude[2], Vector3::UnitZ());
+		Eigen::Matrix3d m;
+		m = Eigen::AngleAxisd(-sensorData_.attitude[0], Vector3::UnitX())
+			* Eigen::AngleAxisd(-sensorData_.attitude[1], Vector3::UnitY())
+			* Eigen::AngleAxisd(-sensorData_.attitude[2], Vector3::UnitZ());
 
-	sensorData_.acceleration = m * accelerationInertial;
+		sensorData_.acceleration = m * accelerationInertial;
 
 
-	sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
-	sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
+		sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
+		sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
 
-	double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
-	sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
+		double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+		sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
 
-	sensorData_.angleOfAttack = degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
-	sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
+		sensorData_.angleOfAttack = degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
+		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
 
-	sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-	sensorData_.angularRate[1] = degToRad(-static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
-	sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
+		sensorData_.angularRate[1] = degToRad(-static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
+		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
 
-	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
+		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
-	get<IAutopilotAPI>()->setSensorData(sensorData_);
+		api->setSensorData(sensorData_);
 
-	//Process Power Data
-	powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
-	powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
+		//Process Power Data
+		powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
+		powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
 
-	get<IAutopilotAPI>()->setPowerData(powerData_);
+		api->setPowerData(powerData_);
 
-	//Process Servo Data
-	servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
-	servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
-	servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
+		//Process Servo Data
+		servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
+		servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
+		servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
 
-	float throttle[8];
-	XPLMGetDatavf(throttleRef_, throttle, 0, 8);
-	servoData_.throttle = static_cast<double>(throttle[0]);
+		float throttle[8];
+		XPLMGetDatavf(throttleRef_, throttle, 0, 8);
+		servoData_.throttle = static_cast<double>(throttle[0]);
 
-	float rpm[8];
-	XPLMGetDatavf(rpmRef_, rpm, 0, 8);
-	rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
-	servoData_.rpm = static_cast<double>(rpm[0]);
+		float rpm[8];
+		XPLMGetDatavf(rpmRef_, rpm, 0, 8);
+		rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
+		servoData_.rpm = static_cast<double>(rpm[0]);
 
-	//Add Timestamps
-	auto currTime = Clock::now();
-	sensorData_.timestamp = currTime;
-	powerData_.timestamp = currTime;
-	servoData_.timestamp = currTime;
+		//Add Timestamps
+		auto currTime = Clock::now();
+		sensorData_.timestamp = currTime;
+		powerData_.timestamp = currTime;
+		servoData_.timestamp = currTime;
 
-	get<IAutopilotAPI>()->setServoData(servoData_);
+		api->setServoData(servoData_);
+	}
+	else
+	{
+		CPSLOG_ERROR << "Missing IAutopilotAPI";
+	}
 }
 
 void
