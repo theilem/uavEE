@@ -5,12 +5,18 @@
 #ifndef UAVEE_REMOTEAUTOPILOTINTERFACE_H
 #define UAVEE_REMOTEAUTOPILOTINTERFACE_H
 
-#include <cpsCore/Aggregation/AggregatableObject.hpp>
+#include <cpsCore/cps_object>
+#include <uavAP/API/IAutopilotAPI.h>
+#include <cpsCore/Utilities/IDC/IDCSender.h>
+
 class IDC;
+class DataPresentation;
 
-#include "uavEE/RemoteAutopilotInterface/RemoteAutopilotInterface.h"
-
-class RemoteAutopilotInterface : public AggregatableObject<IDC>, public IRunnableObject
+class RemoteAutopilotInterface
+		: public AggregatableObject<IDC, DataPresentation>,
+		  public IRunnableObject,
+//		  public ConfigurableObject<RemoteAutopilotInterfaceParams>,
+		  public IAutopilotAPI
 {
 public:
 	void
@@ -25,7 +31,17 @@ public:
 	boost::signals2::connection
 	subscribeOnControllerOut(const OnControllerOut::slot_type& slot);
 
+	bool
+	run(RunStage stage) override;
+
 private:
+
+	void
+	onAPPacket(const Packet& packet);
+
+	OnControllerOut onControllerOut_;
+
+	IDCSender autopilotSender_;
 };
 
 
