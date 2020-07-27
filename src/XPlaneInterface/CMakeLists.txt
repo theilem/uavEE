@@ -10,6 +10,7 @@ target_link_libraries(lin cps_core
 		uavap_core
 		uavap_api
 		Eigen3::Eigen
+		stdc++fs
 		)
 
 install(TARGETS lin

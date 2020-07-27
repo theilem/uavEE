@@ -32,6 +32,9 @@ configSelector(void* mRef, void* iRef);
 int
 refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 
+int
+generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
+
 void
 populateConfig();
 

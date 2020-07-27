@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /**
  * @file xplane_ros_plugin.cpp
  * @author Mirco Theile, mirco.theile@tum.edu
@@ -24,10 +6,19 @@
  * @brief
  */
 
+#if GCC_VERSION > 80000
 #include <filesystem>
+namespace filesystem = std::filesystem;
+#else
+
+#include <experimental/filesystem>
+
+namespace filesystem = std::experimental::filesystem;
+#endif
 
 #include <cpsCore/Logging/CPSLogger.h>
 #include <cpsCore/Synchronization/SimpleRunner.h>
+#include <cpsCore/Configuration/JsonPopulator.h>
 
 #ifdef UNIX
 #define LIN
@@ -74,6 +65,8 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 
 	registerCommand(rootMenu, "Reset Config", "Resets config file path for XPlanePlugin", resetConfig);
 	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo);
+	registerCommand(rootMenu, "Generate Config", "Generates a config according to the helper into generate.json",
+					generateConfig);
 
 
 	CPSLOG_TRACE << "End XPlanePlugin";
@@ -164,13 +157,13 @@ addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
 	char path[512];
 	XPLMGetSystemPath(path);
 
-	std::filesystem::path configDir(path);
+	filesystem::path configDir(path);
 	configDir.append("uavEEConfig");
 
 	XPLMMenuID configMenuId = XPLMCreateMenu("Select Config", parentMenu, menuIdx, configSelector, NULL);
 	//Using pointer as integer
 	intptr_t menuId = 0;
-	for (const auto& entry : std::filesystem::directory_iterator(configDir))
+	for (const auto& entry : filesystem::directory_iterator(configDir))
 	{
 		CPSLOG_TRACE << "Found: " << entry.path().string() << "\n";
 		XPLMAppendMenuItem(configMenuId, entry.path().string().data(), (void*) menuId, 1);
@@ -207,6 +200,25 @@ refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRe
 		configMap.clear();
 		XPLMRemoveMenuItem(rootMenu, parentIdx);
 		populateConfig();
+	}
+	return 0;
+}
+
+int
+generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (inPhase == xplm_CommandBegin)
+	{
+		char path[512];
+		XPLMGetSystemPath(path);
+
+		filesystem::path configDir(path);
+		configDir.append("uavEEConfig").append("generate.json");
+		std::ofstream file;
+		file.open(configDir.string(), std::ofstream::out);
+		JsonPopulator pop(file);
+
+		pop.populateContainer(XPlaneInterfaceHelper());
 	}
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <cpsCore/Utilities/IDC/IDC.h>
+#include <cpsCore/Utilities/IDC/NetworkLayer/NetworkFactory.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <uavAP/API/AggregatableAutopilotAPI.h>
 
@@ -18,14 +19,16 @@
 
 using XPlaneInterfaceDefaultHelper = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
-		IPC,
-//		IDC,
 		DataPresentation,
-		AggregatableAutopilotAPI,
+		IDC,
+		IPC,
 		XPlaneInterface
 		>;
-//		RemoteAutopilotInterface>;
 
-using XPlaneInterfaceHelper = StaticHelper<XPlaneInterfaceDefaultHelper>;
+using XPlaneInterfaceHelper = StaticHelper<XPlaneInterfaceDefaultHelper,
+		NetworkFactory,
+		AggregatableAutopilotAPI,
+		RemoteAutopilotInterface
+		>;
 
 #endif //UAVEE_XPLANEINTERFACEHELPER_H

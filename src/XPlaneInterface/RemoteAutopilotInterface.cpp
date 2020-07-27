@@ -105,6 +105,7 @@ RemoteAutopilotInterface::onAPPacket(const Packet& packet)
 			case Content::CONTROLLER_OUTPUT:
 			{
 				onControllerOut_(dp->deserialize<ControllerOutput>(p));
+				break;
 			}
 			default:
 			{
