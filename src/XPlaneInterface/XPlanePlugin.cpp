@@ -24,16 +24,14 @@
  * @brief
  */
 
-#include <cstring>
-#include <csignal>
+#include <filesystem>
 
 #include <cpsCore/Logging/CPSLogger.h>
+#include <cpsCore/Synchronization/SimpleRunner.h>
 
 #ifdef UNIX
 #define LIN
 #endif
-
-#include <cpsCore/Synchronization/SimpleRunner.h>
 
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
 #include "xPlane/CHeaders/XPLM/XPLMMenus.h"
@@ -42,12 +40,14 @@
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 #include "uavEE/XPlaneInterface/XPlaneInterfaceHelper.h"
 
-
-void
-handler(void* mRef, void* iRef);
+#include "uavEE/XPlaneInterface/XPlanePlugin.h"
 
 Aggregator agg;
 bool runBegan;
+std::string configPath;
+XPLMMenuID configMenu, rootMenu;
+std::unordered_map<int, std::string> configMap;
+int parentIdx;
 
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
@@ -58,16 +58,23 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	strcpy(outSig, "uavee");
 	strcpy(outDesc, "uavEE X-Plane Simulation Interface");
 
-	XPLMMenuID id;
 	int item;
 
 	item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "uavEE", NULL, 1);
 
-	id = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
+	rootMenu = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
 
-	XPLMAppendMenuItem(id, "Start Node", (void*) "STARTNODE", 1);
-	XPLMAppendMenuItem(id, "Enable Autopilot", (void*) "ENABLEAP", 1);
-	XPLMAppendMenuItem(id, "Disable Autopilot", (void*) "DISABLEAP", 1);
+	registerCommand(rootMenu, "Start Node", "Starts the XPlanePlugin", startNode);
+	registerCommand(rootMenu, "Enable Autopilot", "Enables the IAutopilotAPI in the XPlanePlugin", setAutopilotState, 0,
+					(void*) true);
+	registerCommand(rootMenu, "Disable Autopilot", "Disables the IAutopilotAPI in the XPlanePlugin", setAutopilotState,
+					0, (void*) false);
+
+	populateConfig();
+
+	registerCommand(rootMenu, "Reset Config", "Resets config file path for XPlanePlugin", resetConfig);
+	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo);
+
 
 	CPSLOG_TRACE << "End XPlanePlugin";
 	return 1;
@@ -97,38 +104,116 @@ XPluginReceiveMessage(XPLMPluginID, intptr_t, void*)
 void
 handler(void* mRef, void* iRef)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
-	if (!strcmp((char*) iRef, "STARTNODE"))
+}
+
+int
+resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (inPhase == xplm_CommandBegin)
 	{
-		CPSLOG_DEBUG << "STARTNODE\n";
-		if (!runBegan)
+		configPath = std::string();
+		std::cout << "Resetting Config\n";
+	}
+	return 0;
+}
+
+int
+startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (!runBegan && inPhase == xplm_CommandBegin)
+	{
+		CPSLOG_DEBUG << "STARTNODE";
+		if (!configPath.length())
 		{
-			Configuration c;
-			agg = XPlaneInterfaceHelper::createAggregation(c);
-			SimpleRunner runner(agg);
-			if (runner.runAllStages())
-			{
-				CPSLOG_ERROR << "Running all stages failed.";
-				return;
-			}
-			runBegan = true;
+			CPSLOG_DEBUG << "No Config Path specified, using default";
+			agg = XPlaneInterfaceHelper::createAggregation();
+		}
+		else
+		{
+			agg = XPlaneInterfaceHelper::createAggregation(configPath);
+		}
+		SimpleRunner runner(agg);
+		if (runner.runAllStages())
+		{
+			CPSLOG_ERROR << "Running all stages failed.";
+			return 0;
+		}
+		runBegan = true;
+	}
+	return 0;
+}
+
+int
+setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (inPhase == xplm_CommandBegin)
+	{
+		if (auto node = agg.getOne<XPlaneInterface>())
+		{
+			bool active = (bool) inRefcon;
+			node->setAutopilotActive(active);
+			CPSLOG_DEBUG << "Setting autopilot active to " << active << "\n";
 		}
 	}
-	else if (!strcmp((char*) iRef, "ENABLEAP"))
+	return 0;
+}
+
+XPLMMenuID
+addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
+{
+	char path[512];
+	XPLMGetSystemPath(path);
+
+	std::filesystem::path configDir(path);
+	configDir.append("uavEEConfig");
+
+	XPLMMenuID configMenuId = XPLMCreateMenu("Select Config", parentMenu, menuIdx, configSelector, NULL);
+	//Using pointer as integer
+	intptr_t menuId = 0;
+	for (const auto& entry : std::filesystem::directory_iterator(configDir))
 	{
-		CPSLOG_DEBUG << "ENABLEAP\n";
-		auto node = agg.getOne<XPlaneInterface>();
-		node->enableAutopilot();
+		CPSLOG_TRACE << "Found: " << entry.path().string() << "\n";
+		XPLMAppendMenuItem(configMenuId, entry.path().string().data(), (void*) menuId, 1);
+		configMap[menuId] = entry.path().string();
+		menuId++;
 	}
-	else if (!strcmp((char*) iRef, "DISABLEAP"))
+	return configMenuId;
+}
+
+void
+configSelector(void* mRef, void* iRef)
+{
+	//Using pointer as integer
+	auto menuId = (intptr_t) iRef;
+	configPath = configMap[menuId];
+	CPSLOG_DEBUG << "Setting config file path to:" << configPath;
+}
+
+void
+registerCommand(XPLMMenuID menuID, const char* name, const char* description,
+				int (* func)(XPLMCommandRef, XPLMCommandPhase, void*), int inBefore, void* inRefcon)
+{
+	XPLMCommandRef cmd = XPLMCreateCommand(name, description);
+	XPLMRegisterCommandHandler(cmd, (XPLMCommandCallback_f) func, inBefore, inRefcon);
+
+	XPLMAppendMenuItemWithCommand(menuID, name, cmd);
+}
+
+int
+refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (inPhase == xplm_CommandBegin)
 	{
-		CPSLOG_DEBUG << "DISABLEAP\n";
-		auto node = agg.getOne<XPlaneInterface>();
-		node->disableAutopilot();
+		configMap.clear();
+		XPLMRemoveMenuItem(rootMenu, parentIdx);
+		populateConfig();
 	}
-	else
-	{
-		CPSLOG_WARN << "Unknown iRef in XPlanePlugin " << __FUNCTION__ << ". Line:" << __LINE__;
-		CPSLOG_WARN << "iRef was: " << (char*) iRef;
-	}
+	return 0;
+}
+
+void
+populateConfig()
+{
+	parentIdx = XPLMAppendMenuItem(rootMenu, "Select Config", (void*) "SETCONF", 1);
+	configMenu = addDirectoryInfo(rootMenu, parentIdx);
 }

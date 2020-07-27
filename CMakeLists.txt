@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.0.0)
 project (uavEE)
 
-#set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -static-libstdc++ -std=c++1z")
 
@@ -15,6 +15,7 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/extern)
 
 
 add_subdirectory(src)

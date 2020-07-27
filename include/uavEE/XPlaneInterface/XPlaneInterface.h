@@ -6,15 +6,21 @@
 #define UAVEE_XPLANEINTERFACE_H
 
 #include <cpsCore/cps_object>
-#include <cpsCore/Utilities/Scheduler/IScheduler.h>
-#include <uavAP/API/AggregatableAutopilotAPI.h>
+#include <cpsCore/Utilities/Scheduler/Event.h>
 #include <uavAP/Core/SensorData.h>
 
 #include "xPlane/CHeaders/XPLM/XPLMDataAccess.h"
+
 class ControllerOutput;
 
+class IAutopilotAPI;
 
-class XPlaneInterface : public AggregatableObject<IScheduler, AggregatableAutopilotAPI>, public IRunnableObject
+class IScheduler;
+
+
+class XPlaneInterface
+		: public AggregatableObject<IScheduler, IAutopilotAPI>,
+		  public IRunnableObject
 {
 public:
 	static constexpr TypeId typeId = "xplanenode";
@@ -25,10 +31,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	enableAutopilot();
-
-	void
-	disableAutopilot();
+	setAutopilotActive(bool active);
 
 private:
 
