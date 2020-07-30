@@ -20,12 +20,12 @@
 using XPlaneInterfaceDefaultHelper = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
 		DataPresentation,
-		IDC,
-		IPC,
 		XPlaneInterface
 		>;
 
 using XPlaneInterfaceHelper = StaticHelper<XPlaneInterfaceDefaultHelper,
+		IDC,
+		IPC,
 		NetworkFactory,
 		AggregatableAutopilotAPI,
 		RemoteAutopilotInterface
