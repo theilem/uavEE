@@ -43,7 +43,7 @@ int parentIdx;
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	CPSLOG_TRACE << "Begin XPlanePlugin";
 	strcpy(outName, "uavEE");
 	strcpy(outSig, "uavee");
