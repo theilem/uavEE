@@ -20,9 +20,14 @@ make
 
 ## XPlane Plugin
 uavEE contains a plugin for XPlane11. It is configured through config files. Two config files are provided:
+
 sitl.json:
+
     For software in the loop. SensorData is published directly on shared memory and is listening to actuation published by FlightControl in uavAP.
+    
 chitl.json:
+
+    For computational hardware in the loop. This uses redis to communicate with uavAP running on a different board. The config file should be adapted according to the redis-server.
 
 ### Installing plugin
 ```shell script
