@@ -1,0 +1,24 @@
+{
+	"network": {
+		"redis":{
+			"sub":{
+				"to_uavee": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavee"
+				}
+			},
+			"pub":{
+				"to_uavap": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavap_emu"
+				}
+			}
+		}
+	},
+	"remote_autopilot_api":{
+	}
+}
