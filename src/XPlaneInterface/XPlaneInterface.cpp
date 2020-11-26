@@ -33,7 +33,8 @@ XPlaneInterface::XPlaneInterface() :
 	attitudeRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/theta");
 	attitudeRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/psi");
 
-	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
+//	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
+	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel/position/alpha");
 	angleOfSideslipRef_ = XPLMFindDataRef("sim/flightmodel/position/beta");
 
 	angularRateRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/P");
@@ -58,9 +59,9 @@ XPlaneInterface::XPlaneInterface() :
 	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
 	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
 
-	course_ = XPLMDataRef("sim/cockpit/gps/course");
-	temp_ = XPLMDataRef("sim/weather/temperature_le_c");
-	pressure_ = XPLMDataRef("sim/weather/barometer_current_inhg");
+	course_ = XPLMFindDataRef("sim/flightmodel/position/hpath");
+	temp_ = XPLMFindDataRef("sim/weather/temperature_le_c");
+	pressure_ = XPLMFindDataRef("sim/weather/barometer_current_inhg");
 
 	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
 
@@ -165,7 +166,8 @@ XPlaneInterface::processData()
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
-		sensorData_.courseAngle = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+		double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+		sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
 		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
 		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
 
