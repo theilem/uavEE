@@ -58,6 +58,10 @@ XPlaneInterface::XPlaneInterface() :
 	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
 	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
 
+	course_ = XPLMDataRef("sim/cockpit/gps/course");
+	temp_ = XPLMDataRef("sim/weather/temperature_le_c");
+	pressure_ = XPLMDataRef("sim/weather/barometer_current_inhg");
+
 	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
 
 	sensorData_.hasGPSFix = true;
@@ -160,6 +164,10 @@ XPlaneInterface::processData()
 		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
+
+		sensorData_.courseAngle = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
+		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
 
 		api->setSensorData(sensorData_);
 
