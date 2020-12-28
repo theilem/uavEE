@@ -157,7 +157,7 @@ XPlaneInterface::processData()
 		double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
 		sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
 
-		sensorData_.angleOfAttack = degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
+		sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
 		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
 
 		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
