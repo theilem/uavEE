@@ -9,6 +9,8 @@
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
+#include <uavAP/Core/Orientation/ConversionUtils.h>
+
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
 XPlaneInterface::XPlaneInterface() :
@@ -115,7 +117,16 @@ XPlaneInterface::processData()
 {
 	if (auto api = get<IAutopilotAPI>())
 	{
+		// X-Plane uses an internal acf (aircraft) coordinate system
+		// https://developer.x-plane.com/article/screencoordinates
+		// x => right
+		// y -> up
+		// z -> backwards
+
 		//Process SensorData
+
+		// FIXME Xplane does not recommend using our own transformations
+		// https://developer.x-plane.com/article/screencoordinates/#3-D_Coordinate_System
 		double lat = XPLMGetDatad(positionRefs_[0]);
 		double lon = XPLMGetDatad(positionRefs_[1]);
 
@@ -130,7 +141,9 @@ XPlaneInterface::processData()
 		sensorData_.position[1] = north;
 		sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
 
-		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
+		sensorData_.orientation = Orientation::ENU;
+
+		// Converting from ACF to ENU inertial frame
 		sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
 		sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
 		sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
@@ -138,18 +151,13 @@ XPlaneInterface::processData()
 		sensorData_.groundSpeed = sensorData_.velocity.norm();
 		sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
 
-		Vector3 accelerationInertial;
-		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
-		accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-		accelerationInertial[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
-		accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
+		// Converting from ACF to ENU inertial frame
+		sensorData_.acceleration[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
+		sensorData_.acceleration[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
+		sensorData_.acceleration[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
 
-		Eigen::Matrix3d m;
-		m = Eigen::AngleAxisd(-sensorData_.attitude[0], Vector3::UnitX())
-			* Eigen::AngleAxisd(-sensorData_.attitude[1], Vector3::UnitY())
-			* Eigen::AngleAxisd(-sensorData_.attitude[2], Vector3::UnitZ());
-
-		sensorData_.acceleration = m * accelerationInertial;
+		// Converting acceleration to body frame
+		directionalConversion(sensorData_.acceleration, sensorData_.attitude, Frame::BODY, Orientation::ENU);
 
 
 		sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
@@ -162,8 +170,15 @@ XPlaneInterface::processData()
 		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
 
 		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-		sensorData_.angularRate[1] = degToRad(-static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
+		sensorData_.angularRate[1] = degToRad(static_cast<double>(-XPLMGetDataf(angularRateRefs_[1])));
 		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+		sensorData_.angularRate.frame = Frame::BODY;
+
+		//NOTE -> pqr in NED probably, changing to ENU
+		//FIXME duplicated code from uavAP
+//		angularConversion(sensorData_.angularRate, sensorData_.attitude, Frame::INERTIAL, Orientation::NED);
+//		simpleFlipInertial(sensorData_.angularRate);
+//		angularConversion(sensorData_.angularRate, sensorData_.attitude, Frame::BODY, Orientation::ENU);
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
