@@ -10,6 +10,7 @@
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
 #include <uavAP/Core/Orientation/ConversionUtils.h>
+#include <iostream>
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
@@ -163,22 +164,18 @@ XPlaneInterface::processData()
 		sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
 		sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
 
-		double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
-		sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
+		FloatingType nedYaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+		sensorData_.attitude[2] = boundAngleRad(-(nedYaw - M_PI_2));
 
+		//ENU angle of attack = -NED angle of attack
 		sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
 		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
 
-		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-		sensorData_.angularRate[1] = degToRad(static_cast<double>(-XPLMGetDataf(angularRateRefs_[1])));
-		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+		//enu PQR <-> QP(-R)
+		sensorData_.angularRate[1] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
+		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
+		sensorData_.angularRate[2] = -degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
 		sensorData_.angularRate.frame = Frame::BODY;
-
-		//NOTE -> pqr in NED probably, changing to ENU
-		//FIXME duplicated code from uavAP
-//		angularConversion(sensorData_.angularRate, sensorData_.attitude, Frame::INERTIAL, Orientation::NED);
-//		simpleFlipInertial(sensorData_.angularRate);
-//		angularConversion(sensorData_.angularRate, sensorData_.attitude, Frame::BODY, Orientation::ENU);
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
