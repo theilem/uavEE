@@ -118,9 +118,16 @@ XPlaneInterface::processData()
 {
 	if (auto api = get<IAutopilotAPI>())
 	{
+
+		//Add Timestamps
+		auto currTime = Clock::now();
+		sensorData_.timestamp = currTime;
+		powerData_.timestamp = currTime;
+		servoData_.timestamp = currTime;
+
 		// X-Plane uses an internal acf (aircraft) coordinate system
 		// https://developer.x-plane.com/article/screencoordinates
-		// x => right
+		// x -> right
 		// y -> up
 		// z -> backwards
 
@@ -210,13 +217,9 @@ XPlaneInterface::processData()
 		rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
 		servoData_.rpm = static_cast<double>(rpm[0]);
 
-		//Add Timestamps
-		auto currTime = Clock::now();
-		sensorData_.timestamp = currTime;
-		powerData_.timestamp = currTime;
-		servoData_.timestamp = currTime;
-
 		api->setServoData(servoData_);
+
+
 	}
 	else
 	{

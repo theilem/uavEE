@@ -30,9 +30,7 @@ namespace filesystem = std::experimental::filesystem;
 Aggregator agg;
 bool runBegan;
 std::string configPath;
-XPLMMenuID configMenu, rootMenu;
 std::unordered_map<int, std::string> configMap;
-int parentIdx;
 
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
@@ -47,7 +45,14 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 
 	item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "uavEE", NULL, 1);
 
-	rootMenu = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
+	XPLMMenuID rootMenu = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
+
+	// Generates dummy item
+	int configMenuIdx = XPLMAppendMenuItem(rootMenu, "Select Config", NULL, 1);
+	// Turns dummy item into a menu
+	XPLMMenuID configMenu = XPLMCreateMenu("Select Config Menu", rootMenu, configMenuIdx, configSelector, NULL);
+	// Adds config files to that menu
+	addDirectoryInfo(configMenu);
 
 	registerCommand(rootMenu, "Start Node", "Starts the XPlanePlugin", startNode);
 	registerCommand(rootMenu, "Enable Autopilot", "Enables the IAutopilotAPI in the XPlanePlugin", setAutopilotState, 0,
@@ -55,10 +60,9 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	registerCommand(rootMenu, "Disable Autopilot", "Disables the IAutopilotAPI in the XPlanePlugin", setAutopilotState,
 					0, (void*) false);
 
-	populateConfig();
-
 	registerCommand(rootMenu, "Reset Config", "Resets config file path for XPlanePlugin", resetConfig);
-	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo);
+	// Telling refresh config which menu to clear
+	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo, 0, configMenu);
 	registerCommand(rootMenu, "Generate Config", "Generates a config according to the helper into generate.json",
 					generateConfig);
 
@@ -94,18 +98,18 @@ handler(void* mRef, void* iRef)
 }
 
 int
-resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*)
 {
 	if (inPhase == xplm_CommandBegin)
 	{
 		configPath = std::string();
-		std::cout << "Resetting Config\n";
+		CPSLOG_DEBUG << "Resetting config to default\n";
 	}
 	return 0;
 }
 
 int
-startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*)
 {
 	if (!runBegan && inPhase == xplm_CommandBegin)
 	{
@@ -145,8 +149,8 @@ setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRe
 	return 0;
 }
 
-XPLMMenuID
-addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
+void
+addDirectoryInfo(XPLMMenuID &configMenu)
 {
 	char path[512];
 	XPLMGetSystemPath(path);
@@ -154,21 +158,19 @@ addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
 	filesystem::path configDir(path);
 	configDir.append("uavEEConfig");
 
-	XPLMMenuID configMenuId = XPLMCreateMenu("Select Config", parentMenu, menuIdx, configSelector, NULL);
 	//Using pointer as integer
 	intptr_t menuId = 0;
 	for (const auto& entry : filesystem::directory_iterator(configDir))
 	{
 		CPSLOG_TRACE << "Found: " << entry.path().string() << "\n";
-		XPLMAppendMenuItem(configMenuId, entry.path().string().data(), (void*) menuId, 1);
+		XPLMAppendMenuItem(configMenu, entry.path().string().data(), (void*) menuId, 1);
 		configMap[menuId] = entry.path().string();
 		menuId++;
 	}
-	return configMenuId;
 }
 
 void
-configSelector(void* mRef, void* iRef)
+configSelector(void*, void* iRef)
 {
 	//Using pointer as integer
 	auto menuId = (intptr_t) iRef;
@@ -176,14 +178,24 @@ configSelector(void* mRef, void* iRef)
 	CPSLOG_DEBUG << "Setting config file path to:" << configPath;
 }
 
-void
+/**
+ * Adds a command to a plugin menu
+ * @param menuID - Menu to add the command to
+ * @param name - Name that will show up in the menu
+ * @param description - Description when mouse hovers over menu option
+ * @param func - Function pointer. Should have return type int and take params (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+ * @param inBefore - See https://developer.x-plane.com/sdk/XPLMRegisterCommandHandler/
+ * @param inRefcon - Void parameter to pass params to function
+ * @return Index of generated menu item
+ */
+int
 registerCommand(XPLMMenuID menuID, const char* name, const char* description,
-				int (* func)(XPLMCommandRef, XPLMCommandPhase, void*), int inBefore, void* inRefcon)
+				XPLMCommandCallback_f func, XPLMCommandPhase inBefore, void* inRefcon)
 {
 	XPLMCommandRef cmd = XPLMCreateCommand(name, description);
-	XPLMRegisterCommandHandler(cmd, (XPLMCommandCallback_f) func, inBefore, inRefcon);
+	XPLMRegisterCommandHandler(cmd, func, inBefore, inRefcon);
 
-	XPLMAppendMenuItemWithCommand(menuID, name, cmd);
+	return XPLMAppendMenuItemWithCommand(menuID, name, cmd);
 }
 
 void
@@ -199,14 +211,14 @@ refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRe
 	if (inPhase == xplm_CommandBegin)
 	{
 		configMap.clear();
-		XPLMRemoveMenuItem(rootMenu, parentIdx);
-		populateConfig();
+		XPLMClearAllMenuItems(inRefcon);
+		addDirectoryInfo(inRefcon);
 	}
 	return 0;
 }
 
 int
-generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*)
 {
 	if (inPhase == xplm_CommandBegin)
 	{
@@ -222,11 +234,4 @@ generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefco
 		pop.populateContainer(XPlaneInterfaceHelper());
 	}
 	return 0;
-}
-
-void
-populateConfig()
-{
-	parentIdx = XPLMAppendMenuItem(rootMenu, "Select Config", (void*) "SETCONF", 1);
-	configMenu = addDirectoryInfo(rootMenu, parentIdx);
 }
