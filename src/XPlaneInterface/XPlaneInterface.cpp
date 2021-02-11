@@ -10,9 +10,13 @@
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
 #include <uavAP/Core/Orientation/ConversionUtils.h>
+#include <uavAP/Core/Orientation/NED.h>
 #include <iostream>
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
+
+// Not including filesystem because older GCC compilers cant use it
+#include <experimental/filesystem>
 
 XPlaneInterface::XPlaneInterface() :
 		sensorFrequency_(100)
@@ -114,116 +118,159 @@ XPlaneInterface::setAutopilotActive(bool active)
 }
 
 void
+XPlaneInterface::setLogging(bool logging)
+{
+	if (logging) {
+		// Start logging
+		if (file_.is_open()) {
+			CPSLOG_WARN << "Already logging!";
+			return;
+		}
+		std::experimental::filesystem::path logpath(params.log_directory.value);
+		std::stringstream filename;
+		filename << params.name.value;
+		filename << timePointToNanoseconds(Clock::now());
+		logpath.append(filename.str() + params.file_extension.value);
+		CPSLOG_DEBUG << "Begin logging to path " << logpath;
+		file_.open(logpath);
+
+		//Again, there must be a better way
+#define SEP <<','<<
+		file_ << "u" SEP "w" SEP "q" SEP "theta" SEP "pitch_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP
+		"du/dt" SEP "dw/dt" SEP "dtheta/dt" SEP "delta_e" SEP "delta_T" SEP "timestamp\n";
+#undef SEP
+	} else {
+		// Stop logging
+		if (!file_.is_open()) {
+			CPSLOG_WARN << "Not logging!";
+			return;
+		}
+		file_.close();
+		CPSLOG_DEBUG << "Closed logfile";
+	}
+}
+
+void
 XPlaneInterface::processData()
 {
+	//Add Timestamps
+	auto currTime = Clock::now();
+	sensorData_.timestamp = currTime;
+	powerData_.timestamp = currTime;
+	servoData_.timestamp = currTime;
+
+	// X-Plane uses an internal acf (aircraft) coordinate system
+	// https://developer.x-plane.com/article/screencoordinates
+	// x -> right
+	// y -> up
+	// z -> backwards
+
+	//Process SensorData
+
+	// FIXME Xplane does not recommend using our own transformations
+	// https://developer.x-plane.com/article/screencoordinates/#3-D_Coordinate_System
+	double lat = XPLMGetDatad(positionRefs_[0]);
+	double lon = XPLMGetDatad(positionRefs_[1]);
+
+	double north;
+	double east;
+	int zone;
+	char hemi;
+
+	latLongToUTM(lat, lon, north, east, zone, hemi);
+
+	sensorData_.position[0] = east;
+	sensorData_.position[1] = north;
+	sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
+
+	sensorData_.orientation = Orientation::ENU;
+
+	// Converting from ACF to ENU inertial frame
+	sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
+	sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
+	sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
+
+	sensorData_.groundSpeed = sensorData_.velocity.norm();
+	sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
+
+	// Converting from ACF to ENU inertial frame
+	sensorData_.acceleration[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
+	sensorData_.acceleration[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
+	sensorData_.acceleration[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
+
+	// Converting acceleration to body frame
+	directionalConversion(sensorData_.acceleration, sensorData_.attitude, Frame::BODY, Orientation::ENU);
+
+	sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
+	sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
+
+	FloatingType nedYaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+	sensorData_.attitude[2] = boundAngleRad(-(nedYaw - M_PI_2));
+
+	//ENU angle of attack = -NED angle of attack
+	sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
+	sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
+
+	//enu PQR <-> QP(-R)
+	sensorData_.angularRate[1] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
+	sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
+	sensorData_.angularRate[2] = -degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+	sensorData_.angularRate.frame = Frame::BODY;
+
+	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
+
+	double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+	sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
+	sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
+	sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
+
+	//Process Power Data
+	powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
+	powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
+
+	//Process Servo Data
+	servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
+	servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
+	servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
+
+	sensorData_.sequenceNumber = sequenceNumber_++;
+	if (sequenceNumber_ > std::numeric_limits<uint16_t>::max())
+		sequenceNumber_ = 0;
+
+	float throttle[8];
+	XPLMGetDatavf(throttleRef_, throttle, 0, 8);
+	servoData_.throttle = static_cast<double>(throttle[0]);
+
+	float rpm[8];
+	XPLMGetDatavf(rpmRef_, rpm, 0, 8);
+	rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
+	servoData_.rpm = static_cast<double>(rpm[0]);
+
 	if (auto api = get<IAutopilotAPI>())
 	{
-
-		//Add Timestamps
-		auto currTime = Clock::now();
-		sensorData_.timestamp = currTime;
-		powerData_.timestamp = currTime;
-		servoData_.timestamp = currTime;
-
-		// X-Plane uses an internal acf (aircraft) coordinate system
-		// https://developer.x-plane.com/article/screencoordinates
-		// x -> right
-		// y -> up
-		// z -> backwards
-
-		//Process SensorData
-
-		// FIXME Xplane does not recommend using our own transformations
-		// https://developer.x-plane.com/article/screencoordinates/#3-D_Coordinate_System
-		double lat = XPLMGetDatad(positionRefs_[0]);
-		double lon = XPLMGetDatad(positionRefs_[1]);
-
-		double north;
-		double east;
-		int zone;
-		char hemi;
-
-		latLongToUTM(lat, lon, north, east, zone, hemi);
-
-		sensorData_.position[0] = east;
-		sensorData_.position[1] = north;
-		sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
-
-		sensorData_.orientation = Orientation::ENU;
-
-		// Converting from ACF to ENU inertial frame
-		sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
-		sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
-		sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
-
-		sensorData_.groundSpeed = sensorData_.velocity.norm();
-		sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
-
-		// Converting from ACF to ENU inertial frame
-		sensorData_.acceleration[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-		sensorData_.acceleration[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
-		sensorData_.acceleration[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
-
-		// Converting acceleration to body frame
-		directionalConversion(sensorData_.acceleration, sensorData_.attitude, Frame::BODY, Orientation::ENU);
-
-
-		sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
-		sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
-
-		FloatingType nedYaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
-		sensorData_.attitude[2] = boundAngleRad(-(nedYaw - M_PI_2));
-
-		//ENU angle of attack = -NED angle of attack
-		sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
-		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
-
-		//enu PQR <-> QP(-R)
-		sensorData_.angularRate[1] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
-		sensorData_.angularRate[2] = -degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
-		sensorData_.angularRate.frame = Frame::BODY;
-
-		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
-
-		double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
-		sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
-		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
-		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
-
-		sensorData_.sequenceNumber = sequenceNumber_++;
-		if (sequenceNumber_ > std::numeric_limits<uint16_t>::max())
-			sequenceNumber_ = 0;
-
 		api->setSensorData(sensorData_);
-
-		//Process Power Data
-		powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
-		powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
-
 		api->setPowerData(powerData_);
-
-		//Process Servo Data
-		servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
-		servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
-		servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
-
-		float throttle[8];
-		XPLMGetDatavf(throttleRef_, throttle, 0, 8);
-		servoData_.throttle = static_cast<double>(throttle[0]);
-
-		float rpm[8];
-		XPLMGetDatavf(rpmRef_, rpm, 0, 8);
-		rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
-		servoData_.rpm = static_cast<double>(rpm[0]);
-
 		api->setServoData(servoData_);
-
-
 	}
 	else
 	{
 		CPSLOG_ERROR << "Missing IAutopilotAPI";
+	}
+
+	if(file_.is_open())
+	{
+		SensorData sd_ned = sensorData_;
+		NED::convert(sd_ned, Frame::BODY);
+		FramedVector3 attitudeRate = sd_ned.angularRate;
+		angularConversion(attitudeRate, sd_ned.attitude, Frame::INERTIAL, Orientation::NED);
+		//FIXME there must be a better way
+#define SEP <<','<<
+		file_ << sd_ned.velocity[0] SEP sd_ned.velocity[2] SEP sd_ned.angularRate[1] SEP sd_ned.attitude[1] SEP
+		coToLog_.pitchOutput SEP coToLog_.throttleOutput SEP sensorData_.position[0] SEP sensorData_.position[1] SEP
+		sensorData_.position[2] SEP sd_ned.acceleration[0] SEP sd_ned.acceleration[2] SEP attitudeRate[1] SEP
+		servoData_.elevator SEP servoData_.throttle SEP durationToNanoseconds(
+				sensorData_.timestamp.time_since_epoch()) << '\n';
+#undef SEP
 	}
 }
 
@@ -233,7 +280,7 @@ XPlaneInterface::actuate(const ControllerOutput& out)
 	CPSLOG_TRACE << "Begin Actuate\n";
 	if (!sensorData_.autopilotActive)
 		return;
-
+	coToLog_ = out;
 	float throt = (static_cast<float>(out.throttleOutput) + 1) / 2;
 	float throttle[] =
 			{throt, throt, throt, throt, throt, throt, throt, throt};

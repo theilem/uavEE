@@ -5,13 +5,16 @@
 #ifndef UAVEE_XPLANEINTERFACE_H
 #define UAVEE_XPLANEINTERFACE_H
 
+#include <fstream>
+
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/Scheduler/Event.h>
 #include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
 #include "xPlane/CHeaders/XPLM/XPLMDataAccess.h"
+#include "uavEE/XPlaneInterface/XPlaneInterfaceParams.h"
 
-class ControllerOutput;
 
 class IAutopilotAPI;
 
@@ -20,6 +23,7 @@ class IScheduler;
 
 class XPlaneInterface
 		: public AggregatableObject<IScheduler, IAutopilotAPI>,
+		  public ConfigurableObject<XPlaneInterfaceParams>,
 		  public IRunnableObject
 {
 public:
@@ -35,6 +39,9 @@ public:
 
 	const SensorData&
 	getSensorData() const;
+
+	void
+	setLogging(bool logging);
 
 private:
 
@@ -77,6 +84,10 @@ private:
 	PowerData powerData_;
 
 	Event sensorDataEvent_;
+
+	std::ofstream file_;
+
+	ControllerOutput coToLog_;
 };
 
 #endif //UAVEE_XPLANEINTERFACE_H

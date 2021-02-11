@@ -5,6 +5,8 @@
 #ifndef UAVEE_XPLANEPLUGIN_H
 #define UAVEE_XPLANEPLUGIN_H
 
+
+
 #ifdef UNIX
 #define LIN
 #endif
@@ -12,25 +14,30 @@
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
 #include "xPlane/CHeaders/XPLM/XPLMMenus.h"
 
-void
-handler(void* mRef, void* iRef);
 
-int
-registerCommand(XPLMMenuID menuID, const char* name, const char* description,
-				XPLMCommandCallback_f func, int inBefore = 0, void* inRefcon = nullptr);
+PLUGIN_API int
+XPluginStart(char* outName, char* outSig, char* outDesc);
 
-void
-addCommandToMenu(const char* name, const char* description, int (* func)(XPLMCommandRef, XPLMCommandPhase, void*),
-				 int inBefore = 0, void* inRefcon = nullptr);
+PLUGIN_API void
+XPluginStop(void);
 
-int
-resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*);
+PLUGIN_API void
+XPluginDisable(void);
+
+PLUGIN_API int
+XPluginEnable(void);
+
+PLUGIN_API void
+XPluginReceiveMessage(XPLMPluginID, intptr_t, void*);
 
 int
 startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*);
 
 int
 setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
+
+int
+setLoggingState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 
 void
 addDirectoryInfo(XPLMMenuID &configMenu);
@@ -43,5 +50,9 @@ refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRe
 
 int
 generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void*);
+
+
+void
+addCommandToMenu(const char* name, const char* description, XPLMCommandCallback_f func, int inBefore = 0, void* inRefcon = nullptr);
 
 #endif //UAVEE_XPLANEPLUGIN_H
