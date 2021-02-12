@@ -186,61 +186,61 @@ XPlaneInterface::processData()
 	sensorData_.orientation = Orientation::ENU;
 
 	// Converting from ACF to ENU inertial frame
-	sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
-	sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
-	sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
+	sensorData_.velocity[0] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[0]));
+	sensorData_.velocity[1] = -static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[2]));
+	sensorData_.velocity[2] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[1]));
 
 	sensorData_.groundSpeed = sensorData_.velocity.norm();
-	sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
+	sensorData_.airSpeed = static_cast<FloatingType>(XPLMGetDataf(airSpeedRef_));
 
 	// Converting from ACF to ENU inertial frame
-	sensorData_.acceleration[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-	sensorData_.acceleration[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
-	sensorData_.acceleration[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
+	sensorData_.acceleration[0] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[0]));
+	sensorData_.acceleration[1] = -static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[2]));
+	sensorData_.acceleration[2] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[1]));
 
 	// Converting acceleration to body frame
 	directionalConversion(sensorData_.acceleration, sensorData_.attitude, Frame::BODY, Orientation::ENU);
 
-	sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
-	sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
+	sensorData_.attitude[0] = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[0])));
+	sensorData_.attitude[1] = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[1])));
 
-	FloatingType nedYaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+	FloatingType nedYaw = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[2])));
 	sensorData_.attitude[2] = boundAngleRad(-(nedYaw - M_PI_2));
 
 	//ENU angle of attack = -NED angle of attack
-	sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
-	sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
+	sensorData_.angleOfAttack = -degToRad(static_cast<FloatingType>(XPLMGetDataf(angleOfAttackRef_)));
+	sensorData_.angleOfSideslip = degToRad(static_cast<FloatingType>(XPLMGetDataf(angleOfSideslipRef_)));
 
 	//enu PQR <-> QP(-R)
-	sensorData_.angularRate[1] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-	sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
-	sensorData_.angularRate[2] = -degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+	sensorData_.angularRate[1] = degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[0])));
+	sensorData_.angularRate[0] = degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[1])));
+	sensorData_.angularRate[2] = -degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[2])));
 	sensorData_.angularRate.frame = Frame::BODY;
 
 	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
-	double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+	FloatingType course = degToRad(static_cast<FloatingType>(XPLMGetDataf(course_)));
 	sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
-	sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
-	sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
+	sensorData_.temperature = static_cast<FloatingType>(XPLMGetDataf(temp_));
+	sensorData_.pressure = static_cast<FloatingType>(XPLMGetDataf(pressure_));
 
 	//Process Power Data
-	powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
-	powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
+	powerData_.batteryCurrent = static_cast<FloatingType>(XPLMGetDataf(batteryCurrentRef_));
+	powerData_.batteryVoltage = static_cast<FloatingType>(XPLMGetDataf(batteryVoltageRef_));
 
 	//Process Servo Data
-	servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
-	servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
-	servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
+	servoData_.aileron = static_cast<FloatingType>(XPLMGetDataf(aileronRef_));
+	servoData_.elevator = static_cast<FloatingType>(XPLMGetDataf(elevatorRef_));
+	servoData_.rudder = static_cast<FloatingType>(XPLMGetDataf(rudderRef_));
 
 	float throttle[8];
 	XPLMGetDatavf(throttleRef_, throttle, 0, 8);
-	servoData_.throttle = static_cast<double>(throttle[0]);
+	servoData_.throttle = static_cast<FloatingType>(throttle[0]);
 
 	float rpm[8];
 	XPLMGetDatavf(rpmRef_, rpm, 0, 8);
 	rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
-	servoData_.rpm = static_cast<double>(rpm[0]);
+	servoData_.rpm = static_cast<FloatingType>(rpm[0]);
 
 	if (auto api = get<IAutopilotAPI>())
 	{

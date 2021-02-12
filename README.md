@@ -19,7 +19,7 @@ make
 ```
 
 ## XPlane Plugin
-uavEE contains a plugin for XPlane11. It is configured through config files. Two config files are provided:
+uavEE contains plugins for XPlane11. It is configured through config files. Two config files are provided:
 
 sitl.json:
 
@@ -29,15 +29,21 @@ chitl.json:
 
     For computational hardware in the loop. This uses redis to communicate with uavAP running on a different board. The config file should be adapted according to the redis-server.
 
-### Installing plugin
+### Installing main simulation interface plugin
 ```shell script
 # Install the plugin
 mkdir -p [xplane_dir]/Resources/plugins/uavee/64/
-ln -s [uavee_dir]/bld/release/src/XPlaneInterface/lin.xpl [xplane_dir]/Resources/plugins/uavee/64/lin.xpl
+ln -s [uavee_dir]/bld/release/src/XPlaneInterface/XPlanePlugin.xpl [xplane_dir]/Resources/plugins/uavee/64/lin.xpl
 
 # Install the config
 mkdir [xplane_dir]/uavEEConfig
 cp [uavee_dir]/config/*.json [xplane_dir]/uavEEConfig/
+```
+
+### Installing the ServoListener Helper plugin
+```shell script
+mkdir -p [xplane_dir]/Resources/plugins/uavEE-ServoListener/64/
+ln -s [uavee_dir]/bld/release/src/XPlaneInterface/ServoListener.xpl [xplane_dir]/Resources/plugins/uavEE-ServoListener/64/lin.xpl
 ```
 
 ### Running plugin

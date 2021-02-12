@@ -1,8 +1,10 @@
 //
 // Created by seedship on 2/11/21.
 //
-#include "xPlane/CHeaders/XPLM/XPLMMenus.h"
 
+#include <cpsCore/Logging/CPSLogger.h>
+
+#include "xPlane/CHeaders/XPLM/XPLMMenus.h"
 /**
  * Adds a command to a plugin menu
  * @param menuID - Menu to add the command to
@@ -21,4 +23,10 @@ registerCommand(XPLMMenuID menuID, const char* name, const char* description,
 	XPLMRegisterCommandHandler(cmd, func, inBefore, inRefcon);
 
 	return XPLMAppendMenuItemWithCommand(menuID, name, cmd);
+}
+
+void
+setLogLevel()
+{
+	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
 }

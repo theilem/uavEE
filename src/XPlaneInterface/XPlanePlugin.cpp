@@ -31,13 +31,16 @@ bool runBegan;
 std::string configPath;
 std::unordered_map<int, std::string> configMap;
 
+/**
+ * See https://developer.x-plane.com/article/developing-plugins/#The_Required_Callbacks-2
+ */
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	setLogLevel();
 	CPSLOG_TRACE << "Begin XPlanePlugin";
-	strcpy(outName, "uavEE");
-	strcpy(outSig, "uavee");
+	strcpy(outName, "uavEE XPlaneInterface");
+	strcpy(outSig, "uavee-xplaneinterface");
 	strcpy(outDesc, "uavEE X-Plane Simulation Interface");
 
 	int item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "uavEE", NULL, 1);
