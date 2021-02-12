@@ -5,15 +5,12 @@
 #ifndef UAVEE_XPLANEPLUGIN_H
 #define UAVEE_XPLANEPLUGIN_H
 
-
-
 #ifdef UNIX
 #define LIN
 #endif
 
 #include "xPlane/CHeaders/XPLM/XPLMDefs.h"
 #include "xPlane/CHeaders/XPLM/XPLMMenus.h"
-
 
 PLUGIN_API int
 XPluginStart(char* outName, char* outSig, char* outDesc);
