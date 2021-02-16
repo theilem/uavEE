@@ -74,6 +74,11 @@ private:
 	XPLMDataRef temp_;
 	XPLMDataRef pressure_;
 
+	//For logging for modelling purposes creation
+	XPLMDataRef p_dot_;
+	XPLMDataRef q_dot_;
+	XPLMDataRef r_dot_;
+
 	//TODO update scheduling based on sim speed
 	XPLMDataRef simSpeed_;
 

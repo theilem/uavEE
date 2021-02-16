@@ -19,58 +19,46 @@
 #include <experimental/filesystem>
 
 XPlaneInterface::XPlaneInterface() :
-		sensorFrequency_(100)
+		sensorFrequency_(100),
+		positionRefs_{XPLMFindDataRef("sim/flightmodel/position/latitude"),
+					  XPLMFindDataRef("sim/flightmodel/position/longitude"),
+					  XPLMFindDataRef("sim/flightmodel/position/elevation")},
+		velocityRefs_{XPLMFindDataRef("sim/flightmodel/position/local_vx"),
+					  XPLMFindDataRef("sim/flightmodel/position/local_vy"),
+					  XPLMFindDataRef("sim/flightmodel/position/local_vz")},
+		airSpeedRef_(XPLMFindDataRef("sim/flightmodel/position/true_airspeed")),
+		accelerationRefs_{XPLMFindDataRef("sim/flightmodel/position/local_ax"),
+						  XPLMFindDataRef("sim/flightmodel/position/local_ay"),
+						  XPLMFindDataRef("sim/flightmodel/position/local_az")},
+		attitudeRefs_{XPLMFindDataRef("sim/flightmodel/position/phi"),
+					  XPLMFindDataRef("sim/flightmodel/position/theta"),
+					  XPLMFindDataRef("sim/flightmodel/position/psi")},
+		angleOfAttackRef_(XPLMFindDataRef("sim/flightmodel/position/alpha")),
+		angleOfSideslipRef_(XPLMFindDataRef("sim/flightmodel/position/beta")),
+		angularRateRefs_{XPLMFindDataRef("sim/flightmodel/position/P"),
+						 XPLMFindDataRef("sim/flightmodel/position/Q"),
+						 XPLMFindDataRef("sim/flightmodel/position/R")},
+		gpsFixRef_(XPLMFindDataRef("sim/cockpit2/radios/actuators/gps_power")),
+		batteryVoltageRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt")),
+		batteryCurrentRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp")),
+		aileronRef_(XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def")),
+		elevatorRef_(XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def")),
+		rudderRef_(XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def")),
+		throttleRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use")),
+		rpmRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad")),
+		joystickOverrideRef_{XPLMFindDataRef("sim/operation/override/override_joystick"),
+							 XPLMFindDataRef("sim/operation/override/override_throttles")},
+		joystickAttitudeRef_{XPLMFindDataRef("sim/joystick/yoke_roll_ratio"),
+							 XPLMFindDataRef("sim/joystick/yoke_pitch_ratio"),
+							 XPLMFindDataRef("sim/joystick/yoke_heading_ratio")},
+		course_(XPLMFindDataRef("sim/flightmodel/position/hpath")),
+		temp_(XPLMFindDataRef("sim/weather/temperature_le_c")),
+		pressure_(XPLMFindDataRef("sim/weather/barometer_current_inhg")),
+		p_dot_(XPLMFindDataRef("sim/flightmodel/position/P_dot")),
+		q_dot_(XPLMFindDataRef("sim/flightmodel/position/Q_dot")),
+		r_dot_(XPLMFindDataRef("sim/flightmodel/position/R_dot")),
+		simSpeed_(XPLMFindDataRef("sim/time/sim_speed_actual_ogl"))
 {
-	positionRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/latitude");
-	positionRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/longitude");
-	positionRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/elevation");
-
-	velocityRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/local_vx");
-	velocityRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_vy");
-	velocityRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/local_vz");
-
-	airSpeedRef_ = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
-
-	accelerationRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/local_ax");
-	accelerationRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/local_ay");
-	accelerationRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/local_az");
-
-	attitudeRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/phi");
-	attitudeRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/theta");
-	attitudeRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/psi");
-
-//	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
-	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel/position/alpha");
-	angleOfSideslipRef_ = XPLMFindDataRef("sim/flightmodel/position/beta");
-
-	angularRateRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/P");
-	angularRateRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/Q");
-	angularRateRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/R");
-
-	gpsFixRef_ = XPLMFindDataRef("sim/cockpit2/radios/actuators/gps_power");
-
-	batteryVoltageRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt");
-	batteryCurrentRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp");
-
-	aileronRef_ = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
-	elevatorRef_ = XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def");
-	rudderRef_ = XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def");
-	throttleRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use");
-	rpmRef_ = XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad");
-
-	joystickOverrideRef_[0] = XPLMFindDataRef("sim/operation/override/override_joystick");
-	joystickOverrideRef_[1] = XPLMFindDataRef("sim/operation/override/override_throttles");
-
-	joystickAttitudeRef_[0] = XPLMFindDataRef("sim/joystick/yoke_roll_ratio");
-	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
-	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
-
-	course_ = XPLMFindDataRef("sim/flightmodel/position/hpath");
-	temp_ = XPLMFindDataRef("sim/weather/temperature_le_c");
-	pressure_ = XPLMFindDataRef("sim/weather/barometer_current_inhg");
-
-	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
-
 	sensorData_.hasGPSFix = true;
 	sensorData_.autopilotActive = false;
 }
@@ -120,9 +108,11 @@ XPlaneInterface::setAutopilotActive(bool active)
 void
 XPlaneInterface::setLogging(bool logging)
 {
-	if (logging) {
+	if (logging)
+	{
 		// Start logging
-		if (file_.is_open()) {
+		if (file_.is_open())
+		{
 			CPSLOG_WARN << "Already logging!";
 			return;
 		}
@@ -136,12 +126,17 @@ XPlaneInterface::setLogging(bool logging)
 
 		//Again, there must be a better way
 #define SEP <<','<<
-		file_ << "u" SEP "w" SEP "q" SEP "theta" SEP "pitch_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP
-		"du/dt" SEP "dw/dt" SEP "dtheta/dt" SEP "delta_e" SEP "delta_T" SEP "timestamp\n";
+		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
+			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "du/dt" SEP "dv/dt" SEP
+			  "dw/dt" SEP "dp/dt" SEP "dq/dt" SEP "dr/dt" SEP "dphi/dt" SEP "dtheta/dt" SEP "dpsi/dt" SEP "delta_a" SEP
+			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
 #undef SEP
-	} else {
+	}
+	else
+	{
 		// Stop logging
-		if (!file_.is_open()) {
+		if (!file_.is_open())
+		{
 			CPSLOG_WARN << "Not logging!";
 			return;
 		}
@@ -257,19 +252,29 @@ XPlaneInterface::processData()
 		CPSLOG_ERROR << "Missing IAutopilotAPI";
 	}
 
-	if(file_.is_open())
+	if (file_.is_open())
 	{
 		SensorData sd_ned = sensorData_;
 		NED::convert(sd_ned, Frame::BODY);
 		FramedVector3 attitudeRate = sd_ned.angularRate;
 		angularConversion(attitudeRate, sd_ned.attitude, Frame::INERTIAL, Orientation::NED);
+		/*
+		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
+			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "du/dt" SEP "dv/dt" SEP
+			  "dw/dt" SEP "dp/dt" SEP "dq/dt" SEP "dr/dt" SEP "dphi/dt" SEP "dtheta/dt" SEP "dpsi/dt" SEP "delta_a" SEP
+			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
+		 */
 		//FIXME there must be a better way
 #define SEP <<','<<
-		file_ << sd_ned.velocity[0] SEP sd_ned.velocity[2] SEP sd_ned.angularRate[1] SEP sd_ned.attitude[1] SEP
-		coToLog_.pitchOutput SEP coToLog_.throttleOutput SEP sensorData_.position[0] SEP sensorData_.position[1] SEP
-		sensorData_.position[2] SEP sd_ned.acceleration[0] SEP sd_ned.acceleration[2] SEP attitudeRate[1] SEP
-		servoData_.elevator SEP servoData_.throttle SEP durationToNanoseconds(
-				sensorData_.timestamp.time_since_epoch()) << '\n';
+		file_ << sd_ned.velocity[0] SEP sd_ned.velocity[1] SEP sd_ned.velocity[2] SEP sd_ned.angularRate[0] SEP
+			  sd_ned.angularRate[1] SEP sd_ned.angularRate[2] SEP sd_ned.attitude[0] SEP sd_ned.attitude[1] SEP
+			  sd_ned.attitude[2] SEP coToLog_.rollOutput SEP coToLog_.pitchOutput SEP coToLog_.yawOutput SEP
+			  coToLog_.throttleOutput SEP sensorData_.position[0] SEP sensorData_.position[1] SEP
+			  sensorData_.position[2] SEP sd_ned.acceleration[0] SEP sd_ned.acceleration[1] SEP sd_ned.acceleration[2]
+			  SEP degToRad(XPLMGetDataf(p_dot_)) SEP degToRad(XPLMGetDataf(q_dot_)) SEP
+			  degToRad(XPLMGetDataf(r_dot_)) SEP attitudeRate[0] SEP attitudeRate[1] SEP attitudeRate[2] SEP
+			  servoData_.aileron SEP servoData_.elevator SEP servoData_.rudder SEP servoData_.throttle SEP
+			  durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) << '\n';
 #undef SEP
 	}
 }
