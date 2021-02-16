@@ -28,5 +28,5 @@ registerCommand(XPLMMenuID menuID, const char* name, const char* description,
 void
 setLogLevel()
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::TRACE);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 }
