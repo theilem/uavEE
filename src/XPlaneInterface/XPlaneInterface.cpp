@@ -127,8 +127,8 @@ XPlaneInterface::setLogging(bool logging)
 		//Again, there must be a better way
 #define SEP <<','<<
 		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
-			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "du/dt" SEP "dv/dt" SEP
-			  "dw/dt" SEP "dp/dt" SEP "dq/dt" SEP "dr/dt" SEP "dphi/dt" SEP "dtheta/dt" SEP "dpsi/dt" SEP "delta_a" SEP
+			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
+			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
 			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
 #undef SEP
 	}
@@ -256,8 +256,8 @@ XPlaneInterface::processData()
 		angularConversion(attitudeRate, sd_ned.attitude, Frame::INERTIAL, Orientation::NED);
 		/*
 		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
-			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "du/dt" SEP "dv/dt" SEP
-			  "dw/dt" SEP "dp/dt" SEP "dq/dt" SEP "dr/dt" SEP "dphi/dt" SEP "dtheta/dt" SEP "dpsi/dt" SEP "delta_a" SEP
+			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
+			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
 			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
 		 */
 		//FIXME there must be a better way
