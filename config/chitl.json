@@ -20,5 +20,7 @@
 		}
 	},
 	"remote_autopilot_api":{
+	},
+	"idc": {
 	}
 }
