@@ -60,6 +60,10 @@ private:
 	XPLMDataRef rpmRef_;
 	XPLMDataRef joystickOverrideRef_[2];
 	XPLMDataRef joystickAttitudeRef_[3];
+	XPLMDataRef course_;
+	XPLMDataRef temp_;
+	XPLMDataRef pressure_;
+
 	//TODO update scheduling based on sim speed
 	XPLMDataRef simSpeed_;
 

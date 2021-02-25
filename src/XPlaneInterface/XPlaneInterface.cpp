@@ -9,7 +9,6 @@
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
-
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
 XPlaneInterface::XPlaneInterface() :
@@ -33,7 +32,8 @@ XPlaneInterface::XPlaneInterface() :
 	attitudeRefs_[1] = XPLMFindDataRef("sim/flightmodel/position/theta");
 	attitudeRefs_[2] = XPLMFindDataRef("sim/flightmodel/position/psi");
 
-	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
+//	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel2/misc/AoA_angle_degrees");
+	angleOfAttackRef_ = XPLMFindDataRef("sim/flightmodel/position/alpha");
 	angleOfSideslipRef_ = XPLMFindDataRef("sim/flightmodel/position/beta");
 
 	angularRateRefs_[0] = XPLMFindDataRef("sim/flightmodel/position/P");
@@ -57,6 +57,10 @@ XPlaneInterface::XPlaneInterface() :
 	joystickAttitudeRef_[0] = XPLMFindDataRef("sim/joystick/yoke_roll_ratio");
 	joystickAttitudeRef_[1] = XPLMFindDataRef("sim/joystick/yoke_pitch_ratio");
 	joystickAttitudeRef_[2] = XPLMFindDataRef("sim/joystick/yoke_heading_ratio");
+
+	course_ = XPLMFindDataRef("sim/flightmodel/position/hpath");
+	temp_ = XPLMFindDataRef("sim/weather/temperature_le_c");
+	pressure_ = XPLMFindDataRef("sim/weather/barometer_current_inhg");
 
 	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
 
@@ -126,6 +130,7 @@ XPlaneInterface::processData()
 		sensorData_.position[1] = north;
 		sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
 
+		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
 		sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
 		sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
 		sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
@@ -134,8 +139,9 @@ XPlaneInterface::processData()
 		sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
 
 		Vector3 accelerationInertial;
+		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
 		accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-		accelerationInertial[1] = static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
+		accelerationInertial[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
 		accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
 
 		Eigen::Matrix3d m;
@@ -152,7 +158,7 @@ XPlaneInterface::processData()
 		double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
 		sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
 
-		sensorData_.angleOfAttack = degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
+		sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
 		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
 
 		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
@@ -160,6 +166,11 @@ XPlaneInterface::processData()
 		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
+
+		double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+		sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
+		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
+		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
 
 		api->setSensorData(sensorData_);
 
