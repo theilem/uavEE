@@ -1,19 +1,22 @@
 {
 	"network": {
 		"redis":{
+			"hosts": {
+				"localhost": {
+					"ip": "127.0.0.1",
+					"auth": "",
+					"port": 6379
+				}
+			},
 			"sub":{
 				"to_uavee": {
-					"host_ip":"127.0.0.1",
-					"auth":"",
-					"port":6379,
+					"host": "localhost",
 					"channel":"to_uavee"
 				}
 			},
 			"pub":{
 				"to_uavap": {
-					"host_ip":"127.0.0.1",
-					"auth":"",
-					"port":6379,
+					"host": "localhost",
 					"channel":"to_uavap_emu"
 				}
 			}
