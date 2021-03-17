@@ -33,6 +33,9 @@ public:
 	void
 	setAutopilotActive(bool active);
 
+	const SensorData&
+	getSensorData() const;
+
 private:
 
 	void
@@ -66,6 +69,8 @@ private:
 
 	//TODO update scheduling based on sim speed
 	XPLMDataRef simSpeed_;
+
+	uint32_t sequenceNumber_{0};
 
 	ServoData servoData_;
 	SensorData sensorData_;

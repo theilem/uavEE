@@ -25,5 +25,10 @@
 	"remote_autopilot_api":{
 	},
 	"idc": {
+	},
+	"data_recording": {
+		"period": 10,
+		"header_file": "/home/mirco/logs_cessna/351header.txt",
+		"log_file": "/home/mirco/logs_cessna/log.log"
 	}
 }

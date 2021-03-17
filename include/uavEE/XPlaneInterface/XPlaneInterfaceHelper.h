@@ -16,6 +16,7 @@
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 #include "uavEE/XPlaneInterface/RemoteAutopilotInterface.h"
+#include "uavEE/XPlaneInterface/DataRecording.h"
 
 using XPlaneInterfaceDefaultHelper = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
@@ -28,7 +29,8 @@ using XPlaneInterfaceHelper = StaticHelper<XPlaneInterfaceDefaultHelper,
 		IPC,
 		NetworkFactory,
 		AggregatableAutopilotAPI,
-		RemoteAutopilotInterface
+		RemoteAutopilotInterface,
+		DataRecording
 		>;
 
 #endif //UAVEE_XPLANEINTERFACEHELPER_H

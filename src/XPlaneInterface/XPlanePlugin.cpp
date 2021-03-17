@@ -20,12 +20,6 @@ namespace filesystem = std::experimental::filesystem;
 #include <cpsCore/Synchronization/SimpleRunner.h>
 #include <cpsCore/Configuration/JsonPopulator.h>
 
-#ifdef UNIX
-#define LIN
-#endif
-
-#include "xPlane/CHeaders/XPLM/XPLMDefs.h"
-#include "xPlane/CHeaders/XPLM/XPLMMenus.h"
 
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
@@ -190,6 +184,13 @@ registerCommand(XPLMMenuID menuID, const char* name, const char* description,
 	XPLMRegisterCommandHandler(cmd, (XPLMCommandCallback_f) func, inBefore, inRefcon);
 
 	XPLMAppendMenuItemWithCommand(menuID, name, cmd);
+}
+
+void
+addCommandToMenu(const char* name, const char* description, int (* func)(XPLMCommandRef, XPLMCommandPhase, void*),
+				 int inBefore, void* inRefcon)
+{
+	registerCommand(rootMenu, name, description, func, inBefore, inRefcon);
 }
 
 int

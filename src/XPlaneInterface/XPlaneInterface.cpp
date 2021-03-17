@@ -172,6 +172,10 @@ XPlaneInterface::processData()
 		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
 		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
 
+		sensorData_.sequenceNumber = sequenceNumber_++;
+		if (sequenceNumber_ > std::numeric_limits<uint16_t>::max())
+			sequenceNumber_ = 0;
+
 		api->setSensorData(sensorData_);
 
 		//Process Power Data
@@ -223,4 +227,10 @@ XPlaneInterface::actuate(const ControllerOutput& out)
 	XPLMSetDataf(joystickAttitudeRef_[1], out.pitchOutput);
 	XPLMSetDataf(joystickAttitudeRef_[2], out.yawOutput);
 	CPSLOG_TRACE << "End Actuate\n";
+}
+
+const SensorData&
+XPlaneInterface::getSensorData() const
+{
+	return sensorData_;
 }
