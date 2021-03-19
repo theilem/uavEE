@@ -28,7 +28,7 @@
 	},
 	"data_recording": {
 		"period": 10,
-		"header_file": "/home/mirco/logs_cessna/351header.txt",
+		"header_file": "/home/mirco/logs_cessna/294header.txt",
 		"log_file": "/home/mirco/logs_cessna/log.log"
 	}
 }

@@ -10,6 +10,7 @@
 #include <boost/token_functions.hpp>
 #include <boost/tokenizer.hpp>
 #include <uavAP/Core/SensorData.h>
+#include <iomanip>
 
 static DataRecording* dataRecording;
 
@@ -169,7 +170,7 @@ DataRecording::log()
 		if (sensor == SensorEnum::INVALID)
 			logFile_ << "0;";
 		else
-			logFile_ << enumAccess<FloatingType>(sd, sensor) << ";";
+			logFile_ << std::setprecision(10) << enumAccess<FloatingType>(sd, sensor) << ";";
 	}
 	logFile_ << std::endl;
 }
