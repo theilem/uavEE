@@ -18,6 +18,8 @@
 // Not including filesystem because older GCC compilers cant use it
 #include <experimental/filesystem>
 
+#include "uavEE/utils.h"
+
 XPlaneInterface::XPlaneInterface() :
 		sensorFrequency_(100),
 		positionRefs_{XPLMFindDataRef("sim/flightmodel/position/latitude"),
@@ -41,11 +43,13 @@ XPlaneInterface::XPlaneInterface() :
 		gpsFixRef_(XPLMFindDataRef("sim/cockpit2/radios/actuators/gps_power")),
 		batteryVoltageRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_volt")),
 		batteryCurrentRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_bat_amp")),
-		aileronRef_(XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def")),
+		aileronRefR_(XPLMFindDataRef("sim/flightmodel/controls/wing1r_ail1def")),
+		aileronRefL_(XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def")),
 		elevatorRef_(XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def")),
 		rudderRef_(XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def")),
 		throttleRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro_use")),
 		rpmRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_tacrad")),
+		powerRef_(XPLMFindDataRef("sim/flightmodel/engine/ENGN_power")),
 		joystickOverrideRef_{XPLMFindDataRef("sim/operation/override/override_joystick"),
 							 XPLMFindDataRef("sim/operation/override/override_throttles")},
 		joystickAttitudeRef_{XPLMFindDataRef("sim/joystick/yoke_roll_ratio"),
@@ -129,7 +133,8 @@ XPlaneInterface::setLogging(bool logging)
 		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
 			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
 			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
-			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
+			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "voltage" SEP "current" SEP "power" SEP "rpm" SEP "alpha" SEP
+			  "beta" SEP "Va" SEP "Vg" SEP "timestamp" SEP "sequenceNo\n";
 #undef SEP
 	}
 	else
@@ -162,7 +167,7 @@ XPlaneInterface::processData()
 
 	//Process SensorData
 
-	// FIXME Xplane does not recommend using our own transformations
+	// Xplane does not recommend using our own transformations
 	// https://developer.x-plane.com/article/screencoordinates/#3-D_Coordinate_System
 	double lat = XPLMGetDatad(positionRefs_[0]);
 	double lon = XPLMGetDatad(positionRefs_[1]);
@@ -189,6 +194,9 @@ XPlaneInterface::processData()
 	sensorData_.airSpeed = static_cast<FloatingType>(XPLMGetDataf(airSpeedRef_));
 
 	// Converting from ACF to ENU inertial frame
+	// ACF: https://developer.x-plane.com/article/screencoordinates/#Aircraft_Coordinates
+
+	// ENU acceleration
 	sensorData_.acceleration[0] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[0]));
 	sensorData_.acceleration[1] = -static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[2]));
 	sensorData_.acceleration[2] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[1]));
@@ -223,8 +231,13 @@ XPlaneInterface::processData()
 	powerData_.batteryCurrent = static_cast<FloatingType>(XPLMGetDataf(batteryCurrentRef_));
 	powerData_.batteryVoltage = static_cast<FloatingType>(XPLMGetDataf(batteryVoltageRef_));
 
+	float power[8];
+	XPLMGetDatavf(powerRef_, power, 0, 8);
+	powerData_.propulsionPower = static_cast<FloatingType>(power[0]);
+
 	//Process Servo Data
-	servoData_.aileron = static_cast<FloatingType>(XPLMGetDataf(aileronRef_));
+	// delta_a = 1/2 (a_R - a_L)
+	servoData_.aileron = 0.5 * (static_cast<FloatingType>(XPLMGetDataf(aileronRefR_) - XPLMGetDataf(aileronRefL_)));
 	servoData_.elevator = static_cast<FloatingType>(XPLMGetDataf(elevatorRef_));
 	servoData_.rudder = static_cast<FloatingType>(XPLMGetDataf(rudderRef_));
 
@@ -262,10 +275,13 @@ XPlaneInterface::processData()
 		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
 			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
 			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
-			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "timestamp\n";
+			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "voltage" SEP "current" SEP "power" SEP "rpm" SEP "alpha" SEP
+			  "beta" SEP "Va" SEP "Vg" SEP "timestamp" SEP "sequenceNo\n";
 		 */
 		//FIXME there must be a better way
 #define SEP <<','<<
+		file_ << std::scientific;
+		file_.precision(10);
 		file_ << sd_ned.velocity[0] SEP sd_ned.velocity[1] SEP sd_ned.velocity[2] SEP sd_ned.angularRate[0] SEP
 			  sd_ned.angularRate[1] SEP sd_ned.angularRate[2] SEP sd_ned.attitude[0] SEP sd_ned.attitude[1] SEP
 			  sd_ned.attitude[2] SEP coToLog_.rollOutput SEP coToLog_.pitchOutput SEP coToLog_.yawOutput SEP
@@ -274,7 +290,9 @@ XPlaneInterface::processData()
 			  SEP degToRad(XPLMGetDataf(p_dot_)) SEP degToRad(XPLMGetDataf(q_dot_)) SEP
 			  degToRad(XPLMGetDataf(r_dot_)) SEP attitudeRate[0] SEP attitudeRate[1] SEP attitudeRate[2] SEP
 			  servoData_.aileron SEP servoData_.elevator SEP servoData_.rudder SEP servoData_.throttle SEP
-			  durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) << '\n';
+			  powerData_.batteryVoltage SEP powerData_.batteryCurrent SEP powerData_.propulsionPower SEP servoData_.rpm SEP
+			  sd_ned.angleOfAttack SEP sd_ned.angleOfSideslip SEP sd_ned.airSpeed SEP sd_ned.groundSpeed SEP
+			  durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) SEP sd_ned.sequenceNumber << '\n';
 #undef SEP
 	}
 }

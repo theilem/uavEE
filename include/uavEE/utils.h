@@ -18,5 +18,4 @@ setLogLevel();
 
 constexpr auto emptyHandler = [](void* mRef, void* iRef){};
 
-
 #endif //UAVEE_UTILS_H

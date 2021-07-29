@@ -63,11 +63,13 @@ private:
 	XPLMDataRef gpsFixRef_;
 	XPLMDataRef batteryVoltageRef_;
 	XPLMDataRef batteryCurrentRef_;
-	XPLMDataRef aileronRef_;
+	XPLMDataRef aileronRefR_;
+	XPLMDataRef aileronRefL_;
 	XPLMDataRef elevatorRef_;
 	XPLMDataRef rudderRef_;
 	XPLMDataRef throttleRef_;
 	XPLMDataRef rpmRef_;
+	XPLMDataRef powerRef_;
 	XPLMDataRef joystickOverrideRef_[2];
 	XPLMDataRef joystickAttitudeRef_[3];
 	XPLMDataRef course_;
