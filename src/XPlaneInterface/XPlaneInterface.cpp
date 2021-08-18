@@ -10,6 +10,7 @@
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
 #include <uavAP/Core/Orientation/ConversionUtils.h>
+#include <uavAP/Core/Orientation/ENU.h>
 #include <uavAP/Core/Orientation/NED.h>
 #include <iostream>
 
@@ -130,11 +131,18 @@ XPlaneInterface::setLogging(bool logging)
 
 		//Again, there must be a better way
 #define SEP <<','<<
-		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
-			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
-			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
-			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "voltage" SEP "current" SEP "power" SEP "rpm" SEP "alpha" SEP
-			  "beta" SEP "Va" SEP "Vg" SEP "timestamp" SEP "sequenceNo\n";
+		file_ << "u" SEP "v" SEP "w" SEP "p" SEP
+				"q" SEP "r" SEP "phi" SEP "theta" SEP
+				"psi" SEP "roll_ctrl" SEP "pitch_ctrl" SEP "yaw_ctrl" SEP
+				"throttle_ctrl" SEP "E" SEP "N" SEP
+				"U" SEP "Ax" SEP "Ay" SEP "Az" SEP
+				"p_dot" SEP "q_dot" SEP
+				"r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP
+				"delta_a" SEP "delta_e" SEP "delta_r" SEP "delta_T" SEP
+				"voltage" SEP "current" SEP "power" SEP "rpm" SEP
+				"alpha" SEP "beta" SEP "Va" SEP "Vg" SEP
+				"u_dot" SEP "v_dot" SEP "w_dot" SEP
+				"timestamp" SEP "sequenceNo" << '\n';
 #undef SEP
 	}
 	else
@@ -189,6 +197,7 @@ XPlaneInterface::processData()
 	sensorData_.velocity[0] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[0]));
 	sensorData_.velocity[1] = -static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[2]));
 	sensorData_.velocity[2] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[1]));
+	sensorData_.velocity.frame = Frame::INERTIAL;
 
 	sensorData_.groundSpeed = sensorData_.velocity.norm();
 	sensorData_.airSpeed = static_cast<FloatingType>(XPLMGetDataf(airSpeedRef_));
@@ -200,6 +209,7 @@ XPlaneInterface::processData()
 	sensorData_.acceleration[0] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[0]));
 	sensorData_.acceleration[1] = -static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[2]));
 	sensorData_.acceleration[2] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[1]));
+	sensorData_.acceleration.frame = Frame::INERTIAL;
 
 	// Converting acceleration to body frame
 	directionalConversion(sensorData_.acceleration, sensorData_.attitude, Frame::BODY, Orientation::ENU);
@@ -219,6 +229,8 @@ XPlaneInterface::processData()
 	sensorData_.angularRate[0] = degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[1])));
 	sensorData_.angularRate[2] = -degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[2])));
 	sensorData_.angularRate.frame = Frame::BODY;
+
+	ENU::setUVWDot(sensorData_);
 
 	sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
@@ -269,14 +281,22 @@ XPlaneInterface::processData()
 	{
 		SensorData sd_ned = sensorData_;
 		NED::convert(sd_ned, Frame::BODY);
+		NED::setUVWDot(sd_ned);
 		FramedVector3 attitudeRate = sd_ned.angularRate;
 		angularConversion(attitudeRate, sd_ned.attitude, Frame::INERTIAL, Orientation::NED);
 		/*
-		file_ << "u" SEP "v" SEP "w" SEP "p" SEP "q" SEP "r" SEP "phi" SEP "theta" SEP "psi" SEP "roll_ctrl" SEP
-			  "pitch_ctrl" SEP "yaw_ctrl" SEP "throttle_ctrl" SEP "E" SEP "N" SEP "U" SEP "u_dot" SEP "v_dot" SEP
-			  "w_dot" SEP "p_dot" SEP "q_dot" SEP "r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP "delta_a" SEP
-			  "delta_e" SEP "delta_r" SEP "delta_T" SEP "voltage" SEP "current" SEP "power" SEP "rpm" SEP "alpha" SEP
-			  "beta" SEP "Va" SEP "Vg" SEP "timestamp" SEP "sequenceNo\n";
+		file_ << "u" SEP "v" SEP "w" SEP "p" SEP
+				"q" SEP "r" SEP "phi" SEP "theta" SEP
+				"psi" SEP "roll_ctrl" SEP "pitch_ctrl" SEP "yaw_ctrl" SEP
+				"throttle_ctrl" SEP "E" SEP "N" SEP
+				"U" SEP "Ax" SEP "Ay" SEP "Az" SEP
+				"p_dot" SEP "q_dot" SEP
+				"r_dot" SEP "phi_dot" SEP "theta_dot" SEP "psi_dot" SEP
+				"delta_a" SEP "delta_e" SEP "delta_r" SEP "delta_T" SEP
+				"voltage" SEP "current" SEP "power" SEP "rpm" SEP
+				"alpha" SEP "beta" SEP "Va" SEP "Vg" SEP
+				"u_dot" SEP "v_dot" SEP "w_dot" SEP
+				"timestamp" SEP "sequenceNo" << '\n';
 		 */
 		//FIXME there must be a better way
 #define SEP <<','<<
@@ -292,6 +312,7 @@ XPlaneInterface::processData()
 			  servoData_.aileron SEP servoData_.elevator SEP servoData_.rudder SEP servoData_.throttle SEP
 			  powerData_.batteryVoltage SEP powerData_.batteryCurrent SEP powerData_.propulsionPower SEP servoData_.rpm SEP
 			  sd_ned.angleOfAttack SEP sd_ned.angleOfSideslip SEP sd_ned.airSpeed SEP sd_ned.groundSpeed SEP
+			  sd_ned.uvw_dot[0] SEP sd_ned.uvw_dot[1] SEP sd_ned.uvw_dot[2] SEP
 			  durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) SEP sd_ned.sequenceNumber << '\n';
 #undef SEP
 	}
