@@ -22,4 +22,4 @@ add_subdirectory(src)
 
 
 install(DIRECTORY include/uavEE DESTINATION include)
-install(DIRECTORY config DESTINATION .)
+install(DIRECTORY config DESTINATION config/uavEE)

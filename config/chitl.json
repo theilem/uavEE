@@ -3,7 +3,7 @@
 		"redis":{
 			"hosts": {
 				"localhost": {
-					"ip": "127.0.0.1",
+					"ip": "192.168.3.21",
 					"auth": "",
 					"port": 6379
 				}
@@ -25,10 +25,5 @@
 	"remote_autopilot_api":{
 	},
 	"idc": {
-	},
-	"data_recording": {
-		"period": 10,
-		"header_file": "/home/mirco/logs_cessna/294header.txt",
-		"log_file": "/home/mirco/logs_cessna/log.log"
 	}
 }
