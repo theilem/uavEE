@@ -7,7 +7,8 @@ add_xplane_plugin(lin 303 XPlanePlugin.cpp
 		DataRecording.cpp
 		)
 
-target_link_libraries(lin cps_core
+
+target_link_libraries(lin PUBLIC cps_core
 		uavap_core
 		uavap_api
 		Eigen3::Eigen

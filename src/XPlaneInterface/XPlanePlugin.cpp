@@ -6,7 +6,7 @@
  * @brief
  */
 
-#if GCC_VERSION > 80000
+#if (GCC_VERSION > 80000) || __APPLE__
 #include <filesystem>
 namespace filesystem = std::filesystem;
 #else

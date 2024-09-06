@@ -1,10 +1,10 @@
 # Set up the imported targets for X-Plane plugin libraries:
 
-#IF(APPLE)
-#    SET(XPLANE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sdk/Libraries/Mac/")
-#ELSEIF(WIN32)
-#    SET(XPLANE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sdk/Libraries/Win/")
-#ENDIF()
+IF(APPLE)
+    SET(XPLANE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../extern/xPlane/Libraries/Mac/")
+ELSEIF(WIN32)
+    SET(XPLANE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../extern/xPlane/Libraries/Win/")
+ENDIF()
 
 SET(XPLANE_INCLUDES_PATH ${CMAKE_CURRENT_SOURCE_DIR}../../include/xPlane/CHeaders)
 INCLUDE_DIRECTORIES(${XPLANE_INCLUDES_PATH}/Widgets

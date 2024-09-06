@@ -119,8 +119,8 @@ XPlaneInterface::processData()
 		double lat = XPLMGetDatad(positionRefs_[0]);
 		double lon = XPLMGetDatad(positionRefs_[1]);
 
-		double north;
-		double east;
+		FloatingType north;
+		FloatingType east;
 		int zone;
 		char hemi;
 
@@ -144,10 +144,10 @@ XPlaneInterface::processData()
 		accelerationInertial[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
 		accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
 
-		Eigen::Matrix3d m;
-		m = Eigen::AngleAxisd(-sensorData_.attitude[0], Vector3::UnitX())
-			* Eigen::AngleAxisd(-sensorData_.attitude[1], Vector3::UnitY())
-			* Eigen::AngleAxisd(-sensorData_.attitude[2], Vector3::UnitZ());
+		Matrix3 m;
+		m = AngleAxis(-sensorData_.attitude[0], Vector3::UnitX())
+			* AngleAxis(-sensorData_.attitude[1], Vector3::UnitY())
+			* AngleAxis(-sensorData_.attitude[2], Vector3::UnitZ());
 
 		sensorData_.acceleration = m * accelerationInertial;
 
