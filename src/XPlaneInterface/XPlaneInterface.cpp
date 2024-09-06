@@ -119,8 +119,8 @@ XPlaneInterface::processData()
 		double lat = XPLMGetDatad(positionRefs_[0]);
 		double lon = XPLMGetDatad(positionRefs_[1]);
 
-		FloatingType north;
-		FloatingType east;
+		double north;
+		double east;
 		int zone;
 		char hemi;
 
