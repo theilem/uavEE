@@ -26,8 +26,8 @@ addCommandToMenu(const char* name, const char* description, int (* func)(XPLMCom
 int
 resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 
-int
-startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
+void
+startNode(void* mRef, void* iRef);
 
 int
 setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
@@ -36,8 +36,6 @@ setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRe
 XPLMMenuID
 addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx);
 
-void
-configSelector(void* mRef, void* iRef);
 
 int
 refreshConfigInfo(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);

@@ -29,7 +29,6 @@ namespace filesystem = std::experimental::filesystem;
 
 Aggregator agg;
 bool runBegan;
-std::string configPath;
 XPLMMenuID configMenu, rootMenu;
 std::unordered_map<int, std::string> configMap;
 int parentIdx;
@@ -49,15 +48,14 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 
 	rootMenu = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
 
-	registerCommand(rootMenu, "Start Node", "Starts the XPlanePlugin", startNode);
+//	registerCommand(rootMenu, "Start Node", "Starts the XPlanePlugin", startNode);
+	populateConfig();
 	registerCommand(rootMenu, "Enable Autopilot", "Enables the IAutopilotAPI in the XPlanePlugin", setAutopilotState, 0,
 					(void*) true);
 	registerCommand(rootMenu, "Disable Autopilot", "Disables the IAutopilotAPI in the XPlanePlugin", setAutopilotState,
 					0, (void*) false);
 
-	populateConfig();
 
-	registerCommand(rootMenu, "Reset Config", "Resets config file path for XPlanePlugin", resetConfig);
 	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo);
 	registerCommand(rootMenu, "Generate Config", "Generates a config according to the helper into generate.json",
 					generateConfig);
@@ -93,24 +91,14 @@ handler(void* mRef, void* iRef)
 {
 }
 
-int
-resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+void
+startNode(void* mRef, void* iRef)
 {
-	if (inPhase == xplm_CommandBegin)
-	{
-		configPath = std::string();
-		std::cout << "Resetting Config\n";
-	}
-	return 0;
-}
-
-int
-startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
-{
-	if (!runBegan && inPhase == xplm_CommandBegin)
+	auto configPath = configMap[(intptr_t) iRef];
+	if (!runBegan)
 	{
 		CPSLOG_DEBUG << "STARTNODE";
-		if (!configPath.length())
+		if (configPath.empty())
 		{
 			CPSLOG_DEBUG << "No Config Path specified, using default";
 			agg = XPlaneInterfaceHelper::createAggregation();
@@ -123,11 +111,10 @@ startNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
 		if (runner.runAllStages())
 		{
 			CPSLOG_ERROR << "Running all stages failed.";
-			return 0;
+			return;
 		}
 		runBegan = true;
 	}
-	return 0;
 }
 
 int
@@ -154,7 +141,7 @@ addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
 	filesystem::path configDir(path);
 	configDir.append("uavEEConfig");
 
-	XPLMMenuID configMenuId = XPLMCreateMenu("Select Config", parentMenu, menuIdx, configSelector, NULL);
+	XPLMMenuID configMenuId = XPLMCreateMenu("Start Node", parentMenu, menuIdx, startNode, NULL);
 	//Using pointer as integer
 	intptr_t menuId = 0;
 	for (const auto& entry : filesystem::directory_iterator(configDir))
@@ -165,15 +152,6 @@ addDirectoryInfo(XPLMMenuID parentMenu, int menuIdx)
 		menuId++;
 	}
 	return configMenuId;
-}
-
-void
-configSelector(void* mRef, void* iRef)
-{
-	//Using pointer as integer
-	auto menuId = (intptr_t) iRef;
-	configPath = configMap[menuId];
-	CPSLOG_DEBUG << "Setting config file path to:" << configPath;
 }
 
 void
@@ -227,6 +205,6 @@ generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefco
 void
 populateConfig()
 {
-	parentIdx = XPLMAppendMenuItem(rootMenu, "Select Config", (void*) "SETCONF", 1);
+	parentIdx = XPLMAppendMenuItem(rootMenu, "Start Node", (void*) "SETCONF", 1);
 	configMenu = addDirectoryInfo(rootMenu, parentIdx);
 }
