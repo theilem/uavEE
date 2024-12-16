@@ -67,8 +67,13 @@ private:
 	XPLMDataRef temp_;
 	XPLMDataRef pressure_;
 
+	XPLMDataRef fuel_;
+
 	//TODO update scheduling based on sim speed
 	XPLMDataRef simSpeed_;
+	XPLMDataRef timestamp_;
+
+	TimePoint lastSensorUpdate_;
 
 	uint32_t sequenceNumber_{0};
 

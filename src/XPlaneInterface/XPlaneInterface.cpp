@@ -62,7 +62,10 @@ XPlaneInterface::XPlaneInterface() :
 	temp_ = XPLMFindDataRef("sim/weather/temperature_le_c");
 	pressure_ = XPLMFindDataRef("sim/weather/barometer_current_inhg");
 
-	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual_ogl");
+	fuel_ = XPLMFindDataRef("sim/flightmodel/weight/m_fuel");
+
+	simSpeed_ = XPLMFindDataRef("sim/time/sim_speed_actual");
+	timestamp_ = XPLMFindDataRef("sim/time/total_flight_time_sec");
 
 	sensorData_.hasGPSFix = true;
 	sensorData_.autopilotActive = false;
@@ -86,12 +89,12 @@ XPlaneInterface::run(RunStage stage)
 		{
 			sensorDataEvent_ = get<IScheduler>()->schedule([this]
 														   { processData(); }, Milliseconds(0),
-														   Milliseconds(1000 / sensorFrequency_));
+														   Milliseconds(1000 / (sensorFrequency_ * 10)));
 
 			if (auto autopilotAPI = get<IAutopilotAPI>())
 			{
-				autopilotAPI->subscribeOnControllerOut(
-						std::bind(&XPlaneInterface::actuate, this, std::placeholders::_1));
+				autopilotAPI->subscribeOnControllerOut([this](const ControllerOutput& out)
+														{ actuate(out); });
 			}
 			break;
 		}
@@ -113,6 +116,16 @@ XPlaneInterface::setAutopilotActive(bool active)
 void
 XPlaneInterface::processData()
 {
+	auto timestamp = static_cast<double>(XPLMGetDataf(timestamp_));
+	auto currTime = TimePoint() + Nanoseconds(static_cast<uint64_t>(timestamp * 1e9));
+
+	int64_t step = std::chrono::duration_cast<Nanoseconds>(lastSensorUpdate_.time_since_epoch()).count() * sensorFrequency_ / int(1e9);
+	int64_t currentStep = std::chrono::duration_cast<Nanoseconds>(currTime.time_since_epoch()).count() * sensorFrequency_ / int(1e9);
+	if (currentStep <= step)
+		return;
+
+	lastSensorUpdate_ = currTime;
+
 	if (auto api = get<IAutopilotAPI>())
 	{
 		//Process SensorData
@@ -199,7 +212,6 @@ XPlaneInterface::processData()
 		servoData_.rpm = static_cast<double>(rpm[0]);
 
 		//Add Timestamps
-		auto currTime = Clock::now();
 		sensorData_.timestamp = currTime;
 		powerData_.timestamp = currTime;
 		servoData_.timestamp = currTime;
@@ -210,6 +222,7 @@ XPlaneInterface::processData()
 	{
 		CPSLOG_ERROR << "Missing IAutopilotAPI";
 	}
+	XPLMSetDataf(fuel_, 10.0);
 }
 
 void
