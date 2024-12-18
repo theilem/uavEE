@@ -144,18 +144,18 @@ XPlaneInterface::processData()
 		sensorData_.position[2] = XPLMGetDatad(positionRefs_[2]);
 
 		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
-		sensorData_.velocity[0] = static_cast<double>(XPLMGetDataf(velocityRefs_[0]));
-		sensorData_.velocity[1] = -static_cast<double>(XPLMGetDataf(velocityRefs_[2]));
-		sensorData_.velocity[2] = static_cast<double>(XPLMGetDataf(velocityRefs_[1]));
+		sensorData_.velocity[0] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[0]));
+		sensorData_.velocity[1] = -static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[2]));
+		sensorData_.velocity[2] = static_cast<FloatingType>(XPLMGetDataf(velocityRefs_[1]));
 
 		sensorData_.groundSpeed = sensorData_.velocity.norm();
-		sensorData_.airSpeed = static_cast<double>(XPLMGetDataf(airSpeedRef_));
+		sensorData_.airSpeed = static_cast<FloatingType>(XPLMGetDataf(airSpeedRef_));
 
 		Vector3 accelerationInertial;
 		// Don't know what frame X-Plane is in, but the following converts it to ENU inertial frame
-		accelerationInertial[0] = static_cast<double>(XPLMGetDataf(accelerationRefs_[0]));
-		accelerationInertial[1] = -static_cast<double>(XPLMGetDataf(accelerationRefs_[2]));
-		accelerationInertial[2] = static_cast<double>(XPLMGetDataf(accelerationRefs_[1]));
+		accelerationInertial[0] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[0]));
+		accelerationInertial[1] = -static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[2]));
+		accelerationInertial[2] = static_cast<FloatingType>(XPLMGetDataf(accelerationRefs_[1]));
 
 		Matrix3 m;
 		m = AngleAxis(-sensorData_.attitude[0], Vector3::UnitX())
@@ -165,25 +165,25 @@ XPlaneInterface::processData()
 		sensorData_.acceleration = m * accelerationInertial;
 
 
-		sensorData_.attitude[0] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[0])));
-		sensorData_.attitude[1] = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[1])));
+		sensorData_.attitude[0] = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[0])));
+		sensorData_.attitude[1] = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[1])));
 
-		double yaw = degToRad(static_cast<double>(XPLMGetDataf(attitudeRefs_[2])));
+		FloatingType yaw = degToRad(static_cast<FloatingType>(XPLMGetDataf(attitudeRefs_[2])));
 		sensorData_.attitude[2] = boundAngleRad(-(yaw - M_PI_2));
 
-		sensorData_.angleOfAttack = -degToRad(static_cast<double>(XPLMGetDataf(angleOfAttackRef_)));
-		sensorData_.angleOfSideslip = degToRad(static_cast<double>(XPLMGetDataf(angleOfSideslipRef_)));
+		sensorData_.angleOfAttack = -degToRad(static_cast<FloatingType>(XPLMGetDataf(angleOfAttackRef_)));
+		sensorData_.angleOfSideslip = degToRad(static_cast<FloatingType>(XPLMGetDataf(angleOfSideslipRef_)));
 
-		sensorData_.angularRate[0] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[0])));
-		sensorData_.angularRate[1] = degToRad(-static_cast<double>(XPLMGetDataf(angularRateRefs_[1])));
-		sensorData_.angularRate[2] = degToRad(static_cast<double>(XPLMGetDataf(angularRateRefs_[2])));
+		sensorData_.angularRate[0] = degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[0])));
+		sensorData_.angularRate[1] = degToRad(-static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[1])));
+		sensorData_.angularRate[2] = degToRad(static_cast<FloatingType>(XPLMGetDataf(angularRateRefs_[2])));
 
 		sensorData_.hasGPSFix = static_cast<bool>(XPLMGetDatai(gpsFixRef_));
 
-		double course = degToRad(static_cast<double>(XPLMGetDataf(course_)));
+		FloatingType course = degToRad(static_cast<FloatingType>(XPLMGetDataf(course_)));
 		sensorData_.courseAngle = boundAngleRad(-(course - M_PI_2));
-		sensorData_.temperature = static_cast<double>(XPLMGetDataf(temp_));
-		sensorData_.pressure = static_cast<double>(XPLMGetDataf(pressure_));
+		sensorData_.temperature = static_cast<FloatingType>(XPLMGetDataf(temp_));
+		sensorData_.pressure = static_cast<FloatingType>(XPLMGetDataf(pressure_));
 
 		sensorData_.sequenceNumber = sequenceNumber_++;
 		if (sequenceNumber_ > std::numeric_limits<uint16_t>::max())
@@ -192,24 +192,24 @@ XPlaneInterface::processData()
 		api->setSensorData(sensorData_);
 
 		//Process Power Data
-		powerData_.batteryCurrent = static_cast<double>(XPLMGetDataf(batteryCurrentRef_));
-		powerData_.batteryVoltage = static_cast<double>(XPLMGetDataf(batteryVoltageRef_));
+		powerData_.batteryCurrent = static_cast<FloatingType>(XPLMGetDataf(batteryCurrentRef_));
+		powerData_.batteryVoltage = static_cast<FloatingType>(XPLMGetDataf(batteryVoltageRef_));
 
 		api->setPowerData(powerData_);
 
 		//Process Servo Data
-		servoData_.aileron = static_cast<double>(XPLMGetDataf(aileronRef_));
-		servoData_.elevator = static_cast<double>(XPLMGetDataf(elevatorRef_));
-		servoData_.rudder = static_cast<double>(XPLMGetDataf(rudderRef_));
+		servoData_.aileron = static_cast<FloatingType>(XPLMGetDataf(aileronRef_));
+		servoData_.elevator = static_cast<FloatingType>(XPLMGetDataf(elevatorRef_));
+		servoData_.rudder = static_cast<FloatingType>(XPLMGetDataf(rudderRef_));
 
 		float throttle[8];
 		XPLMGetDatavf(throttleRef_, throttle, 0, 8);
-		servoData_.throttle = static_cast<double>(throttle[0]);
+		servoData_.throttle = static_cast<FloatingType>(throttle[0]);
 
 		float rpm[8];
 		XPLMGetDatavf(rpmRef_, rpm, 0, 8);
 		rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
-		servoData_.rpm = static_cast<double>(rpm[0]);
+		servoData_.rpm = static_cast<FloatingType>(rpm[0]);
 
 		//Add Timestamps
 		sensorData_.timestamp = currTime;
