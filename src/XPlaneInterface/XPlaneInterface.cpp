@@ -186,7 +186,7 @@ XPlaneInterface::processData()
 		sensorData_.pressure = static_cast<FloatingType>(XPLMGetDataf(pressure_));
 
 		sensorData_.sequenceNumber = sequenceNumber_++;
-		if (sequenceNumber_ > std::numeric_limits<uint16_t>::max())
+		if (sequenceNumber_ > std::numeric_limits<std::uint16_t>::max())
 			sequenceNumber_ = 0;
 
 		api->setSensorData(sensorData_);
