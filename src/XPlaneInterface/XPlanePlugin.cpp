@@ -193,11 +193,9 @@ generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefco
 
 		filesystem::path configDir(path);
 		configDir.append("uavEEConfig").append("generate.json");
-		std::ofstream file;
-		file.open(configDir.string(), std::ofstream::out);
-		JsonPopulator pop(file);
 
-		pop.populateContainer(XPlaneInterfaceHelper());
+		auto pop = JsonPopulator::populateContainer<XPlaneInterfaceHelper>();
+		pop.toFile(configDir.string());
 	}
 	return 0;
 }
