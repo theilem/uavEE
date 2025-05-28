@@ -11,7 +11,7 @@
 
 #include "xPlane/CHeaders/XPLM/XPLMDataAccess.h"
 
-class ControllerOutput;
+struct ControllerOutput;
 
 class IAutopilotAPI;
 
