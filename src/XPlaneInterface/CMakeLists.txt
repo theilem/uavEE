@@ -1,10 +1,10 @@
 include(xplane.cmake)
 
 
-add_xplane_plugin(lin 303 XPlanePlugin.cpp
-		XPlaneInterface.cpp
-		RemoteAutopilotInterface.cpp
-		DataRecording.cpp
+add_xplane_plugin(lin 303 ${CMAKE_CURRENT_SOURCE_DIR}/XPlanePlugin.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/XPlaneInterface.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/RemoteAutopilotInterface.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/DataRecording.cpp
 		)
 
 

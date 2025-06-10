@@ -46,4 +46,9 @@ generateConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefco
 void
 populateConfig();
 
+float
+flightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop,
+				  int inCounter, void* inRefcon);
+
+
 #endif //UAVEE_XPLANEPLUGIN_H

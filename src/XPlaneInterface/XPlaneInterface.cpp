@@ -11,6 +11,18 @@
 
 #include "uavEE/XPlaneInterface/XPlaneInterface.h"
 
+#include <uavEE/XPlaneInterface/XPlanePlugin.h>
+
+
+#include "cpsCore/Utilities/IDC/Header/Hash.h"
+#include <uavGS/XPlane/XPlaneManager.h>
+#include "cpsCore/Utilities/IPC/IPC.h"
+#include "cpsCore/Utilities/DataPresentation/DataPresentation.h"
+#include "uavAP/API/ap_ext/UTM.h"
+#include "xPlane/CHeaders/XPLM/XPLMUtilities.h"
+#include "xPlane/CHeaders/XPLM/XPLMPlanes.h"
+#include "xPlane/CHeaders/XPLM/XPLMProcessing.h"
+
 XPlaneInterface::XPlaneInterface() :
     sensorFrequency_(100)
 {
@@ -100,6 +112,25 @@ XPlaneInterface::run(RunStage stage)
                     actuate(out);
                 });
             }
+            auto ipc = get<IPC>();
+            auto options = IPCOptions{};
+            options.multiTarget = false;
+            options.retry = true;
+            ipc->subscribeOnPackets("uavgs_to_uavee", [this](const Packet& packet)
+            {
+                auto dp = get<DataPresentation>();
+                auto p = packet;
+                auto content = dp->extract<Hash>(p);
+                if (content == "xplane_teleportation")
+                {
+                    auto tp = dp->deserialize<Teleportation>(p);
+                    CPSLOG_DEBUG << "XPlaneInterface: Teleporting to position: " << tp.position().transpose()
+                        << ", velocity: " << tp.velocity().transpose()
+                        << ", attitude: " << tp.attitude().transpose();
+                    teleportTo_ = tp;
+                    XPLMRegisterFlightLoopCallback(::flightLoopCallback, -1.0, NULL);
+                }
+            }, options);
             break;
         }
     default:
@@ -109,9 +140,46 @@ XPlaneInterface::run(RunStage stage)
     return false;
 }
 
+float
+XPlaneInterface::flightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop,
+                                    int inCounter, void* inRefcon)
+{
+    std::cout << "Callback called" << std::endl;
+    if (teleportTo_)
+    {
+        setAutopilotActive(false);
+        std::cout << "Teleporting" << std::endl;
+        teleportTo(*teleportTo_);
+        teleportTo_.reset();
+        return -1.; // Call again
+    }
+    std::cout << "Starting more" << std::endl;
+    setAutopilotActive(true);
+    sensorDataEvent_ = get<IScheduler>()->schedule([this]
+                                                   {
+                                                       processData();
+                                                   }, Milliseconds(0),
+                                                   Milliseconds(1000 / (sensorFrequency_ * 10)));
+    return 0;
+}
+
+void
+XPlaneInterface::teleportTo(const Teleportation& tele)
+{
+    sensorDataEvent_.cancel();
+    std::lock_guard lock(dataMutex_);
+    XPLMPlaceUserAtLocation(
+        tele.position()[0],
+        tele.position()[1],
+        tele.position()[2],
+        radToDeg(tele.attitude()[2]),
+        tele.velocity().norm());
+}
+
 void
 XPlaneInterface::setAutopilotActive(bool active)
 {
+    std::lock_guard lock(dataMutex_);
     sensorData_.autopilotActive = active;
     XPLMSetDatai(joystickOverrideRef_[0], active);
     XPLMSetDatai(joystickOverrideRef_[1], active);
@@ -120,6 +188,7 @@ XPlaneInterface::setAutopilotActive(bool active)
 void
 XPlaneInterface::processData()
 {
+    std::lock_guard lock(dataMutex_);
     auto timestamp = static_cast<double>(XPLMGetDataf(timestamp_));
     auto currTime = std::chrono::time_point_cast<Clock::duration>(
         TimePoint() + Nanoseconds(static_cast<uint64_t>(timestamp * 1e9)));
@@ -128,7 +197,7 @@ XPlaneInterface::processData()
         sensorFrequency_ / int(1e9);
     int64_t currentStep = std::chrono::duration_cast<Nanoseconds>(currTime.time_since_epoch()).count() *
         sensorFrequency_ / int(1e9);
-    if (currentStep <= step)
+    if (currentStep == step) // Filtering for same step but allowing lower step to allow jumping back in time
         return;
 
     lastSensorUpdate_ = currTime;
@@ -141,10 +210,8 @@ XPlaneInterface::processData()
 
         double north;
         double east;
-        int zone;
-        char hemi;
 
-        latLongToUTM(lat, lon, north, east, zone, hemi);
+        latLongToUTM(lat, lon, north, east, zone_, hemi_);
 
         sensorData_.position[0] = east;
         sensorData_.position[1] = north;
@@ -215,7 +282,7 @@ XPlaneInterface::processData()
 
         float rpm[8];
         XPLMGetDatavf(rpmRef_, rpm, 0, 8);
-        rpm[0] = rpm[0] * 60 / M_PI / 2; // Radians Per Second to Revolution Per Minute
+        rpm[0] = rpm[0] * 60. / M_PI / 2.; // Radians Per Second to Revolution Per Minute
         servoData_.rpm = static_cast<FloatingType>(rpm[0]);
 
         //Add Timestamps

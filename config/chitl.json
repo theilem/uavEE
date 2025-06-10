@@ -3,8 +3,8 @@
 		"redis":{
 			"hosts": {
 				"localhost": {
-					"ip": "192.168.3.21",
-					"auth": "",
+					"ip": "192.168.3.22",
+					"auth": "pass_linux",
 					"port": 6379
 				}
 			},
@@ -25,5 +25,10 @@
 	"remote_autopilot_api":{
 	},
 	"idc": {
+	},
+	"ipc": {
+	},
+	"data_presentation": {
+		"compress_double": true
 	}
 }

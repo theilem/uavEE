@@ -6,6 +6,7 @@
  * @brief
  */
 
+#include <uavEE/XPlaneInterface/XPlanePlugin.h>
 #if (GCC_VERSION > 80000) || __APPLE__
 #include <filesystem>
 namespace filesystem = std::filesystem;
@@ -26,6 +27,7 @@ namespace filesystem = std::experimental::filesystem;
 #include "uavEE/XPlaneInterface/XPlaneInterfaceHelper.h"
 
 #include "uavEE/XPlaneInterface/XPlanePlugin.h"
+#include "xPlane/CHeaders/XPLM/XPLMProcessing.h"
 
 Aggregator agg;
 bool runBegan;
@@ -60,8 +62,6 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	registerCommand(rootMenu, "Generate Config", "Generates a config according to the helper into generate.json",
 					generateConfig);
 
-
-	CPSLOG_TRACE << "End XPlanePlugin";
 	return 1;
 }
 
@@ -205,4 +205,21 @@ populateConfig()
 {
 	parentIdx = XPLMAppendMenuItem(rootMenu, "Start Node", (void*) "SETCONF", 1);
 	configMenu = addDirectoryInfo(rootMenu, parentIdx);
+}
+
+float
+flightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop,
+				  int inCounter, void* inRefcon)
+{
+	std::cout << "Flight loop callback called with elapsed time: " << inElapsedSinceLastCall
+			  << ", elapsed time since last flight loop: " << inElapsedTimeSinceLastFlightLoop
+			  << ", counter: " << inCounter << std::endl;
+	if (runBegan)
+	{
+		if (auto interface = agg.getOne<XPlaneInterface>())
+		{
+			return interface->flightLoopCallback(inElapsedSinceLastCall, inElapsedTimeSinceLastFlightLoop, inCounter, inRefcon);
+		}
+	}
+	return -1.0f; // -1.0f means to call this callback again at the next flight loop
 }
