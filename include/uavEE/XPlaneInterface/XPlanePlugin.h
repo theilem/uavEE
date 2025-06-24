@@ -28,6 +28,8 @@ resetConfig(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 
 void
 startNode(void* mRef, void* iRef);
+int
+stopNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 
 int
 setAutopilotState(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);

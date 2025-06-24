@@ -127,8 +127,9 @@ XPlaneInterface::run(RunStage stage)
                     CPSLOG_DEBUG << "XPlaneInterface: Teleporting to position: " << tp.position().transpose()
                         << ", velocity: " << tp.velocity().transpose()
                         << ", attitude: " << tp.attitude().transpose();
+                    sensorDataEvent_.cancel();
                     teleportTo_ = tp;
-                    XPLMRegisterFlightLoopCallback(::flightLoopCallback, -1.0, NULL);
+                    XPLMRegisterFlightLoopCallback(::flightLoopCallback, -1.0f, NULL);
                 }
             }, options);
             break;
@@ -158,7 +159,7 @@ XPlaneInterface::flightLoopCallback(float inElapsedSinceLastCall, float inElapse
     sensorDataEvent_ = get<IScheduler>()->schedule([this]
                                                    {
                                                        processData();
-                                                   }, Milliseconds(0),
+                                                   }, Milliseconds(5000),
                                                    Milliseconds(1000 / (sensorFrequency_ * 10)));
     return 0;
 }
@@ -168,12 +169,14 @@ XPlaneInterface::teleportTo(const Teleportation& tele)
 {
     sensorDataEvent_.cancel();
     std::lock_guard lock(dataMutex_);
+    std::cout << "Instructing Teleporation" << std::endl;
     XPLMPlaceUserAtLocation(
         tele.position()[0],
         tele.position()[1],
         tele.position()[2],
         radToDeg(tele.attitude()[2]),
         tele.velocity().norm());
+    std::cout << "Teleportation instructed" << std::endl;
 }
 
 void

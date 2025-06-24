@@ -50,7 +50,6 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 
 	rootMenu = XPLMCreateMenu("UAVEE", XPLMFindPluginsMenu(), item, handler, NULL);
 
-//	registerCommand(rootMenu, "Start Node", "Starts the XPlanePlugin", startNode);
 	populateConfig();
 	registerCommand(rootMenu, "Enable Autopilot", "Enables the IAutopilotAPI in the XPlanePlugin", setAutopilotState, 0,
 					(void*) true);
@@ -61,6 +60,7 @@ XPluginStart(char* outName, char* outSig, char* outDesc)
 	registerCommand(rootMenu, "Refresh Config", "Searches config file path for new configs", refreshConfigInfo);
 	registerCommand(rootMenu, "Generate Config", "Generates a config according to the helper into generate.json",
 					generateConfig);
+	registerCommand(rootMenu, "Stop Node", "Stop the XPlanePlugin", stopNode, 0, (void*) true);
 
 	return 1;
 }
@@ -115,6 +115,22 @@ startNode(void* mRef, void* iRef)
 		}
 		runBegan = true;
 	}
+}
+
+int
+stopNode(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+	if (runBegan)
+	{
+		CPSLOG_DEBUG << "STOPNODE";
+		runBegan = false;
+		agg.cleanUp();
+	}
+	else
+	{
+		CPSLOG_DEBUG << "Node not running, nothing to stop.";
+	}
+	return 0; // Returning 0 means the command was handled successfully
 }
 
 int
